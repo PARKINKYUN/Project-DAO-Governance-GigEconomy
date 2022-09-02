@@ -1,0 +1,6 @@
+.env
+node_modules
+localhost*
+uploads
+
+*.pem
