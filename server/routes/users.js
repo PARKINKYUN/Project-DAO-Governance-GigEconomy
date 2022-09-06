@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const controller = require("../controllers/users");
+const controller = require("../controllers/users.controller");
 
 router.post("/join", controller.join); //회원가입
 router.post("/login", controller.login); //로그인

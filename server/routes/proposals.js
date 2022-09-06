@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const controller = require("../controllers/proposal");
+const controller = require("../controllers/proposals.controller");
 
 router.post("/proposal", controller.proposal); //제안 추가
 router.get("/proposallist", controlloer.proposallist); //제안 조회
