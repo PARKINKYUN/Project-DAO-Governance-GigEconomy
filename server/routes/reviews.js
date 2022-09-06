@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const controller = require("../controllers/review");
+const controller = require("../controllers/reviews.controller");
 
 router.post("/review", controller.post); //리뷰 추가
 router.get("/reviewlist", controller.postlist); //리뷰 조회
