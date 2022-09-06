@@ -48,7 +48,7 @@ worker.statics.setWorkerInfo = async function (
   isworker
 ) {
   return await this.findOneQAndUpdate(
-    { worker_id },
+    { worker_id: worker_id },
     { nickname: nickname, image: image, isworker: isworker },
     { new: true }
   );
@@ -74,5 +74,10 @@ worker.statics.checkPassword = async function (worker_id, password) {
 worker.statics.getWorkerInfo = async function (worker_id) {
   return await this.find({ worker_id: worker_id });
 };
+  
+//긱스코어
+// worker.statics.setGigScore = async funtion (worker_id, ){
+// return await this.findOneAndUpdate({worker_id: worker_id});
+// };
 
-module.expots = mongoose.module("Worker", worker);
+module.exports = mongoose.model("Worker", worker);
