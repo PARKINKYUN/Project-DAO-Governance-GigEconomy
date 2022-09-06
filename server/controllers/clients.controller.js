@@ -19,14 +19,14 @@ module.exports = {
     // 회원 로그인
     login: async (req, res) => {
         try {
-            const clientInfo = await clientModel.getClientInfoById(req.body.user_id);
+            const clientInfo = await clientModel.getClientInfoById(req.body.client_id);
             if (!clientInfo.length) {
                 return res
                     .status(400)
                     .send({ data: null, message: "Not autorized" });
             } else {
                 const checkClientInputData = await clientModel.checkPassword(
-                    req.body.user_id,
+                    req.body.client_id,
                     req.body.password
                 );
 
@@ -79,7 +79,7 @@ module.exports = {
     // 회원가입
     join: async (req, res) => {
         try {
-            const inputID = await clientModel.getUserInfoById(req.body.user_id);
+            const inputID = await clientModel.getUserInfoById(req.body.client_id);
 
             if (inputID.length !== 0) {
                 return res
@@ -108,7 +108,7 @@ module.exports = {
                 password: req.body.password,
                 image: null,                  // default image 필요함
                 address: newAccount.address,
-                balance: 0
+                balance: welcomeReward
             };
 
             // const createUser = usermodel.saveUser(userData);
@@ -175,7 +175,7 @@ module.exports = {
                     image: clientData.image
                 };
 
-                return res.status(200).send({ clientInfo, message: "Completed search" });
+                return res.status(200).send({ data: clientInfo, message: "Completed search" });
             }
         } catch (err) {
             console.log(err);
