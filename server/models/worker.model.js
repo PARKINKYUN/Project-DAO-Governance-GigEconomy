@@ -7,6 +7,10 @@ const worker = new mongoose.schema({
     required: true,
     unique: true,
   },
+  account_type:{
+    type: String,
+    default: 'worker'
+  },
   password: {
     type: String,
     required: true,
@@ -44,12 +48,11 @@ worker.methods.saveWorker = async function () {
 worker.statics.setWorkerInfo = async function (
   worker_id,
   nickname,
-  image,
-  isworker
+  image
 ) {
-  return await this.findOneQAndUpdate(
+  return await this.findOneAndUpdate(
     { worker_id: worker_id },
-    { nickname: nickname, image: image, isworker: isworker },
+    { nickname: nickname, image: image},
     { new: true }
   );
 };
@@ -57,27 +60,30 @@ worker.statics.setWorkerInfo = async function (
 // 회원정보 수정 (비밀번호)
 worker.statics.setWorkerPassword = async function (worker_id, password) {
   const _hash = bcrypt.hash(password, 10);
-  return await this.findOneQAndUpdate(
+  return await this.findOneAndUpdate(
     { workert_id: worker_id },
     { password: _hash },
     { new: true }
   );
 };
 
-//로그인 (아이디, 비밀번호 일치여부 확인
+// 로그인 (아이디, 비밀번호 일치여부 확인)
 worker.statics.checkPassword = async function (worker_id, password) {
   const _workerInfo = await this.find({ worker_id: worker_id });
   return await bcrypt.compare(password, _workerInfo[0].password);
 };
 
-//회원정보 요청 (배열로 반환한다)
+// 회원정보 요청 (배열로 반환한다)
 worker.statics.getWorkerInfo = async function (worker_id) {
   return await this.find({ worker_id: worker_id });
 };
-  
-//긱스코어
-// worker.statics.setGigScore = async funtion (worker_id, ){
-// return await this.findOneAndUpdate({worker_id: worker_id});
-// };
+
+// 긱 스코어
+worker.statics.setGigScore = async function (worker_id, gig_score) {
+  return await this.findOneAndUpdate(
+    { worker_id: worker_id },
+    { gig_score: gig_score }
+  );
+};
 
 module.exports = mongoose.model("Worker", worker);
