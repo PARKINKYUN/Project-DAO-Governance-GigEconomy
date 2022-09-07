@@ -10,6 +10,7 @@ dotenv.config();
 app.use(express.urlencoded({ limit: "50mb", extended: false }));
 app.use(express.json({ limit: "50mb" }));
 app.use(cors());
+app.use('/images', express.static(__dirname + '/uploads'));
 
 // Database 연결
 const db = require("./models");
