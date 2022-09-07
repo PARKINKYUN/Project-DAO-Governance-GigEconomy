@@ -106,7 +106,7 @@ module.exports = {
                 client_id: req.body.client_id,
                 nickname: req.body.nickname,
                 password: req.body.password,
-                image: null,                  // default image 필요함
+                image: req.file.path,
                 address: newAccount.address,
                 balance: welcomeReward
             };
