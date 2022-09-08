@@ -75,6 +75,7 @@ module.exports = {
       res.status(400);
     }
   },
+
   // 오더 내용 변경
   edit_order: async (req, res) => {
     try {
@@ -94,6 +95,7 @@ module.exports = {
       res.status(400);
     }
   },
+
   // 워커가 pending 상태인 오더에 제안 등록
   make_offer: async (req, res) => {
     try {
@@ -116,8 +118,9 @@ module.exports = {
       res.status(400);
     }
   },
+
   // 클라이언트가 제안 선택, 오더 시작
-  setWorkerAndStart: async (req, res) => {
+  clientStart: async (req, res) => {
     try {
       const clientId = getClientId(req, res);
 
@@ -137,12 +140,13 @@ module.exports = {
       res.status(400);
     }
   },
-  // 오더 시작
-  start: async (req, res) => {
-    try {
-      const clientId = getClientId(req, res);
 
-      const order = await order.start(req.params.id);
+  // 워커가 오더 수락, 오더 시작
+  workerStart: async (req, res) => {
+    try {
+      const workerId = getWorkerId(req, res);
+
+      const order = await order.acceptRequestAndStart(req.params.id);
       if (!order) {
         return res.status(400).message("에러가 발생했습니다.");
       }
@@ -155,6 +159,7 @@ module.exports = {
       res.status(400);
     }
   },
+
   // 오더 연장
   extend: async (req, res) => {
     try {
@@ -173,6 +178,7 @@ module.exports = {
       res.status(400);
     }
   },
+
   // 오더 취소
   cancel: async (req, res) => {
     try {
@@ -191,6 +197,7 @@ module.exports = {
       res.status(400);
     }
   },
+
   // 오더 완료
   finish: async (req, res) => {
     try {
@@ -204,6 +211,23 @@ module.exports = {
       return res
         .status(200)
         .send({ data: order._id, message: "오더가 완료되었습니다." });
+    } catch (err) {
+      console.error(err);
+      res.status(400);
+    }
+  },
+
+  // 오더 삭제
+  remove: async (req, res) => {
+    try {
+      const workerId = getWorkerId(req, res);
+
+      const removedOrder = await order.removeOrder(req.params.id);
+      if (!removedOrder) {
+        return res.status(400).message("오더의 삭제에 실패하였습니다.");
+      }
+
+      return res.status(200).message("오더가 삭제되었습니다.");
     } catch (err) {
       console.error(err);
       res.status(400);

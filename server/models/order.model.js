@@ -19,7 +19,14 @@ const order = new mongoose.Schema({
   status: {
     type: String,
     required: true,
-    enum: ["pending", "ongoing", "extended", "finished", "canceled"],
+    enum: [
+      "pending", // find order에 보여지게 되는 오더
+      "requested", // client가 worker에게 직접 의뢰한 오더
+      "ongoing",
+      "extended",
+      "finished",
+      "canceled",
+    ],
     default: "pending",
   },
   deadline: {
@@ -96,6 +103,7 @@ order.statics.directOrder = async (client_id, worker_id, order_data) => {
     worker_id: worker_id,
     title: title,
     category: category,
+    status: "requested",
     deadline: deadline,
     compensation: compensation,
     content: content,
@@ -145,12 +153,9 @@ order.statics.setWorkerAndStart = async (order_id, offer_index) => {
   return await order.update(_order);
 };
 
-// 오더 시작
-order.statics.start = async (order_id) => {
-  return await this.findOneAndUpdate(
-    { order_id: order_id },
-    { status: "ongoing" }
-  );
+// 워커가 클라이언트의 의뢰를 수락, 오더의 상태를 진행중으로
+order.statics.acceptRequestAndStart = async (order_id) => {
+  return await this.findByIdAndUpdate(order_id, { status: "ongoing" });
 };
 
 // 오더 연장
@@ -177,5 +182,8 @@ order.statics.finish = async (order_id) => {
   );
 };
 
-// 오더 삭제
+// 오더 삭제 (pending, requested 상태인 오더만 가능)
+order.statics.remove = async (order_id) => {
+  await this.findByIdAndRemove(order_id);
+};
 module.exports = mongoose.model("Order", Order);
