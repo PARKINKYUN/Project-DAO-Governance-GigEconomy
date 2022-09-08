@@ -19,7 +19,14 @@ const order = new mongoose.Schema({
   status: {
     type: String,
     required: true,
-    enum: ["pending", "ongoing", "extended", "finished", "canceled"],
+    enum: [
+      "pending", // find order에 보여지게 되는 오더
+      "requested", // client가 worker에게 직접 의뢰한 오더
+      "ongoing",
+      "extended",
+      "finished",
+      "canceled",
+    ],
     default: "pending",
   },
   deadline: {
@@ -65,17 +72,17 @@ const order = new mongoose.Schema({
 });
 
 // pending 상태인 모든 order 조회
-Order.statics.getAllOrders = async () => {
+order.statics.getAllOrders = async () => {
   return await this.find({ status: "pending" });
 };
 
 // 오더 조회
-Order.statics.getOrderById = async (order_id) => {
+order.statics.getOrderById = async (order_id) => {
   return await this.findById(order_id);
 };
 
 // 새로운 오더 생성
-Order.statics.postOrder = async (client_id, order_data) => {
+order.statics.postOrder = async (client_id, order_data) => {
   const { title, category, deadline, compensation, content, file } = order_data;
   return await this.create({
     client_id: client_id,
@@ -89,13 +96,14 @@ Order.statics.postOrder = async (client_id, order_data) => {
 };
 
 // 워커에게 직접 의뢰
-Order.statics.directOrder = async (client_id, worker_id, order_data) => {
+order.statics.directOrder = async (client_id, worker_id, order_data) => {
   const { title, category, deadline, compensation, content, file } = order_data;
   return await this.create({
     client_id: client_id,
     worker_id: worker_id,
     title: title,
     category: category,
+    status: "requested",
     deadline: deadline,
     compensation: compensation,
     content: content,
@@ -104,7 +112,7 @@ Order.statics.directOrder = async (client_id, worker_id, order_data) => {
 };
 
 // 오더 내용 변경
-Order.statics.editOrder = async (order_id, new_data) => {
+order.statics.editOrder = async (order_id, new_data) => {
   const { title, category, deadline, compensation, content, file } = new_data;
   const _order = {
     title: title,
@@ -118,7 +126,7 @@ Order.statics.editOrder = async (order_id, new_data) => {
 };
 
 // 오더에 제안 등록
-Order.statics.postOffer = async (order_id, worker_id, offer) => {
+order.statics.postOffer = async (order_id, worker_id, offer) => {
   const { deadline, compensation, message } = offer;
   const _offer = {
     worker: worker_id,
@@ -133,7 +141,7 @@ Order.statics.postOffer = async (order_id, worker_id, offer) => {
 };
 
 // 클라이언트가 제안을 선택, 오더의 상태를 진행중으로
-Order.statics.setWorkerAndStart = async (order_id, offer_index) => {
+order.statics.setWorkerAndStart = async (order_id, offer_index) => {
   const order = await this.findById(order_id);
   const { worker, deadline, compensation } = order.offers[offer_index];
   const _order = {
@@ -145,16 +153,13 @@ Order.statics.setWorkerAndStart = async (order_id, offer_index) => {
   return await order.update(_order);
 };
 
-// 오더 시작
-Order.statics.start = async (order_id) => {
-  return await this.findOneAndUpdate(
-    { order_id: order_id },
-    { status: "ongoing" }
-  );
+// 워커가 클라이언트의 의뢰를 수락, 오더의 상태를 진행중으로
+order.statics.acceptRequestAndStart = async (order_id) => {
+  return await this.findByIdAndUpdate(order_id, { status: "ongoing" });
 };
 
 // 오더 연장
-Order.statics.extend = async (order_id) => {
+order.statics.extend = async (order_id) => {
   return await this.findOneAndUpdate(
     { order_id: order_id },
     { status: "extended" }
@@ -162,7 +167,7 @@ Order.statics.extend = async (order_id) => {
 };
 
 // 오더 취소
-Order.statics.cancel = async (order_id) => {
+order.statics.cancel = async (order_id) => {
   return await this.findOneAndUpdate(
     { order_id: order_id },
     { status: "canceled" }
@@ -170,12 +175,15 @@ Order.statics.cancel = async (order_id) => {
 };
 
 // 오더 완료
-Order.statics.finish = async (order_id) => {
+order.statics.finish = async (order_id) => {
   return await this.findOneAndUpdate(
     { order_id: order_id },
     { status: "finished" }
   );
 };
 
-// 오더 삭제
+// 오더 삭제 (pending, requested 상태인 오더만 가능)
+order.statics.remove = async (order_id) => {
+  await this.findByIdAndRemove(order_id);
+};
 module.exports = mongoose.model("Order", Order);
