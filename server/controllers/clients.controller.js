@@ -107,7 +107,6 @@ module.exports = {
                 client_id: req.body.client_id,
                 nickname: req.body.nickname,
                 password: req.body.password,
-                image: req.file.path,
                 address: newAccount.address,
                 balance: welcomeReward
             };
@@ -203,27 +202,21 @@ module.exports = {
                     process.env.ACCESS_SECRET
                 );
 
-                console.log("User information: ", userInfo);
+                if(userInfo.account_type !== "client"){
+                    res.status(404).send({ data: null, message: "Invalid account"})
 
+                } else {
+                    const clientData = await clientModel.getClientInfoById(req.body.client_id);
 
+                    const clientInfo = {
+                        client_id: clientData.client_id,
+                        account_type: clientData.account_type,
+                        nickname: clientData.nickname,
+                        image: clientData.image,
+                    }
 
-
-                const clientInfo = null;
-                // 특정 사용자의 정보 조회
-                // 다른 models가 구현되어야 코딩 가능함
-                //
-                //
-                // 작성 필요
-                //
-                //
-                //
-
-                
-                
-                return res.status(200).send({
-                    data: clientInfo,
-                    message: "Completed search",
-                });
+                    return res.status(200).send({ data: clientInfo, message: "Completed search" });
+                }
             }
         } catch (err) {
             console.log(err);
@@ -233,4 +226,34 @@ module.exports = {
             });
         }
     },
+
+    // 회원정보 수정
+    updateClientInfo: async (req, res) => {
+        try {
+            const accessToken = req.headers.authorization;
+
+            if(!accessToken){
+                return res.status(404).send({ data: null, message: "Invalid access token" });
+            } else {
+                const clientData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+
+                if( userInfo.account_type !== "client" ){
+                    res.status(404).send({ data: null, message: "Invalid account"});
+                } else {
+                    const inputData = {
+                        nickname: req.body.nickname,
+                        image: req.file.path,
+                    };
+
+                    const updateInfo = await clientModel.setClientInfo(clientData.client_id, inputData);
+
+                    res.status(200).send({ data: updateInfo, message: "Client info updated"})
+                }
+            }
+
+        } catch (err) {
+            console.error(err);
+            res.status(404).send({ data: null, message: "Can't execute request"})
+        }
+    }
 };
