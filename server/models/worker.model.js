@@ -7,9 +7,9 @@ const worker = new mongoose.schema({
     required: true,
     unique: true,
   },
-  account_type:{
+  account_type: {
     type: String,
-    default: 'worker'
+    default: "worker",
   },
   password: {
     type: String,
@@ -17,12 +17,16 @@ const worker = new mongoose.schema({
   },
   nickname: {
     type: String,
-    required: true,
     unique: true,
   },
   image: {
     type: String,
+    required: false,
     // default 값 필요함
+  },
+  pending: {
+    type: Boolean,
+    default: false,
   },
   gig_score: {
     type: Number,
@@ -45,14 +49,10 @@ worker.methods.saveWorker = async function () {
 };
 
 // 회원정보 수정
-worker.statics.setWorkerInfo = async function (
-  worker_id,
-  nickname,
-  image
-) {
+worker.statics.setWorkerInfo = async function (worker_id, nickname, image) {
   return await this.findOneAndUpdate(
     { worker_id: worker_id },
-    { nickname: nickname, image: image},
+    { nickname: nickname, image: image },
     { new: true }
   );
 };
@@ -74,8 +74,24 @@ worker.statics.checkPassword = async function (worker_id, password) {
 };
 
 // 회원정보 요청 (배열로 반환한다)
-worker.statics.getWorkerInfo = async function (worker_id) {
+worker.statics.getWorkerInfoById = async function (worker_id) {
   return await this.find({ worker_id: worker_id });
+};
+
+// pending 상태의 워커 리스트
+worker.statics.getPendingWorker = async function () {
+  return await this.find();
+};
+
+// pending 상태 변경(true || false)
+worker.statics.togglePending = async function (worker_id) {
+  const worker = await this.findOne({ worker_id: worker_id });
+  if (worker.pending == false) {
+    return await worker.update({ pending: true });
+  }
+  if (worker.pending == true) {
+    return await worker.update({ pending: false });
+  }
 };
 
 // 긱 스코어

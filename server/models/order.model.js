@@ -183,7 +183,44 @@ order.statics.finish = async (order_id) => {
 };
 
 // 오더 삭제 (pending, requested 상태인 오더만 가능)
-order.statics.remove = async (order_id) => {
+order.statics.removeOrder = async (order_id) => {
   await this.findByIdAndRemove(order_id);
+};
+
+// pending 상태의 오더 id로 조회
+order.statics.pendingOrdersById = async (accountType, id) => {
+  if (accountType == "client") {
+    return await this.find({ client_id: id, status: "pending" });
+  }
+  if (accountType == "worker") {
+    return await this.find({ "offers.worker": id, status: "pending" });
+  }
+};
+// requested 상태의 오더 id로 조회
+order.statics.requestedOrdersById = async (accountType, id) => {
+  if (accountType == "client") {
+    return await this.find({ client_id: id, status: "requested" });
+  }
+  if (accountType == "worker") {
+    return await this.find({ worker_id: id, status: "requested" });
+  }
+};
+// ongoing, extended 상태의 오더 id로 조회
+order.statics.inProgressOrdersById = async (accountType, id) => {
+  if (accountType == "client") {
+    return await this.find({ client_id: id, status: "ongoing" || "extended" });
+  }
+  if (accountType == "worker") {
+    return await this.find({ worker_id: id, status: "ongoing" || "extended" });
+  }
+};
+// finished, canceled 상태의 오더 id로 조회
+order.statics.pastOrdersById = async (accountType, id) => {
+  if (accountType == "client") {
+    return await this.find({ client_id: id, status: "finished" || "canceled" });
+  }
+  if (accountType == "worker") {
+    return await this.find({ worker_id: id, status: "finished" || "canceled" });
+  }
 };
 module.exports = mongoose.model("Order", Order);
