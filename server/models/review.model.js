@@ -16,7 +16,7 @@ const review = new mongoose.Schema({
   },
 });
 
-//리뷰 조회(worke_id조회)
+//리뷰 조회(worker_id조회)
 review.statics.getReviewByworkerId = async (worker_id) => {
   return await this.find({ worker_id: worker_id });
 };
@@ -29,7 +29,7 @@ review.statics.getReviewByorderId = async (order_id) => {
 //리뷰 생성
 review.methods.saveReview = async (obj, idx) => {
   const newReview = new this({
-    worker_id: obj.worke_id,
+    worker_id: obj.worker_id,
     order_id: obj.order_id,
     content: obj.content,
     review_id: idx,
