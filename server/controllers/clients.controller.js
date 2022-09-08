@@ -202,7 +202,7 @@ module.exports = {
                     process.env.ACCESS_SECRET
                 );
 
-                if(userInfo.account_type !== "client"){
+                if(!userInfo){
                     res.status(404).send({ data: null, message: "Invalid account"})
 
                 } else {
