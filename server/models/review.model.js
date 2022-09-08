@@ -51,4 +51,4 @@ review.statics.removeReview = async (review_id) => {
   await this.findByIdAndRemove(review_id);
 };
 
-module.exports = mongoose.model("Review", Order);
+module.exports = mongoose.model("Review", review);
