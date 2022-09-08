@@ -41,12 +41,12 @@ tap.statics.getLatestTapId = async function () {
 
 // client id로 탭 조회
 tap.statics.getTapsByClientId = async function (client_id) {
-    return await this.find({ client_id: client_id }).limit(searchCount);
+    return await this.find({ client_id: client_id }).sort({ tap_id: -1 });
 }
 
 // worker id로 탭 조회
 tap.statics.getTapsByWorkerId = async function (worker_id) {
-    return await this.find({ worker_id: worker_id }).limit(searchCount);
+    return await this.find({ worker_id: worker_id }).sort({ tap_id: -1 });
 }
 
 // tap id로 탭 조회
@@ -67,4 +67,4 @@ tap.statics.deleteTapByTapId = async function (tap_id) {
     return await this.deleteOne({ tap_id: tap_id })
 }
 
-module.exports = mongoose.model("Client", client);
+module.exports = mongoose.model("Taps", tap);
