@@ -1,5 +1,5 @@
-const token_abi = require("../contracts/contract_abi");
-const token_address = require("../contracts/contract_address");
+const contract_abi = require("../contracts/contract_abi");
+const contract_address = require("../contracts/contract_address");
 const clientModel = require("../models/client.model");
 
 const jwt = require("jsonwebtoken");
@@ -8,7 +8,7 @@ const Web3 = require("web3");
 
 // infura를 web3 프로바이더로 사용함
 const web3 = new Web3(process.env.RPCURL);
-const contract = new web3.eth.Contract(token_abi, token_address);
+const contract = new web3.eth.Contract(contract_abi, contract_address);
 
 // 최초 회원 가입 시 지급하는 토큰의 양
 const welcomeReward = 100000;
@@ -48,6 +48,7 @@ module.exports = {
                     // client 정보 객체를 만들어 토큰에 담아 응답
                     const clientData = {
                         client_id: clientInfo[0].client_id,
+                        account_type: clientInfo[0].account_type,
                         nickname: clientInfo[0].nickname,
                         address: clientInfo[0].address,
                         image: clientInfo[0].image
@@ -127,7 +128,7 @@ module.exports = {
 
             // 4. 서명한 트랜잭션 발송
             const sendingTX = await web3.eth.sendSignedTransaction(signedTX.rawTransaction);
-            console.log("20 Token 전송 트랜잭션: ", sendingTX);
+            console.log("Welcome Token 전송 트랜잭션: ", sendingTX);
 
             return res.status(200).send({
                 data: createUser,
@@ -169,6 +170,7 @@ module.exports = {
 
                 const clientInfo = {
                     client_id: clientData.client_id,
+                    account_type: clientData.account_type,
                     nickname: clientData.nickname,
                     address: clientData.address,
                     balance: balance,
