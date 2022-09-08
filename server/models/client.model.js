@@ -44,12 +44,11 @@ client.methods.saveClient = async function () {
 // 회원정보 수정
 client.statics.setClientInfo = async function (
   client_id,
-  nickname,
-  image,
+  obj
 ) {
   return await this.findOneAndUpdate(
     { client_id: client_id },
-    { nickname: nickname, image: image},
+    { nickname: obj.nickname, image: obj.image},
     { new: true }
   );
 };
