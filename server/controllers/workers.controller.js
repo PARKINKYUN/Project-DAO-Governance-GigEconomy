@@ -39,6 +39,7 @@ module.exports = {
             nickname: workerInfo[0].nickname,
             address: workerInfo[0].address,
             image: workerInfo[0].image,
+            mod_authority: workerInfo[0].mod_authority,
           };
 
           const accessToken = jwt.sign(workerData, process.env.ACCESS_SECRET, {
