@@ -122,7 +122,7 @@ order.statics.editOrder = async (order_id, new_data) => {
     content: content,
     file: file,
   };
-  return await this.findOneAndUpdate({ order_id: order_id }, _order);
+  return await this.findOneAndUpdate({ _id: order_id }, _order);
 };
 
 // 오더에 제안 등록
@@ -135,7 +135,7 @@ order.statics.postOffer = async (order_id, worker_id, offer) => {
     message: message,
   };
   return await this.findOneAndUpdate(
-    { order_id: order_id },
+    { _id: order_id },
     { $push: { offers: _offer } }
   );
 };
@@ -160,26 +160,17 @@ order.statics.acceptRequestAndStart = async (order_id) => {
 
 // 오더 연장
 order.statics.extend = async (order_id) => {
-  return await this.findOneAndUpdate(
-    { order_id: order_id },
-    { status: "extended" }
-  );
+  return await this.findOneAndUpdate({ _id: order_id }, { status: "extended" });
 };
 
 // 오더 취소
 order.statics.cancel = async (order_id) => {
-  return await this.findOneAndUpdate(
-    { order_id: order_id },
-    { status: "canceled" }
-  );
+  return await this.findOneAndUpdate({ _id: order_id }, { status: "canceled" });
 };
 
 // 오더 완료
 order.statics.finish = async (order_id) => {
-  return await this.findOneAndUpdate(
-    { order_id: order_id },
-    { status: "finished" }
-  );
+  return await this.findOneAndUpdate({ _id: order_id }, { status: "finished" });
 };
 
 // 오더 삭제 (pending, requested 상태인 오더만 가능)
@@ -187,7 +178,7 @@ order.statics.removeOrder = async (order_id) => {
   await this.findByIdAndRemove(order_id);
 };
 
-// pending 상태의 오더 id로 조회
+// 유저의 pending 상태 오더
 order.statics.pendingOrdersById = async (accountType, id) => {
   if (accountType == "client") {
     return await this.find({ client_id: id, status: "pending" });
@@ -196,7 +187,7 @@ order.statics.pendingOrdersById = async (accountType, id) => {
     return await this.find({ "offers.worker": id, status: "pending" });
   }
 };
-// requested 상태의 오더 id로 조회
+// 유저의 requested 상태 오더
 order.statics.requestedOrdersById = async (accountType, id) => {
   if (accountType == "client") {
     return await this.find({ client_id: id, status: "requested" });
@@ -205,7 +196,7 @@ order.statics.requestedOrdersById = async (accountType, id) => {
     return await this.find({ worker_id: id, status: "requested" });
   }
 };
-// ongoing, extended 상태의 오더 id로 조회
+// 유저의 ongoing, extended 상태 오더
 order.statics.inProgressOrdersById = async (accountType, id) => {
   if (accountType == "client") {
     return await this.find({ client_id: id, status: "ongoing" || "extended" });
@@ -214,7 +205,7 @@ order.statics.inProgressOrdersById = async (accountType, id) => {
     return await this.find({ worker_id: id, status: "ongoing" || "extended" });
   }
 };
-// finished, canceled 상태의 오더 id로 조회
+// 유저의 finished, canceled 상태 오더
 order.statics.pastOrdersById = async (accountType, id) => {
   if (accountType == "client") {
     return await this.find({ client_id: id, status: "finished" || "canceled" });
@@ -223,4 +214,4 @@ order.statics.pastOrdersById = async (accountType, id) => {
     return await this.find({ worker_id: id, status: "finished" || "canceled" });
   }
 };
-module.exports = mongoose.model("Order", Order);
+module.exports = mongoose.model("Order", order);

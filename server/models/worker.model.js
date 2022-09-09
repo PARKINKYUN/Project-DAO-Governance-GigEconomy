@@ -2,14 +2,14 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const worker = new mongoose.schema({
+  account_type: {
+    type: String,
+    default: "worker",
+  },
   worker_id: {
     type: String,
     required: true,
     unique: true,
-  },
-  account_type: {
-    type: String,
-    default: "worker",
   },
   password: {
     type: String,
@@ -30,6 +30,10 @@ const worker = new mongoose.schema({
   },
   gig_score: {
     type: Number,
+  },
+  mod_authority: {
+    type: Boolean,
+    default: false,
   },
   address: {
     type: String,
