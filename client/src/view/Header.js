@@ -11,7 +11,7 @@ const rightLink = {
   ml: 3,
 };
 
-function Header() {
+function Header({ token, setToken, userInfo, setUserInfo }) {
   return (
     <div>
       <AppBar position="fixed">
@@ -27,50 +27,45 @@ function Header() {
           >
             {"Gigtopia"}
           </Link>
-          <Box sx={{ flex: 1 }} />
-          <Link
-            style={{ color: "pink" }}
-            variant="h6"
-            underline="none"
-            component={RouterLink}
-            to="/findworker"
-            sx={rightLink}
-          >
-            {"Find Worker"}
-          </Link>
-          <Link
-            style={{ color: "pink" }}
-            variant="h6"
-            underline="none"
-            component={RouterLink}
-            to="/findorder"
-            sx={rightLink}
-          >
-            {"Find Order"}
-          </Link>
-
-          <Link
-            style={{ color: "pink" }}
-            variant="h6"
-            underline="none"
-            component={RouterLink}
-            to="/governance"
-            sx={rightLink}
-          >
-            {"Governance"}
-          </Link>
-          <Link
-            style={{ color: "pink" }}
-            variant="h6"
-            underline="none"
-            component={RouterLink}
-            to="/signin"
-            sx={rightLink}
-          >
-            {"My Info"}
-          </Link>
-
-          <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
+          {token ? 
+                    <>
+                    <Box sx={{ flex: 1 }} />
+                    <Link
+                      style={{ color: "pink" }}
+                      variant="h6"
+                      underline="none"
+                      component={RouterLink}
+                      to="/findorder"
+                      sx={rightLink}
+                    >
+                      {"Find Order"}
+                    </Link>
+          
+                    <Link
+                      style={{ color: "pink" }}
+                      variant="h6"
+                      underline="none"
+                      component={RouterLink}
+                      to="/governance"
+                      sx={rightLink}
+                    >
+                      {"Governance"}
+                    </Link>
+                    <Link
+                      style={{ color: "pink" }}
+                      variant="h6"
+                      underline="none"
+                      component={RouterLink}
+                      to="/signin"
+                      sx={rightLink}
+                    >
+                      {"My Info"}
+                    </Link>
+                    </>
+          : null }
+          {!token?
+                    <>
+                    <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
             <Link
               color="inherit"
               variant="h6"
@@ -91,6 +86,8 @@ function Header() {
               {"Sign Up"}
             </Link>
           </Box>
+                    </>
+          : null }
         </Toolbar>
       </AppBar>
       <Toolbar />

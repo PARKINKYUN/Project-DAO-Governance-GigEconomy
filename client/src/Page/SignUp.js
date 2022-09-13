@@ -1,6 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+// import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import { Field, Form, FormSpy } from "react-final-form";
 import Typography from "../components/Typography";
@@ -13,13 +13,26 @@ import FormButton from "../form/FormButton";
 import FormFeedback from "../form/FormFeedback";
 import withRoot from "../withRoot";
 import { Link as RouterLink } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import axios from "axios";
 
 function SignUp() {
-  const [sent, setSent] = React.useState(false);
+  const [sent, setSent] = useState(false);
+  const isWorker = useRef(false);
+
+  const handleIsWorker = () => {
+    console.log("변경전", isWorker)
+    if(isWorker.current){
+      isWorker.current = false;
+    } else {
+      isWorker.current = true;
+    }
+    console.log("변경후", isWorker)
+  }
 
   const validate = (values) => {
     const errors = required(
-      ["firstName", "lastName", "email", "password"],
+      ["email", "nickname", "password"],
       values
     );
 
@@ -33,8 +46,40 @@ function SignUp() {
     return errors;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (values) => {
     setSent(true);
+    const { email, nickname, password } = values;
+
+    // 사용자가 client인지 worker인지에 따라서 분기
+    if(isWorker){
+      axios
+      .post('http://localhost:4000/workers/join', {
+        worker_id: email,
+        nickname: nickname,
+        password: password
+      })
+      .then((res) => {
+        if(res.status === 200){
+
+        } else {
+
+        }
+      })
+    } else {
+      axios
+      .post('http://localhost:4000/clients/join', {
+        client_id: email,
+        nickname: nickname,
+        password: password
+      })
+      .then((res) => {
+        if(res.status === 200){
+
+        } else {
+
+        }
+      })
+    }
   };
 
   return (
@@ -63,52 +108,41 @@ function SignUp() {
               noValidate
               sx={{ mt: 6 }}
             >
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Field
-                    autoFocus
-                    component={RFTextField}
-                    disabled={submitting || sent}
-                    autoComplete="given-name"
-                    fullWidth
-                    label="First name"
-                    name="firstName"
-                    required
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Field
-                    component={RFTextField}
-                    disabled={submitting || sent}
-                    autoComplete="family-name"
-                    fullWidth
-                    label="Last name"
-                    name="lastName"
-                    required
-                  />
-                </Grid>
-              </Grid>
               <Field
                 autoComplete="email"
+                autoFocus
                 component={RFTextField}
                 disabled={submitting || sent}
                 fullWidth
-                label="Email"
+                label="ID/Email"
                 margin="normal"
                 name="email"
+                required
+                size="large"
+              />
+              <Field
+                autoComplete="text"
+                component={RFTextField}
+                disabled={submitting || sent}
+                fullWidth
+                label="Nickname"
+                margin="normal"
+                name="nickname"
                 required
               />
               <Field
                 fullWidth
+                size="large"
                 component={RFTextField}
                 disabled={submitting || sent}
                 required
                 name="password"
-                autoComplete="new-password"
+                autoComplete="current-password"
                 label="Password"
                 type="password"
                 margin="normal"
               />
+              <input type="checkbox" name="worker" onChange={handleIsWorker} /> Gig Worker로 등록하려면 체크!
               <FormSpy subscription={{ submitError: true }}>
                 {({ submitError }) =>
                   submitError ? (
