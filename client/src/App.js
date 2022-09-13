@@ -17,10 +17,11 @@ import { useState, useEffect } from "react";
 function App() {
   const [token, setToken] = useState('');
   const [userInfo, setUserInfo] = useState({});
+  const [isWorker, setIsWorker] = useState(false);
 
   useEffect( () => {
     console.log("ReRendering...");
-  }, [token, userInfo]);
+  }, [token, userInfo, isWorker]);
 
   return (
     <BrowserRouter>
@@ -30,7 +31,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signin" element={<SignIn setToken={setToken} setUserInfo={setUserInfo} setIsWorker={setIsWorker} />} />
         <Route path="/findworker" element={<FindWorker />} />
         <Route path="/findorder" element={<FindOrder />} />
         <Route path="/workerprofile" element={<WorkerProfile />} />
