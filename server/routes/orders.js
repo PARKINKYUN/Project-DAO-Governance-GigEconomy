@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const controller = require("../controllers/orders.controller");
+const controller = require("../controllers/order.controller");
 
 router.get("/", controller.getPendingOrder); // pending 중인 order 리스트
 router.get("/order_info/:id", controller.order_info); //오더 조회
