@@ -16,13 +16,13 @@ import { Link as RouterLink } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 
-function SignUp() {
+function SignUp({ history }) {
   const [sent, setSent] = useState(false);
   const isWorker = useRef(false);
 
   const handleIsWorker = () => {
     console.log("변경전", isWorker)
-    if(isWorker.current){
+    if (isWorker.current) {
       isWorker.current = false;
     } else {
       isWorker.current = true;
@@ -46,40 +46,44 @@ function SignUp() {
     return errors;
   };
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     setSent(true);
     const { email, nickname, password } = values;
 
     // 사용자가 client인지 worker인지에 따라서 분기
-    if(isWorker){
-      axios
-      .post('http://localhost:4000/workers/join', {
-        worker_id: email,
-        nickname: nickname,
-        password: password
-      })
-      .then((res) => {
-        if(res.status === 200){
+    try {
+      if (isWorker) {
+        const res = await axios.post('http://localhost:4000/workers/join', {
+            worker_id: email,
+            nickname: nickname,
+            password: password
+          })
+        if (res.status === 200) {
+          window.alert("회원가입에 성공했습니다. 로그인 해주세요.")
+          history.push('http://localhost:3000/signin');
 
         } else {
-
+          console.log("회원가입 실패")
         }
-      })
-    } else {
-      axios
-      .post('http://localhost:4000/clients/join', {
-        client_id: email,
-        nickname: nickname,
-        password: password
-      })
-      .then((res) => {
-        if(res.status === 200){
+      } else {
+        const res = await axios.post('http://localhost:4000/clients/join', {
+          client_id: email,
+          nickname: nickname,
+          password: password
+        })
+        if (res.status === 200) {
+          window.alert("회원가입에 성공했습니다. 로그인 해주세요.")
+          history.push('http://localhost:3000/signin');
 
         } else {
-
+          console.log("회원가입 실패")
         }
-      })
+      }
+
+    } catch (err) {
+      console.error(err);
     }
+
   };
 
   return (
@@ -114,7 +118,7 @@ function SignUp() {
                 component={RFTextField}
                 disabled={submitting || sent}
                 fullWidth
-                label="ID/Email"
+                label="ID (email)"
                 margin="normal"
                 name="email"
                 required

@@ -11,7 +11,7 @@ const rightLink = {
   ml: 3,
 };
 
-function Header({ token, setToken, userInfo, setUserInfo }) {
+function Header({ token, isWorker }) {
   return (
     <div>
       <AppBar position="fixed">
@@ -27,67 +27,71 @@ function Header({ token, setToken, userInfo, setUserInfo }) {
           >
             {"Gigtopia"}
           </Link>
-          {token ? 
-                    <>
-                    <Box sx={{ flex: 1 }} />
-                    <Link
-                      style={{ color: "pink" }}
-                      variant="h6"
-                      underline="none"
-                      component={RouterLink}
-                      to="/findorder"
-                      sx={rightLink}
-                    >
-                      {"Find Order"}
-                    </Link>
-          
-                    <Link
-                      style={{ color: "pink" }}
-                      variant="h6"
-                      underline="none"
-                      component={RouterLink}
-                      to="/governance"
-                      sx={rightLink}
-                    >
-                      {"Governance"}
-                    </Link>
-                    <Link
-                      style={{ color: "pink" }}
-                      variant="h6"
-                      underline="none"
-                      component={RouterLink}
-                      to="/signin"
-                      sx={rightLink}
-                    >
-                      {"My Info"}
-                    </Link>
-                    </>
-          : null }
-          {!token?
-                    <>
-                    <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
-            <Link
-              color="inherit"
-              variant="h6"
-              underline="none"
-              component={RouterLink}
-              to="/signin"
-              sx={rightLink}
-            >
-              {"Sign In"}
-            </Link>
-            <Link
-              variant="h6"
-              underline="none"
-              component={RouterLink}
-              to="/signup"
-              sx={{ ...rightLink, color: "secondary.main" }}
-            >
-              {"Sign Up"}
-            </Link>
-          </Box>
-                    </>
-          : null }
+          {token ?
+            <>
+              <Box sx={{ flex: 1 }} />
+              <Link
+                style={{ color: "pink" }}
+                variant="h6"
+                underline="none"
+                component={RouterLink}
+                to="/findorder"
+                sx={rightLink}
+              >
+                {"Find Order"}
+              </Link>
+
+              {isWorker ?
+                <>
+                  <Link
+                    style={{ color: "pink" }}
+                    variant="h6"
+                    underline="none"
+                    component={RouterLink}
+                    to="/governance"
+                    sx={rightLink}
+                  >
+                    {"Governance"}
+                  </Link>
+                </>
+                : null }
+              <Link
+                style={{ color: "pink" }}
+                variant="h6"
+                underline="none"
+                component={RouterLink}
+                to="/signin"
+                sx={rightLink}
+              >
+                {"My Info"}
+              </Link>
+            </>
+            : null}
+          {!token ?
+            <>
+              <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
+                <Link
+                  color="inherit"
+                  variant="h6"
+                  underline="none"
+                  component={RouterLink}
+                  to="/signin"
+                  sx={rightLink}
+                >
+                  {"Sign In"}
+                </Link>
+                <Link
+                  variant="h6"
+                  underline="none"
+                  component={RouterLink}
+                  to="/signup"
+                  sx={{ ...rightLink, color: "secondary.main" }}
+                >
+                  {"Sign Up"}
+                </Link>
+              </Box>
+            </>
+            : null}
         </Toolbar>
       </AppBar>
       <Toolbar />
