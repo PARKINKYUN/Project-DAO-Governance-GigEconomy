@@ -25,6 +25,9 @@ function RFTextField(props) {
       }}
       helperText={touched ? error || submitError : ''}
       variant="standard"
+      name={input.name}
+      value={input.value}
+      onChange={input.onChange}
     />
   );
 }

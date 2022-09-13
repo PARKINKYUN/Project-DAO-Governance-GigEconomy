@@ -12,12 +12,20 @@ import OrderInfo from "./Page/OrderInfo";
 import Governance from "./Page/Governance";
 import Main from "./Page/Main";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 function App() {
+  const [token, setToken] = useState('');
+  const [userInfo, setUserInfo] = useState({});
+
+  useEffect( () => {
+    console.log("ReRendering...");
+  }, [token, userInfo]);
+
   return (
     <BrowserRouter>
       <div>
-        <Header />
+        <Header token={token} setToken={setToken} userInfo={userInfo} setUserInfo={setUserInfo} />
       </div>
       <Routes>
         <Route path="/" element={<Main />} />
