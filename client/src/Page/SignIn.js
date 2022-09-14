@@ -13,10 +13,13 @@ import withRoot from "../withRoot";
 import { Link as RouterLink } from "react-router-dom";
 import { useState, useRef } from "react";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom'
 
-function SignIn({ history, setToken, setUserInfo, setIsWorker }) {
+function SignIn({ token, setToken, setUserInfo, setIsWorker }) {
   const [sent, setSent] = useState(false);
   const isWorker = useRef(false);
+
+  const navigate = useNavigate();
 
   const handleIsWorker = () => {
     console.log("변경전", isWorker)
@@ -58,7 +61,7 @@ function SignIn({ history, setToken, setUserInfo, setIsWorker }) {
           setToken(accessToken);
           setUserInfo(workerInfo);
           setIsWorker(true);
-          history.push("/");
+          navigate('/');
         } else {
           console.log("로그인 실패")
         }
@@ -74,7 +77,7 @@ function SignIn({ history, setToken, setUserInfo, setIsWorker }) {
           const clientInfo = res.data.data.clientData;
           setToken(accessToken);
           setUserInfo(clientInfo);
-          history.push("/");
+          navigate('/');
         } else {
           console.log("로그인 실패")
         }
