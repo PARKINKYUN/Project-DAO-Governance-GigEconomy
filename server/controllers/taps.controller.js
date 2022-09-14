@@ -43,6 +43,37 @@ module.exports = {
             });
         }
     },
+    // order_id로 탭 조회
+    taplistbyorder: async (req, res) => {
+        try {
+            const accessToken = req.headers.authorization;
+
+            if (!accessToken) {
+                return res
+                    .status(404)
+                    .send({ data: null, message: "Not autorized" });
+            } else {
+                // accessToken 콘솔 찍어서 구조를 보고 수정해야함
+                // console.log(accessToken);
+                const token = accessToken.split(" ")[0];
+                const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+                if(!userInfo){
+                    return res.status(404).send({ data: null, message: "Invalid token" });
+                } else {
+                    const tapInfo = tapmodel.getTapsByOrderId(req.body.order_id);
+
+                    return res.status(200).send({ data: tapInfo, message: "Searching success"})
+                }
+            }
+        } catch (err) {
+            // console.log(err);
+            res.status(400).send({
+                data: null,
+                message: "Can't search",
+            });
+        }
+    },
 
     // client_id로 탭 조회
     taplistbyclient: async (req, res) => {
