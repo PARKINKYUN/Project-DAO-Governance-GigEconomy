@@ -8,7 +8,7 @@ const Web3 = require("web3");
 
 // infura를 web3 프로바이더로 사용함
 const web3 = new Web3(process.env.RPCURL);
-const contract = new web3.eth.Contract(contract_abi, contract_address);
+///////////// const contract = new web3.eth.Contract(contract_abi, contract_address);
 
 // 최초 회원 가입 시 지급하는 토큰의 양
 const welcomeReward = 100000;
