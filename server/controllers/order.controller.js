@@ -39,8 +39,18 @@ module.exports = {
   // 새로운 오더 생성
   new_order: async (req, res) => {
     try {
-      const clientId = getClientId(req, res);
+      const accessToken = req.headers.authorization;
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Invalid access token" });
+      }
 
+      const clientData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+      if (clientData.account_type !== "client") {
+        return res.status(404).message("client only");
+      }
+      console.log(clientData);
       const order = await order.postOrder(clientId, req.body);
       if (!order) {
         return res.status(400).message("새로운 order를 생성하지 못했습니다.");

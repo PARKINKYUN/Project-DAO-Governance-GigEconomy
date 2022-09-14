@@ -1,11 +1,12 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import Order from "../components/Order";
+import OrderCard from "../components/OrderCard";
 import axios from "axios";
 import withRoot from "../withRoot";
 import styles from "../css/FindOrder.module.css";
 import Link from "@mui/material/Link";
+import Typography from "../components/Typography";
 
 function FindOrder() {
   const [orders, setOrders] = useState([]);
@@ -14,7 +15,8 @@ function FindOrder() {
     await axios
       .get("http://localhost:4000/orders", {})
       .then((res) => {
-        setOrders(res.data);
+        setOrders(res.data.data);
+        console.log(orders);
       })
       .catch((err) => console.error(err));
 
@@ -27,11 +29,13 @@ function FindOrder() {
       <div className={styles.orderlist}>
         <div className={styles.header}>
           <div className={styles.text}>Order List</div>
-          <button>
-            <Link component={RouterLink} to="/createorder">
-              Create Order
-            </Link>
-          </button>
+          <Link
+            component={RouterLink}
+            to="/createorder"
+            state={{ workerId: null }}
+          >
+            New Order
+          </Link>
         </div>
         <div className={styles.container}>
           <div className={styles.item}>
@@ -44,7 +48,7 @@ function FindOrder() {
                 deadline,
                 compensation,
               } = order;
-              <Order
+              <OrderCard
                 id={_id}
                 client_id={client_id}
                 title={title}
@@ -53,6 +57,7 @@ function FindOrder() {
                 compensation={compensation}
               />;
             })}
+            <OrderCard />
           </div>
         </div>
       </div>

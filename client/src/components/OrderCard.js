@@ -8,7 +8,7 @@ import { Link as RouterLink } from "react-router-dom";
 import Link from "@mui/material/Link";
 
 export default function OrderCard({
-  _id,
+  id,
   client_id,
   title,
   category,
@@ -16,10 +16,10 @@ export default function OrderCard({
   compensation,
 }) {
   return (
-    <Link component={RouterLink} to="/OrderInfo" id={_id}>
+    <Link component={RouterLink} to="/OrderInfo" id={id}>
       <Card sx={{ maxWidth: 345 }} style={{ marginBottom: "20px" }}>
         <CardActionArea>
-          <CardMedia component="img" height="140" src={src} alt="" />
+          {/* <CardMedia component="img" height="140" src={src} alt="" /> */}
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
               {title}
