@@ -47,14 +47,14 @@ function SignIn({ history, setToken, setUserInfo, setIsWorker }) {
 
     // 사용자가 client인지 worker인지에 따라서 분기
     try {
-      if (isWorker) {
+      if (isWorker.current) {
         const res = await axios.post('http://localhost:4000/workers/login', {
           worker_id: email,
           password: password
         })
         if (res.status === 200) {
           const accessToken = res.data.data.accessToken;
-          const workerInfo = res.data.data.userInfo;
+          const workerInfo = res.data.data.clientData;
           setToken(accessToken);
           setUserInfo(workerInfo);
           setIsWorker(true);
@@ -63,13 +63,15 @@ function SignIn({ history, setToken, setUserInfo, setIsWorker }) {
           console.log("로그인 실패")
         }
       } else {
+        console.log("======================", email)
         const res = await axios.post('http://localhost:4000/clients/login', {
           client_id: email,
           password: password
         })
+        console.log(res.data)
         if (res.status === 200) {
           const accessToken = res.data.data.accessToken;
-          const clientInfo = res.data.data.userInfo;
+          const clientInfo = res.data.data.clientData;
           setToken(accessToken);
           setUserInfo(clientInfo);
           history.push("/");

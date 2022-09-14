@@ -30,20 +30,20 @@ module.exports = {
                     req.body.password
                 );
 
-                if (!checkUserInputData) {
+                if (!checkClientInputData) {
                     return res
                         .status(400)
                         .send({ data: null, message: "Not autorized" });
                 } else {
                     // client가 소유한 최신 토큰 정보를 블록체인 네트워크에서 읽어와 업데이트
-                    const balance = await contract.methods.balanceOf(clientInfo[0].address).call();
+                    /////// const balance = await contract.methods.balanceOf(clientInfo[0].address).call();
 
-                    const updateBalance = await clientModel.setTokenById(
-                        clientInfo[0].client_id,
-                        balance
-                    );
+                    // const updateBalance = await clientModel.setTokenById(
+                    //     clientInfo[0].client_id,
+                    //     balance
+                    // );
 
-                    console.log("DB 업데이트된 Token의 양: ", updateBalance.balance);
+                    // console.log("DB 업데이트된 Token의 양: ", updateBalance.balance);
 
                     // client 정보 객체를 만들어 토큰에 담아 응답
                     const clientData = {
@@ -63,7 +63,7 @@ module.exports = {
                     console.log("accessToken: ", accessToken);
 
                     return res.status(200).send({
-                        data: { accessToken: accessToken, balance: updateBalance },
+                        data: { accessToken: accessToken, clientData: clientData, /* balance: updateBalance */ },
                         message: "Logged in",
                     });
                 }
@@ -80,7 +80,7 @@ module.exports = {
     // 회원가입
     join: async (req, res) => {
         try {
-            const inputID = await clientModel.getUserInfoById(req.body.client_id);
+            const inputID = await clientModel.getClientInfoById(req.body.client_id);
 
             if (inputID.length !== 0) {
                 return res
@@ -88,7 +88,7 @@ module.exports = {
                     .send({ data: null, message: "User ID already exists" });
             }
 
-            const inputNickname = await clientModel.getUserInfoById(
+            const inputNickname = await clientModel.getClientInfoById(
                 req.body.nickname
             );
 
@@ -113,21 +113,22 @@ module.exports = {
 
             // const createUser = usermodel.saveUser(userData);
 
-            const createUser = await new clientModel(clientData).saveUser();
+            const createUser = await new clientModel(clientData).saveClient();
+            console.log("==================", createUser)
 
-            // 회원가입 보상 토큰 지급을 위한 트랜잭션 생성작업
-            // 1. 원시 데이터 생성
-            const data = contract.methods.transferFrom(ADMIN_WALLET_ACOUNT, clientData.address, welcomeReward).encodeABI();
+            // // 회원가입 보상 토큰 지급을 위한 트랜잭션 생성작업
+            // // 1. 원시 데이터 생성
+            // const data = contract.methods.transferFrom(ADMIN_WALLET_ACOUNT, clientData.address, welcomeReward).encodeABI();
 
-            // 2. 원시 트랜잭션 장부 생성
-            const rawTransaction = {to: ADMIN_WALLET_ACOUNT, gas: 1000000, data: data};
+            // // 2. 원시 트랜잭션 장부 생성
+            // const rawTransaction = {to: ADMIN_WALLET_ACOUNT, gas: 1000000, data: data};
 
-            // 3. 트랜잭션에 개인키(server 개인키)로 서명
-            const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
+            // // 3. 트랜잭션에 개인키(server 개인키)로 서명
+            // const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
 
-            // 4. 서명한 트랜잭션 발송
-            const sendingTX = await web3.eth.sendSignedTransaction(signedTX.rawTransaction);
-            console.log("Welcome Token 전송 트랜잭션: ", sendingTX);
+            // // 4. 서명한 트랜잭션 발송
+            // const sendingTX = await web3.eth.sendSignedTransaction(signedTX.rawTransaction);
+            // console.log("Welcome Token 전송 트랜잭션: ", sendingTX);
 
             return res.status(200).send({
                 data: createUser,

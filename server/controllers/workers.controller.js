@@ -5,7 +5,10 @@ const Web3 = require('web3');
 const jwt = require("jsonwebtoken");
 const web3 = new Web3(process.env.RPCURL);
 
-const welcomeReward = 500000;
+// 최초 회원 가입 시 지급하는 토큰의 양
+const welcomeReward = 100000;
+// Access Token 만료 주기
+const expiresIn = "1d";
 
 module.exports = {
   // 회원 로그인
@@ -22,29 +25,32 @@ module.exports = {
           req.body.password
         );
 
-        if (!checkUserInputData) {
+        if (!checkWorkerInputData) {
           return res.status(400).send({ data: null, message: "Not autorized" });
         } else {
           // client가 소유한 최신 토큰 정보를 블록체인 네트워크에서 읽어와 업데이트
-          const balance = await contract.methods
-            .balanceOf(workerInfo[0].address)
-            .call();
+          // const balance = await contract.methods
+          //   .balanceOf(workerInfo[0].address)
+          //   .call();
 
-          const updateBalance = await workerModel.setTokenById(
-            workerInfo[0].worker_id,
-            balance
-          );
+          // const updateBalance = await workerModel.setTokenById(
+          //   workerInfo[0].worker_id,
+          //   balance
+          // );
 
-          console.log("DB 업데이트된 Token의 양: ", updateBalance.balance);
+          // console.log("DB 업데이트된 Token의 양: ", updateBalance.balance);
 
           // worker 정보 객체를 만들어 토큰에 담아 응답
           const workerData = {
             worker_id: workerInfo[0].worker_id,
+            account_type: workerInfo[0].account_type,
             nickname: workerInfo[0].nickname,
             address: workerInfo[0].address,
             image: workerInfo[0].image,
             mod_authority: workerInfo[0].mod_authority,
           };
+
+          console.log("workerData", workerData)
 
           const accessToken = jwt.sign(workerData, process.env.ACCESS_SECRET, {
             expiresIn: expiresIn,
@@ -53,7 +59,7 @@ module.exports = {
           console.log("accessToken: ", accessToken);
 
           return res.status(200).send({
-            data: { accessToken: accessToken, balance: updateBalance },
+            data: { accessToken: accessToken, workerData: workerData, /* balance: updateBalance */ },
             message: "Logged in",
           });
         }
@@ -69,7 +75,6 @@ module.exports = {
 
   // 회원가입
   join: async (req, res) => {
-    console.log("==========================", req.body)
     try {
       const inputID = await workerModel.getWorkerInfoById(req.body.worker_id);
 

@@ -13,7 +13,7 @@ import FormButton from "../form/FormButton";
 import FormFeedback from "../form/FormFeedback";
 import withRoot from "../withRoot";
 import { Link as RouterLink } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
 
 function SignUp({ history }) {
@@ -52,7 +52,7 @@ function SignUp({ history }) {
 
     // 사용자가 client인지 worker인지에 따라서 분기
     try {
-      if (isWorker) {
+      if (isWorker.current) {
         const res = await axios.post('http://localhost:4000/workers/join', {
             worker_id: email,
             nickname: nickname,
@@ -60,7 +60,7 @@ function SignUp({ history }) {
           })
         if (res.status === 200) {
           window.alert("회원가입에 성공했습니다. 로그인 해주세요.")
-          history.push('http://localhost:3000/signin');
+          history.push('/signin');
 
         } else {
           console.log("회원가입 실패")
@@ -73,7 +73,7 @@ function SignUp({ history }) {
         })
         if (res.status === 200) {
           window.alert("회원가입에 성공했습니다. 로그인 해주세요.")
-          history.push('http://localhost:3000/signin');
+          history.push('/signin');
 
         } else {
           console.log("회원가입 실패")

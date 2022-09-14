@@ -36,7 +36,7 @@ const client = new mongoose.Schema({
 
 // 회원가입
 client.methods.saveClient = async function () {
-  const _hash = bcrypt.hash(this.password, 10);
+  const _hash = await bcrypt.hash(this.password, 10);
   this.password = _hash;
   return await this.save();
 };

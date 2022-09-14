@@ -3,8 +3,12 @@ import styles from "../css/WorkerProfile.module.css";
 import Profile from "../components/Profile";
 import Tap from "../components/Tap";
 
-function WorkerProfile() {
-  
+
+// client에 맞게 내용 모두 수정해야함
+//
+//
+//
+function ClientProfile() {
   return (
     <div className={styles.main}>
       <div className={styles.profile}>
@@ -23,4 +27,4 @@ function WorkerProfile() {
   );
 }
 
-export default withRoot(WorkerProfile);
+export default withRoot(ClientProfile);

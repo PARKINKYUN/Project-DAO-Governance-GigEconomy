@@ -35,6 +35,16 @@ function Header({ token, isWorker }) {
                 variant="h6"
                 underline="none"
                 component={RouterLink}
+                to="/findworker"
+                sx={rightLink}
+              >
+                {"Find Worker"}
+              </Link>
+              <Link
+                style={{ color: "pink" }}
+                variant="h6"
+                underline="none"
+                component={RouterLink}
                 to="/findorder"
                 sx={rightLink}
               >
@@ -53,18 +63,29 @@ function Header({ token, isWorker }) {
                   >
                     {"Governance"}
                   </Link>
+                  <Link
+                    style={{ color: "pink" }}
+                    variant="h6"
+                    underline="none"
+                    component={RouterLink}
+                    to="/workerprofile"
+                    sx={rightLink}
+                  >
+                    {"My Info"}
+                  </Link>
                 </>
-                : null }
-              <Link
-                style={{ color: "pink" }}
-                variant="h6"
-                underline="none"
-                component={RouterLink}
-                to="/signin"
-                sx={rightLink}
-              >
-                {"My Info"}
-              </Link>
+                :
+                <Link
+                  style={{ color: "pink" }}
+                  variant="h6"
+                  underline="none"
+                  component={RouterLink}
+                  to="/clientprofile"
+                  sx={rightLink}
+                >
+                  {"My Info"}
+                </Link>
+              }
             </>
             : null}
           {!token ?
