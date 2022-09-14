@@ -46,6 +46,10 @@ const order = new mongoose.Schema({
       type: String,
     },
   ],
+  direct_order: {
+    type: Boolean,
+    required: true,
+  },
   offers: [
     {
       worker: {
