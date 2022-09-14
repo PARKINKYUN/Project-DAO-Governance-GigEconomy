@@ -1,12 +1,12 @@
 const contract_abi = require("../contracts/contract_abi");
 const contract_address = require("../contracts/contract_address");
-const votemodels = require("../models/client.model");
+const votemodels = require("../models/vote.model");
 
 const Web3 = require(web3);
 const jwt = require(jsonwebtoken);
 
 const web3 = new Web3(process.env.RPCURL);
-const contract = web3.eth.Contract(contract_abi, contract_address);
+//////// const contract = web3.eth.Contract(contract_abi, contract_address);
 
 mudule.exports = {
     vote: async (req, res) => {

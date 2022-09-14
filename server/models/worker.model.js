@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-const worker = new mongoose.schema({
+const worker = new mongoose.Schema({
   account_type: {
     type: String,
     default: "worker",
