@@ -5,7 +5,7 @@ import Tap from "../components/Tap";
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import Order from "../components/Order";
+import Order from "../components/OrderCard";
 import { useState, useEffect } from "react";
 import axios from "axios";
 

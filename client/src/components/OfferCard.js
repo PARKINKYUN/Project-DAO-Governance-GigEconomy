@@ -11,7 +11,7 @@ export default function OfferCard({ worker, deadline, compensation, message }) {
   return (
     <Card sx={{ maxWidth: 345 }} style={{ marginBottom: "20px" }}>
       <CardActionArea>
-        <CardMedia component="img" height="140" src={src} alt="" />
+        <CardMedia component="img" height="140" src="../img/worker1.jpg" alt="" />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             {worker}

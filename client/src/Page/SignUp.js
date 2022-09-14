@@ -15,10 +15,13 @@ import withRoot from "../withRoot";
 import { Link as RouterLink } from "react-router-dom";
 import { useState, useRef } from "react";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom'
 
 function SignUp({ history }) {
   const [sent, setSent] = useState(false);
   const isWorker = useRef(false);
+
+  const navigate = useNavigate();
 
   const handleIsWorker = () => {
     console.log("변경전", isWorker)
@@ -60,8 +63,7 @@ function SignUp({ history }) {
           })
         if (res.status === 200) {
           window.alert("회원가입에 성공했습니다. 로그인 해주세요.")
-          history.push('/signin');
-
+          navigate('/signin');
         } else {
           console.log("회원가입 실패")
         }
@@ -72,14 +74,12 @@ function SignUp({ history }) {
           password: password
         })
         if (res.status === 200) {
-          window.alert("회원가입에 성공했습니다. 로그인 해주세요.")
-          history.push('/signin');
-
+          window.alert("회원가입에 성공했습니다. 로그인 해주세요.");
+          navigate('/signin');
         } else {
           console.log("회원가입 실패")
         }
       }
-
     } catch (err) {
       console.error(err);
     }
