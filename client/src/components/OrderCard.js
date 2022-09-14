@@ -2,12 +2,12 @@ import * as React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import Typography from "../components/Typography";
+import Typography from "./Typography";
 import { CardActionArea } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import Link from "@mui/material/Link";
 
-export default function Order({
+export default function OrderCard({
   _id,
   client_id,
   title,

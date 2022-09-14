@@ -1,12 +1,12 @@
 .main {
   padding: 30px;
 }
-.profile {
+.order {
   border: 2px solid #c3cfd9;
   border-radius: 10px;
   padding: 10px;
 }
-.profileBox {
+.orderBox {
   display: flex;
   align-items: center;
   border-bottom: 2px solid #c3cfd9;

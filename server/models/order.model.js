@@ -19,14 +19,7 @@ const order = new mongoose.Schema({
   status: {
     type: String,
     required: true,
-    enum: [
-      "pending", // find order에 보여지게 되는 오더
-      "requested", // client가 worker에게 직접 의뢰한 오더
-      "ongoing",
-      "extended",
-      "finished",
-      "canceled",
-    ],
+    enum: ["pending", "ongoing", "extended", "finished", "canceled"],
     default: "pending",
   },
   deadline: {
@@ -92,6 +85,7 @@ order.statics.postOrder = async (client_id, order_data) => {
     client_id: client_id,
     title: title,
     category: category,
+    status: "pending",
     deadline: deadline,
     compensation: compensation,
     content: content,
@@ -107,7 +101,7 @@ order.statics.directOrder = async (client_id, worker_id, order_data) => {
     worker_id: worker_id,
     title: title,
     category: category,
-    status: "requested",
+    status: "pending",
     deadline: deadline,
     compensation: compensation,
     content: content,
@@ -188,18 +182,12 @@ order.statics.pendingOrdersById = async (accountType, id) => {
     return await this.find({ client_id: id, status: "pending" });
   }
   if (accountType == "worker") {
-    return await this.find({ "offers.worker": id, status: "pending" });
+    return await this.find({
+      $or: [{ worker_id: id }, { "offers.worker": id, status: "pending" }],
+    });
   }
 };
-// 유저의 requested 상태 오더
-order.statics.requestedOrdersById = async (accountType, id) => {
-  if (accountType == "client") {
-    return await this.find({ client_id: id, status: "requested" });
-  }
-  if (accountType == "worker") {
-    return await this.find({ worker_id: id, status: "requested" });
-  }
-};
+
 // 유저의 ongoing, extended 상태 오더
 order.statics.inProgressOrdersById = async (accountType, id) => {
   if (accountType == "client") {
@@ -209,6 +197,7 @@ order.statics.inProgressOrdersById = async (accountType, id) => {
     return await this.find({ worker_id: id, status: "ongoing" || "extended" });
   }
 };
+
 // 유저의 finished, canceled 상태 오더
 order.statics.pastOrdersById = async (accountType, id) => {
   if (accountType == "client") {
@@ -218,4 +207,5 @@ order.statics.pastOrdersById = async (accountType, id) => {
     return await this.find({ worker_id: id, status: "finished" || "canceled" });
   }
 };
+
 module.exports = mongoose.model("Order", order);

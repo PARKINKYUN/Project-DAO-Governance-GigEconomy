@@ -7,7 +7,7 @@ import { CardActionArea } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import Link from "@mui/material/Link";
 
-export default function Offer({ worker, deadline, compensation, message }) {
+export default function OfferCard({ worker, deadline, compensation, message }) {
   return (
     <Card sx={{ maxWidth: 345 }} style={{ marginBottom: "20px" }}>
       <CardActionArea>
