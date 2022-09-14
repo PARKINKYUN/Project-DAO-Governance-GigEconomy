@@ -11,9 +11,12 @@ function FindOrder() {
   const [orders, setOrders] = useState([]);
 
   const getOrders = async () =>
-    await axios.get("http://localhost:4000/orders", {}).then((res) => {
-      setOrders(res.data);
-    });
+    await axios
+      .get("http://localhost:4000/orders", {})
+      .then((res) => {
+        setOrders(res.data);
+      })
+      .catch((err) => console.error(err));
 
   useEffect(() => {
     getOrders();
