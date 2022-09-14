@@ -1,12 +1,13 @@
-import withRoot from "../withRoot";
-import styles from "../css/OrderInfo.module.css";
-import Profile from "../components/Profile";
-import Tap from "../components/Tap";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import OfferCard from "../components/OfferCard";
+import Tap from "../components/Tap";
+import withRoot from "../withRoot";
+import styles from "../css/OrderInfo.module.css";
+import { Grid } from "@mui/material";
+import Typography from "../components/Typography";
 
-function OrderInfo({ _id, isWorker }) {
+function OrderInfo({ id, isWorker }) {
   const [order, setOrder] = useState({});
   const [orderStatus, setOrderStatus] = useState("");
   const [offerIdx, setOfferIdx] = useState(null);
@@ -21,8 +22,8 @@ function OrderInfo({ _id, isWorker }) {
 
   // 오더 정보 불러오기
   const getOrder = async () =>
-    axios
-      .get(`http://localhost:4000/order_info/${_id}`)
+    await axios
+      .get(`http://localhost:4000/order_info/${id}`)
       .then((res) => {
         setOrder(res.data);
       })
@@ -47,7 +48,7 @@ function OrderInfo({ _id, isWorker }) {
     if (isWorker === true) return console.log("클라이언트만 가능합니다.");
     offerIdx !== null
       ? await axios
-          .patch(`http://localhost:4000/order_info/${_id}/client_start`, {
+          .patch(`http://localhost:4000/order_info/${id}/client_start`, {
             offer_idx: offerIdx,
           })
           .then(() => setOrderStatus("ongoing"))
@@ -59,7 +60,7 @@ function OrderInfo({ _id, isWorker }) {
   const workerStartOrder = async () => {
     if (isWorker === false) return console.log("워커만 가능합니다.");
     await axios
-      .patch(`http://localhost:4000/order_info/${_id}/worker_start`)
+      .patch(`http://localhost:4000/order_info/${id}/worker_start`)
       .then(() => setOrderStatus("ongoing"))
       .catch((err) => console.error(err));
   };
@@ -82,7 +83,7 @@ function OrderInfo({ _id, isWorker }) {
   const finishOrder = async () => {
     if (isWorker === true) return console.log("클라이언트만 가능합니다.");
     await axios
-      .patch(`http://localhost:4000/order_info/${_id}/finish`)
+      .patch(`http://localhost:4000/order_info/${id}/finish`)
       .then(() => setOrderStatus("finished"))
       .catch((err) => console.error(err));
   };
@@ -107,16 +108,17 @@ function OrderInfo({ _id, isWorker }) {
     if (isWorker === true) {
       return (
         <div>
-          {order.offers.map((offer, idx) => {
-            <OfferCard
-              index={idx}
-              worker={offer.worker}
-              deadline={offer.deadline}
-              compensation={offer.compensation}
-              message={offer.message}
-            />;
+          {order.offers.map((offer) => {
+            <div>
+              <OfferCard
+                worker={offer.worker}
+                deadline={offer.deadline}
+                compensation={offer.compensation}
+                message={offer.message}
+              />
+            </div>;
           })}
-          <button onClick={handleOpen}>Make Offer</button>
+          {/* <button onClick={handleOpen}>Make Offer</button>
           <Modal
             open={open}
             onClose={handleClose}
@@ -131,7 +133,7 @@ function OrderInfo({ _id, isWorker }) {
                 Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
               </Typography>
             </Box>
-          </Modal>
+          </Modal> */}
         </div>
       );
     }
@@ -140,9 +142,7 @@ function OrderInfo({ _id, isWorker }) {
     if (order.direct_order === true) {
       if (isWorker === false) {
         return (
-          <div>
-            <button onClick={removeOrder}>Remove Order</button>
-          </div>
+          <div>{/* <button onClick={removeOrder}>Remove Order</button> */}</div>
         );
       }
       if (isWorker === true) {
@@ -182,26 +182,53 @@ function OrderInfo({ _id, isWorker }) {
     <div className={styles.main}>
       <div className={styles.order}>
         <div className={styles.orderBox}>
-          <div>
-            {order.title}
-            <div className={styles.name}>{order.client_id}</div>
-            <div className={styles.name}>{order.worker_id}</div>
-            <div className={styles.name}>{order.deadline}</div>
-            <div className={styles.name}>{order.compensation}</div>
-            <div className={styles.name}>{order.status}</div>
-          </div>
-          {order.direct_order === true && order.status === "pending"
-            ? handleOffers
-            : null}
-        </div>
-        <div className="orderController">
-          {order.status === "pending" ? handlePendingOrder() : null}
-          {order.status === "ongoing" || order.status === "extended"
-            ? handleOngoingOrder()
-            : null}
-        </div>
-        <div>
-          <Tap />
+          <Grid
+            container
+            direction="column"
+            justifyContent="center"
+            alignItems="stretch"
+            columnSpacing={{ xs: 1 }}
+          >
+            <Grid item>
+              <Typography variant="body2" color="text.secondary">
+                {order.title}
+              </Typography>
+              <div className={styles.name}>
+                <h4>Client{order.client_id}</h4>
+                <h4>Worker{order.worker_id}</h4>
+                <h4>Deadline{order.deadline}</h4>
+                <h4>compensation{order.compensation}</h4>
+                <h4>Status{order.status}</h4>
+              </div>
+            </Grid>
+
+            {order.direct_order === true && order.status === "pending" ? (
+              <Grid item>
+                <Typography variant="body2" color="text.secondary">
+                  Offers
+                </Typography>
+                {handleOffers()}
+              </Grid>
+            ) : null}
+
+            <Grid item>
+              <Typography variant="body2" color="text.secondary">
+                orderController
+              </Typography>
+              <div>
+                {order.status === "pending" ? handlePendingOrder() : null}
+                {order.status === "ongoing" || order.status === "extended"
+                  ? handleOngoingOrder()
+                  : null}
+              </div>
+            </Grid>
+
+            <Grid item>
+              <div>
+                <Tap />
+              </div>
+            </Grid>
+          </Grid>
         </div>
       </div>
     </div>

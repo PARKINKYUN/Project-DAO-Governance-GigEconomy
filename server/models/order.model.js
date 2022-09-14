@@ -69,17 +69,17 @@ const order = new mongoose.Schema({
 });
 
 // pending 상태인 모든 order 조회
-order.statics.getAllOrders = async () => {
+order.statics.getAllOrders = async function () {
   return await this.find({ status: "pending" });
 };
 
 // 오더 조회
-order.statics.getOrderById = async (order_id) => {
+order.statics.getOrderById = async function (order_id) {
   return await this.findById(order_id);
 };
 
 // 새로운 오더 생성
-order.statics.postOrder = async (client_id, order_data) => {
+order.statics.postOrder = async function (client_id, order_data) {
   const { title, category, deadline, compensation, content, file } = order_data;
   return await this.create({
     client_id: client_id,
@@ -94,7 +94,7 @@ order.statics.postOrder = async (client_id, order_data) => {
 };
 
 // 워커에게 직접 의뢰
-order.statics.directOrder = async (client_id, worker_id, order_data) => {
+order.statics.directOrder = async function (client_id, worker_id, order_data) {
   const { title, category, deadline, compensation, content, file } = order_data;
   return await this.create({
     client_id: client_id,
@@ -110,7 +110,7 @@ order.statics.directOrder = async (client_id, worker_id, order_data) => {
 };
 
 // 오더 내용 변경
-order.statics.editOrder = async (order_id, new_data) => {
+order.statics.editOrder = async function (order_id, new_data) {
   const { title, category, deadline, compensation, content, file } = new_data;
   const _order = {
     title: title,
@@ -124,7 +124,7 @@ order.statics.editOrder = async (order_id, new_data) => {
 };
 
 // 오더에 제안 등록
-order.statics.postOffer = async (order_id, worker_id, offer) => {
+order.statics.postOffer = async function (order_id, worker_id, offer) {
   const { deadline, compensation, message } = offer;
   const _offer = {
     worker: worker_id,
@@ -139,7 +139,7 @@ order.statics.postOffer = async (order_id, worker_id, offer) => {
 };
 
 // 클라이언트가 제안을 선택, 오더의 상태를 진행중으로
-order.statics.setWorkerAndStart = async (order_id, offer_index) => {
+order.statics.setWorkerAndStart = async function (order_id, offer_index) {
   const order = await this.findById(order_id);
   const { worker, deadline, compensation } = order.offers[offer_index];
   const _order = {
@@ -152,32 +152,32 @@ order.statics.setWorkerAndStart = async (order_id, offer_index) => {
 };
 
 // 워커가 클라이언트의 의뢰를 수락, 오더의 상태를 진행중으로
-order.statics.acceptRequestAndStart = async (order_id) => {
+order.statics.acceptRequestAndStart = async function (order_id) {
   return await this.findByIdAndUpdate(order_id, { status: "ongoing" });
 };
 
 // 오더 연장
-order.statics.extend = async (order_id) => {
+order.statics.extend = async function (order_id) {
   return await this.findOneAndUpdate({ _id: order_id }, { status: "extended" });
 };
 
 // 오더 취소
-order.statics.cancel = async (order_id) => {
+order.statics.cancel = async function (order_id) {
   return await this.findOneAndUpdate({ _id: order_id }, { status: "canceled" });
 };
 
 // 오더 완료
-order.statics.finish = async (order_id) => {
+order.statics.finish = async function (order_id) {
   return await this.findOneAndUpdate({ _id: order_id }, { status: "finished" });
 };
 
 // 오더 삭제 (pending, requested 상태인 오더만 가능)
-order.statics.removeOrder = async (order_id) => {
+order.statics.removeOrder = async function (order_id) {
   await this.findByIdAndRemove(order_id);
 };
 
 // 유저의 pending 상태 오더
-order.statics.pendingOrdersById = async (accountType, id) => {
+order.statics.pendingOrdersById = async function (accountType, id) {
   if (accountType == "client") {
     return await this.find({ client_id: id, status: "pending" });
   }
@@ -189,7 +189,7 @@ order.statics.pendingOrdersById = async (accountType, id) => {
 };
 
 // 유저의 ongoing, extended 상태 오더
-order.statics.inProgressOrdersById = async (accountType, id) => {
+order.statics.inProgressOrdersById = async function (accountType, id) {
   if (accountType == "client") {
     return await this.find({ client_id: id, status: "ongoing" || "extended" });
   }
@@ -199,7 +199,7 @@ order.statics.inProgressOrdersById = async (accountType, id) => {
 };
 
 // 유저의 finished, canceled 상태 오더
-order.statics.pastOrdersById = async (accountType, id) => {
+order.statics.pastOrdersById = async function (accountType, id) {
   if (accountType == "client") {
     return await this.find({ client_id: id, status: "finished" || "canceled" });
   }
