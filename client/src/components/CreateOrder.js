@@ -2,7 +2,7 @@ import withRoot from "../withRoot";
 import styles from "../css/CreateOrder.module.css";
 import Profile from "../components/Profile";
 
-function Createorder() {
+function CreateOrder() {
   return (
     <div className={styles.main}>
       <div className={styles.profile}>
