@@ -4,11 +4,11 @@ import Stack from "@mui/material/Stack";
 
 export default function Profile() {
   return (
-    <Stack direction="row" spacing={2}>
+    <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" >
       <Avatar
-        sx={{ width: 56, height: 56 }}
+        sx={{ width: 112, height: 112 }}
         alt="Remy Sharp"
-        src="/static/images/avatar/1.jpg"
+        src="../img/worker1.jpg"
       />
     </Stack>
   );

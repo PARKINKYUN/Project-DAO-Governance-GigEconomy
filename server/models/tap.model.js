@@ -20,6 +20,9 @@ const tap = new mongoose.Schema({
   content: {
     type: String,
     required: true,
+  },
+  order_id: {
+    type: Number,
   }
 });
 
@@ -37,6 +40,11 @@ tap.methods.saveTap = async function (obj) {
 // 마지막에 DB 저장된 tap_id 조회. 새로운 tap을 생성할 때 id를 알아내기 위해 사용
 tap.statics.getLatestTapId = async function () {
     return await this.find({}).sort({ tap_id: -1 }).limit(1);
+}
+
+// order id로 탭 조회
+tap.statics.getTapsByOrderId = async function (order_id) {
+    return await this.find({ order_id: order_id });
 }
 
 // client id로 탭 조회
