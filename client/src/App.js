@@ -7,7 +7,7 @@ import SignIn from "./Page/SignIn";
 import FindWorker from "./Page/FindWorker";
 import FindOrder from "./Page/FindOrder";
 import WorkerProfile from "./Page/WorkerProfile";
-import CreateOrder from "./Page/CreateOrder";
+import CreateOrder from "./components/CreateOrder";
 import OrderInfo from "./Page/OrderInfo";
 import Governance from "./Page/Governance";
 import Main from "./Page/Main";

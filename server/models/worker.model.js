@@ -21,7 +21,6 @@ const worker = new mongoose.Schema({
   },
   image: {
     type: String,
-    required: false,
     // default 값 필요함
   },
   pending: {
