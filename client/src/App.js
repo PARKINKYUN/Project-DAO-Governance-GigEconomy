@@ -13,6 +13,7 @@ import Governance from "./Page/Governance";
 import Main from "./Page/Main";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
+import ClientProfile from "./Page/ClientProfile";
 
 function App() {
   const [token, setToken] = useState('');
@@ -26,7 +27,7 @@ function App() {
   return (
     <BrowserRouter>
       <div>
-        <Header token={token} setToken={setToken} userInfo={userInfo} setUserInfo={setUserInfo} />
+        <Header token={token} setToken={setToken} userInfo={userInfo} setUserInfo={setUserInfo} isWorker={isWorker} />
       </div>
       <Routes>
         <Route path="/" element={<Main />} />
@@ -34,6 +35,7 @@ function App() {
         <Route path="/signin" element={<SignIn setToken={setToken} setUserInfo={setUserInfo} setIsWorker={setIsWorker} />} />
         <Route path="/findworker" element={<FindWorker />} />
         <Route path="/findorder" element={<FindOrder />} />
+        <Route path="/clientprofile" element={<ClientProfile />} />
         <Route path="/workerprofile" element={<WorkerProfile />} />
         <Route path="/orderinfo" element={<OrderInfo />} />
         <Route path="/createorder" element={<CreateOrder />} />

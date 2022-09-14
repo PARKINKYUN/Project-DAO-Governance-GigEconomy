@@ -17,6 +17,7 @@ const worker = new mongoose.Schema({
   },
   nickname: {
     type: String,
+    required: true,
     unique: true,
   },
   image: {
@@ -29,6 +30,7 @@ const worker = new mongoose.Schema({
   },
   gig_score: {
     type: Number,
+    default: 0,
   },
   mod_authority: {
     type: Boolean,
@@ -46,7 +48,7 @@ const worker = new mongoose.Schema({
 
 // 회원가입
 worker.methods.saveWorker = async function () {
-  const _hash = bcrypt.hash(this.password, 10);
+  const _hash = await bcrypt.hash(this.password, 10);
   this.password = _hash;
   return await this.save();
 };
