@@ -8,7 +8,7 @@ export default function Profile() {
       <Avatar
         sx={{ width: 112, height: 112 }}
         alt="Remy Sharp"
-        src="../img/worker1.jpg"
+        src={require("../img/worker1.jpg")}
       />
     </Stack>
   );
