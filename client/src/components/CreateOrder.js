@@ -11,15 +11,18 @@ import FormButton from "../form/FormButton";
 import FormFeedback from "../form/FormFeedback";
 import withRoot from "../withRoot";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function CreateOrder(userInfo) {
   const [sent, setSent] = useState(false);
   const location = useLocation();
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (values) => {
     setSent(true);
     const { title, deadline, compensation, content } = values;
+    
     try {
       if (location.state.workerId === null) {
         const res = await axios.post("http://localhost:4000/orders/new_order", {
@@ -31,6 +34,7 @@ function CreateOrder(userInfo) {
         });
         if (res.status === 200) {
           window.alert("새로운 오더를 성공적으로 작성했습니다.");
+          navigate(-1);
         } else {
           console.log("오더작성 실패");
         }
@@ -49,6 +53,7 @@ function CreateOrder(userInfo) {
         );
         if (res.status === 200) {
           window.alert("새로운 오더를 성공적으로 작성했습니다.");
+          navigate(-1);
         } else {
           console.log("오더작성 실패");
         }
