@@ -9,6 +9,10 @@ const tap = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  writer: {
+    type: String,
+    required: true,
+  },
   client_id:{
     type: String,
     required: true,

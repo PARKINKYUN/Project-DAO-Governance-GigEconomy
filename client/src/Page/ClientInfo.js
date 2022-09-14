@@ -8,12 +8,15 @@ import Box from '@mui/material/Box';
 import Order from "../components/OrderCard";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function ClientInfo({ token, userInfo, setUserInfo }) {
     const [pending, setPending] = useState([]);
     const [requested, setRequested] = useState([]);
     const [ongoing, setOngoing] = useState([]);
     const [finished, setFinished] = useState([]);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         // 토큰을 사용하여
@@ -76,10 +79,15 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
                         </Grid>
                         <Grid item xs={2} justifyContent="center" alignItems="center" >
                             <Box sx={{ '& button': { m: 1 } }}>
-                                <Button variant="contained" size="medium" >
+                                <Button variant="contained" size="medium" onClick={() => navigate('/createorder')}>
                                     Order 생성
                                 </Button>
-                                <Button variant="contained" size="medium" >
+                                {/* 회원정보 수정페이지 제작해야함 */}
+                                {/* 회원정보 수정페이지 제작해야함 */}
+                                {/* 회원정보 수정페이지 제작해야함 */}
+                                {/* 회원정보 수정페이지 제작해야함 */}
+                                {/* 회원정보 수정페이지 제작해야함 */}
+                                <Button variant="contained" size="medium" onClick={() => navigate('/')}>
                                     회원정보수정
                                 </Button>
                             </Box>
