@@ -1,6 +1,6 @@
 const workerModel = require("../models/worker.model");
 const orderModel = require("../models/order.model");
-const Web3 = require('web3');
+const Web3 = require("web3");
 
 const jwt = require("jsonwebtoken");
 const web3 = new Web3(process.env.RPCURL);
@@ -50,7 +50,7 @@ module.exports = {
             mod_authority: workerInfo[0].mod_authority,
           };
 
-          console.log("workerData", workerData)
+          console.log("workerData", workerData);
 
           const accessToken = jwt.sign(workerData, process.env.ACCESS_SECRET, {
             expiresIn: expiresIn,
@@ -59,7 +59,10 @@ module.exports = {
           console.log("accessToken: ", accessToken);
 
           return res.status(200).send({
-            data: { accessToken: accessToken, workerData: workerData, /* balance: updateBalance */ },
+            data: {
+              accessToken: accessToken,
+              workerData: workerData /* balance: updateBalance */,
+            },
             message: "Logged in",
           });
         }
@@ -288,29 +291,6 @@ module.exports = {
       return res.status(200).send({
         data: pendingOrders,
         message: "클라이언트에게 제안을 보낸 오더를 불러왔습니다.",
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(400);
-    }
-  },
-
-  // requested 상태의 오더 리스트(client가 worker에게 직접 보낸 order)
-  listRequested: async () => {
-    try {
-      const workerId = getWorkerId(res.req);
-
-      const requestedOrders = await orderModel.requestedOrdersById(
-        "worker",
-        workerId
-      );
-      if (!requestedOrders) {
-        return res.status(400).message("오더를 불러오지 못했습니다.");
-      }
-
-      return res.status(200).send({
-        data: pendingOrders,
-        message: "클라이언트가 직접 의뢰한 오더를 불러왔습니다.",
       });
     } catch (err) {
       console.error(err);
