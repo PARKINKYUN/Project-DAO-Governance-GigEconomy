@@ -1,7 +1,11 @@
 const workerModel = require("../models/worker.model");
 const orderModel = require("../models/order.model");
+const Web3 = require('web3');
 
 const jwt = require("jsonwebtoken");
+const web3 = new Web3(process.env.RPCURL);
+
+const welcomeReward = 500000;
 
 module.exports = {
   // 회원 로그인
@@ -65,6 +69,7 @@ module.exports = {
 
   // 회원가입
   join: async (req, res) => {
+    console.log("==========================", req.body)
     try {
       const inputID = await workerModel.getWorkerInfoById(req.body.worker_id);
 
@@ -91,39 +96,36 @@ module.exports = {
         worker_id: req.body.worker_id,
         nickname: req.body.nickname,
         password: req.body.password,
-        image: req.file.path,
         address: newAccount.address,
         balance: welcomeReward,
       };
 
-      // const createUser = usermodel.saveUser(userData);
+      const createUser = await new workerModel(workerData).saveWorker();
 
-      const createUser = await new workerModel(workerData).saveUser();
+      // // 회원가입 보상 토큰 지급을 위한 트랜잭션 생성작업
+      // // 1. 원시 데이터 생성
+      // const data = contract.methods
+      //   .transferFrom(ADMIN_WALLET_ACOUNT, workerData.address, welcomeReward)
+      //   .encodeABI();
 
-      // 회원가입 보상 토큰 지급을 위한 트랜잭션 생성작업
-      // 1. 원시 데이터 생성
-      const data = contract.methods
-        .transferFrom(ADMIN_WALLET_ACOUNT, workerData.address, welcomeReward)
-        .encodeABI();
+      // // 2. 원시 트랜잭션 장부 생성
+      // const rawTransaction = {
+      //   to: ADMIN_WALLET_ACOUNT,
+      //   gas: 1000000,
+      //   data: data,
+      // };
 
-      // 2. 원시 트랜잭션 장부 생성
-      const rawTransaction = {
-        to: ADMIN_WALLET_ACOUNT,
-        gas: 1000000,
-        data: data,
-      };
+      // // 3. 트랜잭션에 개인키(server 개인키)로 서명
+      // const signedTX = await web3.eth.accounts.signTransaction(
+      //   rawTransaction,
+      //   process.env.ADMIN_WALLET_PRIVATE_KEY
+      // );
 
-      // 3. 트랜잭션에 개인키(server 개인키)로 서명
-      const signedTX = await web3.eth.accounts.signTransaction(
-        rawTransaction,
-        process.env.ADMIN_WALLET_PRIVATE_KEY
-      );
-
-      // 4. 서명한 트랜잭션 발송
-      const sendingTX = await web3.eth.sendSignedTransaction(
-        signedTX.rawTransaction
-      );
-      console.log("20 Token 전송 트랜잭션: ", sendingTX);
+      // // 4. 서명한 트랜잭션 발송
+      // const sendingTX = await web3.eth.sendSignedTransaction(
+      //   signedTX.rawTransaction
+      // );
+      // console.log("20 Token 전송 트랜잭션: ", sendingTX);
 
       return res.status(200).send({
         data: createUser,

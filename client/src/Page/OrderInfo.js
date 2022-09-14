@@ -8,14 +8,14 @@ import { useLocation } from "react-router-dom";
 import OfferList from "../components/Offer";
 import Order from "../components/Order";
 
-function OrderInfo({ _id }) {
+function OrderInfo({ _id, user }) {
   const [order, setOrder] = useState({});
   const [offers, setOffers] = useState([]);
   const [offerIdx, setOfferIdx] = useState(null);
 
   // 오더 정보 불러오기
   const getOrder = async () =>
-    axios.get(`http://localhost:4000/order_info/${id}`).then((res) => {
+    axios.get(`http://localhost:4000/order_info/${_id}`).then((res) => {
       setOrder(res.data);
     });
 
@@ -24,13 +24,13 @@ function OrderInfo({ _id }) {
   // 클라이언트가 워커의 제안을 선택하여 오더 시작
   const clientStartOrder = async () => {
     offerIdx !== null
-      ? await axios.patch(`http://localhost:4000/order_info/${id}/client_start`)
+      ? await axios.patch(`http://localhost:4000/order_info/${_id}/client_start`)
       : console.log("오퍼를 선택해주세요.");
   };
 
   // 워커가 direct_order를 통해 생성된 오더 시작
   const workerStartOrder = async () => {
-    await axios.patch(`http://localhost:4000/order_info/${id}/worker_start`);
+    await axios.patch(`http://localhost:4000/order_info/${_id}/worker_start`);
   };
 
   useEffect(() => {
@@ -39,33 +39,33 @@ function OrderInfo({ _id }) {
   }, []);
 
   const handleDirectOrder = () => {
-    if (order.status == "pending") {
-      if (user == "client") {
+    if (order.status === "pending") {
+      if (user === "client") {
         return <div>오더수락버튼</div>;
       }
-      if (user == "worker") {
+      if (user === "worker") {
         return <div>오더삭제버튼</div>;
       }
     }
     if (order.status == "ongoing") {
-      if (user == "client") {
+      if (user === "client") {
         return null;
       }
-      if (user == "worker") {
+      if (user === "worker") {
         return <div>오더연장버튼, 오더완료버튼, 오더취소버튼</div>;
       }
     }
   };
   const handlePublicOrder = () => {
-    if (order.status == "pending") {
-      if (user == "client") {
+    if (order.status === "pending") {
+      if (user === "client") {
         return (
           <div>
             <OfferList title={offers.title} />
           </div>
         );
       }
-      if (user == "worker") {
+      if (user === "worker") {
         return (
           <div>
             <OfferList />
@@ -74,11 +74,11 @@ function OrderInfo({ _id }) {
         );
       }
     }
-    if (order.status == "ongoing") {
-      if (user == "client") {
+    if (order.status === "ongoing") {
+      if (user === "client") {
         return null;
       }
-      if (user == "worker") {
+      if (user === "worker") {
         return <div>오더연장버튼, 오더완료버튼, 오더취소버튼</div>;
       }
     }
@@ -94,7 +94,7 @@ function OrderInfo({ _id }) {
         <div className={styles.reviewBox}>
           <div>Order Info</div>
         </div>
-        {order.direct_order == true ? handleDirectOrder() : handlePublicOrder()}
+        {order.direct_order === true ? handleDirectOrder() : handlePublicOrder()}
         <div>
           <Tap />
         </div>
