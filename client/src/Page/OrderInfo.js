@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import OfferCard from "../components/OfferCard";
-import Tap from "../components/Tap";
+import TapsList from "../components/TapsList";
 import withRoot from "../withRoot";
 import styles from "../css/OrderInfo.module.css";
 import { Grid } from "@mui/material";
@@ -225,7 +225,7 @@ function OrderInfo({ id, isWorker }) {
 
             <Grid item>
               <div>
-                <Tap />
+                <TapsList />
               </div>
             </Grid>
           </Grid>

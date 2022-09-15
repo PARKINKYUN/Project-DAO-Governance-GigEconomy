@@ -1,25 +1,36 @@
 import styles from "../css/Tap.module.css";
 import React, { useState } from "react";
+import axios from "axios";
 
-function NewTapForm({ onButtonClick }) {
-  const [newTapContent, setNewTapContent] = useState("");
+function NewTapForm({ token, writer, client_id, order_id, worker_id, onButtonClick }) {
+  const [newTapContent, setNewTapContent] = useState({});
 
   const onTextChange = (e) => {
     setNewTapContent(e.target.value);
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    if (newTapContent === "") {
-      return;
+    try {
+      const res = await axios.get('http://localhost:4000/taps/getlatesttapnum');
+      const latestTapId = res.data.data.tap_id;
+      if (newTapContent === "") {
+        return;
+      }
+      const newTap = {
+        tap_id: latestTapId + 1,
+        writer: writer,
+        client_id: client_id,
+        worker_id: worker_id,
+        content: newTapContent,
+        order_id: order_id,
+      };
+      await axios.post('http://localhost:4000/taps/newtap', newTap, {headers: {authorization: token}});
+      onButtonClick(newTap);
+      setNewTapContent("");
+    } catch (err) {
+      console.error(err);
     }
-    let newTap = {
-      uuid: Math.floor(Math.random() * 10000),
-      date: new Date().toISOString().substring(0, 10),
-      content: newTapContent,
-    };
-    onButtonClick(newTap);
-    setNewTapContent("");
   };
 
   return (

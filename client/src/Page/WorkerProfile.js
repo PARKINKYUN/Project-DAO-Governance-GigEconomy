@@ -2,7 +2,7 @@ import withRoot from "../withRoot";
 import styles from "../css/WorkerProfile.module.css";
 import Profile from "../components/Profile";
 import Grid from "@mui/material/Grid";
-import Tap from "../components/Tap";
+import TapsList from "../components/TapsList";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -38,7 +38,7 @@ function WorkerProfile() {
           <div>Worker Review</div>
         </div>
         <div>
-          <Tap />
+          <TapsList />
         </div>
       </div>
     </div>
