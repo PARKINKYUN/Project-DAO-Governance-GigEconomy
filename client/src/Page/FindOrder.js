@@ -49,7 +49,6 @@ function FindOrder() {
                 compensation,
               } = order;
               <OrderCard
-                id={_id}
                 client_id={client_id}
                 title={title}
                 category={category}
@@ -57,7 +56,6 @@ function FindOrder() {
                 compensation={compensation}
               />;
             })}
-            <OrderCard />
           </div>
         </div>
       </div>

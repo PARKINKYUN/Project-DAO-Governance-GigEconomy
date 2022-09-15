@@ -16,22 +16,25 @@ import { useLocation, useNavigate } from "react-router-dom";
 function CreateOrder(userInfo) {
   const [sent, setSent] = useState(false);
   const location = useLocation();
-
   const navigate = useNavigate();
-
+  const clientId = userInfo.userInfo.client_id;
   const handleSubmit = async (values) => {
     setSent(true);
     const { title, deadline, compensation, content } = values;
-    
+
     try {
       if (location.state.workerId === null) {
-        const res = await axios.post("http://localhost:4000/orders/new_order", {
-          title: title,
-          client_id: userInfo.client_id,
-          deadline: deadline,
-          compensation: compensation,
-          content: content,
-        });
+        const res = await axios.post(
+          "http://localhost:4000/orders/new_order",
+          {
+            title: title,
+            client_id: clientId,
+            deadline: deadline,
+            compensation: compensation,
+            content: content,
+          },
+          { headers: { authorization: userInfo.token } }
+        );
         if (res.status === 200) {
           window.alert("새로운 오더를 성공적으로 작성했습니다.");
           navigate(-1);
@@ -44,12 +47,13 @@ function CreateOrder(userInfo) {
           `http://localhost:4000/orders/direct_order/${location.state.workerId}`,
           {
             title: title,
-            client_id: userInfo.client_id,
+            client_id: clientId,
             worker_id: location.state.workerId,
             deadline: deadline,
             compensation: compensation,
             content: content,
-          }
+          },
+          { headers: { authorization: userInfo.token } }
         );
         if (res.status === 200) {
           window.alert("새로운 오더를 성공적으로 작성했습니다.");
@@ -65,7 +69,6 @@ function CreateOrder(userInfo) {
 
   return (
     <React.Fragment>
-      <Header />
       <OrderForm>
         <React.Fragment>
           <Typography variant="h3" gutterBottom marked="center" align="center">

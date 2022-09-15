@@ -16,7 +16,11 @@ export default function OrderCard({
   compensation,
 }) {
   return (
-    <Link component={RouterLink} to="/OrderInfo" id={id}>
+    <Link
+      component={RouterLink}
+      to="/OrderInfo"
+      state={{ id, client_id, title, category, deadline, compensation }}
+    >
       <Card sx={{ maxWidth: 345 }} style={{ marginBottom: "20px" }}>
         <CardActionArea>
           {/* <CardMedia component="img" height="140" src={src} alt="" /> */}
