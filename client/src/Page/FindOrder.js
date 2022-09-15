@@ -6,7 +6,6 @@ import axios from "axios";
 import withRoot from "../withRoot";
 import styles from "../css/FindOrder.module.css";
 import Link from "@mui/material/Link";
-import Typography from "../components/Typography";
 
 function FindOrder() {
   const [orders, setOrders] = useState([]);

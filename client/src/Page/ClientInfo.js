@@ -1,7 +1,7 @@
 import withRoot from "../withRoot";
 import styles from "../css/WorkerProfile.module.css";
 import Profile from "../components/Profile";
-import Tap from "../components/Tap";
+import TapsList from "../components/TapsList";
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -31,7 +31,7 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
             let requestedData = [];
             let ongoingData = [];
             let finishedData = [];
-            const res = await axios.get('http://localhost:4000/order_info', { params: userInfo.client_id });
+            const res = await axios.get('http://localhost:4000/orders/order_info', { params: userInfo.client_id });
             const orderData = res.data.data.order;
             orderData.map((order) => {
                 if(order.status === "pending"){
@@ -119,7 +119,7 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
                     })}
                 </div>
                 <div>
-                    <Tap />
+                    <TapsList token={token} writer={userInfo.client_id} client_id={userInfo.client_id} />
                 </div>
             </div>
         </div>
