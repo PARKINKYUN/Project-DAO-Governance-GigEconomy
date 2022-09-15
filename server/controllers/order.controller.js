@@ -87,7 +87,7 @@ module.exports = {
         if (!userInfo) {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-          const orderInfo = await order.getTapsByOrderId(userInfo.worker_id);
+          const orderInfo = await order.getOrderByWorker(userInfo.worker_id);
           console.log("worker_id로 오더 정보 조회 완료", orderInfo);
 
           return res.status(200).send({ data: orderInfo, message: "Searching success" })

@@ -68,7 +68,7 @@ function Header({ token, isWorker }) {
                     variant="h6"
                     underline="none"
                     component={RouterLink}
-                    to="/workerprofile"
+                    to="/workerInfo"
                     sx={rightLink}
                   >
                     {"My Info"}
@@ -80,7 +80,7 @@ function Header({ token, isWorker }) {
                   variant="h6"
                   underline="none"
                   component={RouterLink}
-                  to="/clientprofile"
+                  to="/clientInfo"
                   sx={rightLink}
                 >
                   {"My Info"}
