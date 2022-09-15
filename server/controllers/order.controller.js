@@ -22,6 +22,7 @@ module.exports = {
   // 오더 조회
   order_info: async (req, res) => {
     try {
+      console.log(req.params);
       const order = await order.getOrderById(req.params.id);
       if (!order) {
         return res.status(400).message("order를 불러오지 못했습니다.");
