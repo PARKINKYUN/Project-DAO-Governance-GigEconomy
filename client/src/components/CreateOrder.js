@@ -5,7 +5,7 @@ import { Field, Form, FormSpy } from "react-final-form";
 import Typography from "../components/Typography";
 
 import Header from "../view/Header";
-import AppForm from "../view/AppForm";
+import OrderForm from "../view/OrderForm";
 import RFTextField from "../form/RFTextField";
 import FormButton from "../form/FormButton";
 import FormFeedback from "../form/FormFeedback";
@@ -37,7 +37,7 @@ function CreateOrder(userInfo) {
       }
       if (location.state.workerId !== null) {
         const res = await axios.post(
-          `http://localhost:4000/orders/direct_order/${""}`,
+          `http://localhost:4000/orders/direct_order/${location.state.workerId}`,
           {
             title: title,
             client_id: userInfo.client_id,
@@ -61,7 +61,7 @@ function CreateOrder(userInfo) {
   return (
     <React.Fragment>
       <Header />
-      <AppForm>
+      <OrderForm>
         <React.Fragment>
           <Typography variant="h3" gutterBottom marked="center" align="center">
             New Order
@@ -135,7 +135,7 @@ function CreateOrder(userInfo) {
             </Box>
           )}
         </Form>
-      </AppForm>
+      </OrderForm>
     </React.Fragment>
   );
 }
