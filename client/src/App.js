@@ -64,7 +64,7 @@ function App() {
         <Route path="/orderinfo" element={<OrderInfo />} />
         <Route
           path="/createorder"
-          element={<CreateOrder userInfo={userInfo} />}
+          element={<CreateOrder userInfo={userInfo} token={token} />}
         />
         <Route path="/governance" element={<Governance />} />
       </Routes>

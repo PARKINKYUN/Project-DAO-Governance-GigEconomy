@@ -9,7 +9,7 @@ import Typography from "../components/Typography";
 import { useLocation } from "react-router-dom";
 
 function OrderInfo({ isWorker }) {
-  const [order, setOrder] = useState({});
+  const [order, setOrder] = useState("");
   const [orderStatus, setOrderStatus] = useState("");
   const [offerIdx, setOfferIdx] = useState(null);
 
@@ -27,9 +27,9 @@ function OrderInfo({ isWorker }) {
   // 오더 정보 불러오기
   const getOrder = async () =>
     await axios
-      .get(`http://localhost:4000/order_info/${id}`)
+      .get(`http://localhost:4000/orders/order_info/${id}`)
       .then((res) => {
-        setOrder(res.data);
+        setOrder(res.data.data);
       })
       .catch((err) => console.error(err));
 
@@ -198,11 +198,11 @@ function OrderInfo({ isWorker }) {
                 {order.title}
               </Typography>
               <div className={styles.name}>
-                <h4>Client{order.client_id}</h4>
-                <h4>Worker{order.worker_id}</h4>
-                <h4>Deadline{order.deadline}</h4>
-                <h4>compensation{order.compensation}</h4>
-                <h4>Status{order.status}</h4>
+                <h4>Client: {order.client_id}</h4>
+                <h4>Worker: {order.worker_id}</h4>
+                <h4>Deadline: {order.deadline}</h4>
+                <h4>compensation: {order.compensation}</h4>
+                <h4>Status: {order.status}</h4>
               </div>
             </Grid>
 
