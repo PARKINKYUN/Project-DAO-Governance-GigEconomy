@@ -3,8 +3,9 @@ const router = express.Router();
 const controller = require("../controllers/order.controller");
 
 router.get("/", controller.getOrderList); // pending 중인 order 리스트
-router.get("/order_info/:id", controller.order_info); //오더 조회
-router.post("/new_order", controller.new_order); //새로운 오더 생성
+router.get("/order_info/:id", controller.order_info); //오더 조회 getOrderByClient
+router.get("/getOrderByClient", controller.getOrderByClient); // client_id로 order 정보 조회
+router.post("/getOrderByWorker", controller.getOrderByWorker); // worker_id로 order 정보 조회
 router.post("/direct_order/:id", controller.direct_order); //워커에게 직접 의뢰하기
 
 // status pending only

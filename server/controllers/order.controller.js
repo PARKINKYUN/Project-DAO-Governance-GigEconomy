@@ -37,6 +37,72 @@ module.exports = {
     }
   },
 
+  // client_id로 오더 정보 조회
+  getOrderByClient: async (req, res) => {
+    try {
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        // accessToken 콘솔 찍어서 구조를 보고 수정해야함
+        // console.log(accessToken);
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const orderInfo = await order.getOrderByClient(userInfo.client_id);
+          console.log("client_id로 오더 정보 조회 완료", orderInfo);
+
+          return res.status(200).send({ data: orderInfo, message: "Searching success" })
+        }
+      }
+    } catch (err) {
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
+    }
+  },
+
+  // worker_id로 오더 정보 조회
+  getOrderByWorker: async (req, res) => {
+    try {
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        // accessToken 콘솔 찍어서 구조를 보고 수정해야함
+        // console.log(accessToken);
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const orderInfo = await order.getTapsByOrderId(userInfo.worker_id);
+          console.log("worker_id로 오더 정보 조회 완료", orderInfo);
+
+          return res.status(200).send({ data: orderInfo, message: "Searching success" })
+        }
+      }
+    } catch (err) {
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
+    }
+  },
+
   // 새로운 오더 생성
   new_order: async (req, res) => {
     try {
