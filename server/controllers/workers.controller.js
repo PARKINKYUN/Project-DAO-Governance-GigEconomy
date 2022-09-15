@@ -232,7 +232,7 @@ module.exports = {
   },
 
   // pending 상태의 워커 리스트
-  workerList: async () => {
+  workerList: async (req, res) => {
     try {
       const workerList = await workerModel.getPendingWorker();
       if (!workerList) {
@@ -251,7 +251,7 @@ module.exports = {
   },
 
   // 워커의 pending 상태 전환(true || false)
-  toggleStatus: async () => {
+  toggleStatus: async (req, res) => {
     try {
       const workerId = getWorkerId(res, req);
 
@@ -276,7 +276,7 @@ module.exports = {
   },
 
   // pending 상태의 오더 리스트(worker가 offer를 보낸 order)
-  listPending: async () => {
+  listPending: async (req, res) => {
     try {
       const workerId = getWorkerId(res.req);
 
@@ -299,7 +299,7 @@ module.exports = {
   },
 
   // ongoing, extended 상태의 오더 리스트
-  listInProgress: async () => {
+  listInProgress: async (req, res) => {
     try {
       const workerId = getWorkerId(res.req);
 
@@ -322,7 +322,7 @@ module.exports = {
   },
 
   // finished, canceled 상태의 오더 리스트
-  listPastOrders: async () => {
+  listPastOrders: async (req, res) => {
     try {
       const workerId = getWorkerId(res.req);
 

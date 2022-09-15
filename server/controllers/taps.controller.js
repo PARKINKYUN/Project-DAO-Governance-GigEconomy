@@ -12,8 +12,6 @@ module.exports = {
                     .status(404)
                     .send({ data: null, message: "Not autorized" });
             } else {
-                // accessToken 콘솔 찍어서 구조를 보고 수정해야함
-                // console.log(accessToken);
                 const token = accessToken.split(" ")[0];
                 const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
 
@@ -22,6 +20,8 @@ module.exports = {
                 } else {
                     const latestTap = await tapmodel.getLatestTapId();
                     const tap_number = latestTap[0].tap_id;
+                    console.log("==================", tap_number)
+                    console.log(req.body)
 
                     const newTap = {
                         tap_id: tap_number + 1,
@@ -64,7 +64,8 @@ module.exports = {
                 if(!userInfo){
                     return res.status(404).send({ data: null, message: "Invalid token" });
                 } else {
-                    const tapInfo = tapmodel.getTapsByOrderId(req.body.order_id);
+                    const tapInfo = await tapmodel.getTapsByOrderId(req.body.order_id);
+                    console.log("tap 정보 조회 완료", tapInfo)
 
                     return res.status(200).send({ data: tapInfo, message: "Searching success"})
                 }
@@ -96,8 +97,8 @@ module.exports = {
                 if(!userInfo){
                     return res.status(404).send({ data: null, message: "Invalid token" });
                 } else {
-                    const tapInfo = tapmodel.getTapsByClientId(req.body.client_id);
-
+                    const tapInfo = await tapmodel.getTapsByClientId(userInfo.client_id);
+                    console.log("tap 정보 조회 완료", tapInfo)
                     return res.status(200).send({ data: tapInfo, message: "Searching success"})
                 }
             }
@@ -128,8 +129,8 @@ module.exports = {
                 if(!userInfo){
                     return res.status(404).send({ data: null, message: "Invalid token" });
                 } else {
-                    const tapInfo = tapmodel.getTapsByWorkerId(req.body.worker_id);
-
+                    const tapInfo = await tapmodel.getTapsByWorkerId(userInfo.worker_id);
+                    console.log("tap 정보 조회 완료", tapInfo)
                     return res.status(200).send({ data: tapInfo, message: "Searching success"})
                 }
             }

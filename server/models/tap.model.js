@@ -27,16 +27,22 @@ const tap = new mongoose.Schema({
   },
   order_id: {
     type: Number,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 });
 
 // write
-tap.methods.saveTap = async function (obj) {
+tap.statics.saveTap = async function (obj) {
     const _tap = new this({
         tap_id: obj.tap_id,
+        writer: obj.writer,
         client_id: obj.client_id,
         worker_id: obj.worker_id,
-        content: obj.content
+        content: obj.content,
+        order_id: obj.order_id,
     });
     return await _tap.save();
 }

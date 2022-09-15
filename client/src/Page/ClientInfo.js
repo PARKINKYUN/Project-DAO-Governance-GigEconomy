@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 function ClientInfo({ token, userInfo, setUserInfo }) {
     const [pending, setPending] = useState([]);
-    const [requested, setRequested] = useState([]);
     const [ongoing, setOngoing] = useState([]);
     const [finished, setFinished] = useState([]);
 
@@ -28,26 +27,27 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
     const getOrdersList = async () => {
         try {
             let pendingData = [];
-            let requestedData = [];
             let ongoingData = [];
             let finishedData = [];
-            const res = await axios.get('http://localhost:4000/orders/order_info', { params: userInfo.client_id });
+
+            const res = await axios.get('http://localhost:4000/orders/getOrderByClient', { headers: { authorization: token } });
             const orderData = res.data.data.order;
-            orderData.map((order) => {
-                if(order.status === "pending"){
-                    pendingData.push(order);
-                } else if (order.status === "requested") {
-                    requestedData.push(order);
-                } else if (order.status === "ongoing") {
-                    ongoingData.push(order);
-                } else if (order.status === "finished") {
-                    finishedData.push(order);
-                }
-            })
-            setPending(pendingData);
-            setRequested(requestedData);
-            setOngoing(ongoingData);
-            setFinished(finishedData);
+            if (orderData) {
+                orderData.map((order) => {
+                    if (order.status === "pending") {
+                        pendingData.push(order);
+                    } else if (order.status === "ongoing" || order.status === "extended") {
+                        ongoingData.push(order);
+                    } else if (order.status === "finished" || order.status === "canceled") {
+                        finishedData.push(order);
+                    }
+                })
+                setPending(pendingData);
+                setOngoing(ongoingData);
+                setFinished(finishedData);
+            }
+
+
         } catch (err) {
             console.error(err);
         }
@@ -95,31 +95,25 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
                     </Grid>
                 </div>
                 <div className={styles.reviewBox}>
-                    <h3>대기중인 Order List</h3>
+                    <h3>Order 대기</h3>
                     {pending.map((order, idx) => {
                         <Order key={idx} _id={order._id} client_id={order.client_id} title={order.title} deadline={order.deadline} compensation={order.compensation} />
                     })}
                 </div>
                 <div className={styles.reviewBox}>
-                    <h3>Worker가 작업 신청 중인 Order List</h3>
-                    {requested.map((order, idx) => {
-                        <Order key={idx} _id={order._id} client_id={order.client_id} title={order.title} deadline={order.deadline} compensation={order.compensation} />
-                    })}
-                </div>
-                <div className={styles.reviewBox}>
-                    <h3>현재 작업중인 Order List</h3>
+                    <h3>Order 작업 중</h3>
                     {ongoing.map((order, idx) => {
                         <Order key={idx} _id={order._id} client_id={order.client_id} title={order.title} deadline={order.deadline} compensation={order.compensation} />
                     })}
                 </div>
                 <div className={styles.reviewBox}>
-                    <h3>최근 작업이 완료된 Order List</h3>
+                    <h3>Order 종료</h3>
                     {finished.map((order, idx) => {
                         <Order key={idx} _id={order._id} client_id={order.client_id} title={order.title} deadline={order.deadline} compensation={order.compensation} />
                     })}
                 </div>
                 <div>
-                    <TapsList token={token} writer={userInfo.client_id} client_id={userInfo.client_id} />
+                    <TapsList token={token} userInfo={userInfo} />
                 </div>
             </div>
         </div>
