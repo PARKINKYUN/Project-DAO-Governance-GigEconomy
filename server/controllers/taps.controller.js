@@ -25,9 +25,11 @@ module.exports = {
 
                     const newTap = {
                         tap_id: tap_number + 1,
+                        writer: req.body.writer,
                         client_id: req.body.client_id,
                         worker_id: req.body.worker_id,
-                        content: req.body.content
+                        content: req.body.content,
+                        order_id: req.body.order_id
                     };
                     const inputTap = await tapmodel.saveTap(newTap)
                     console.log("똑똑! 새로운 tap이 저장되었습니다.", inputTap);
@@ -43,6 +45,7 @@ module.exports = {
             });
         }
     },
+
     // order_id로 탭 조회
     taplistbyorder: async (req, res) => {
         try {
@@ -233,6 +236,21 @@ module.exports = {
             res.status(400).send({
                 data: null,
                 message: "Can't update tap",
+            });
+        }
+    },
+
+    // 마지막 등록된 탭 넘버 조회
+    getlatesttapnum: async (req, res) => {
+        try {
+            const tapNumber = tapmodel.getLatestTapId();
+
+            return res.status(200).send({ data: tapNumber, message: "Searching success"})
+        } catch (err) {
+            // console.log(err);
+            res.status(400).send({
+                data: null,
+                message: "Can't search",
             });
         }
     },

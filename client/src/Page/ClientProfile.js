@@ -1,7 +1,7 @@
 import withRoot from "../withRoot";
 import styles from "../css/WorkerProfile.module.css";
 import Profile from "../components/Profile";
-import Tap from "../components/Tap";
+import TapsList from "../components/TapsList";
 
 
 // client에 맞게 내용 모두 수정해야함
@@ -20,7 +20,7 @@ function ClientProfile() {
           <div>Worker Review</div>
         </div>
         <div>
-          <Tap />
+          <TapsList />
         </div>
       </div>
     </div>
