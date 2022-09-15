@@ -57,7 +57,7 @@ function SignIn({ token, setToken, setUserInfo, setIsWorker }) {
         })
         if (res.status === 200) {
           const accessToken = res.data.data.accessToken;
-          const workerInfo = res.data.data.clientData;
+          const workerInfo = res.data.data.workerData;
           setToken(accessToken);
           setUserInfo(workerInfo);
           setIsWorker(true);

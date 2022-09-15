@@ -14,6 +14,7 @@ import Main from "./Page/Main";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
 import ClientInfo from "./Page/ClientInfo";
+import WorkerInfo from "./Page/WorkerInfo";
 
 function App() {
   const [token, setToken] = useState("");
@@ -54,6 +55,16 @@ function App() {
           path="/clientprofile"
           element={
             <ClientInfo
+              token={token}
+              userInfo={userInfo}
+              setUserInfo={setUserInfo}
+            />
+          }
+        />
+        <Route
+          path="/workerInfo"
+          element={
+            <WorkerInfo
               token={token}
               userInfo={userInfo}
               setUserInfo={setUserInfo}
