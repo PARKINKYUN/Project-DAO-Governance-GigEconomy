@@ -6,11 +6,15 @@ import withRoot from "../withRoot";
 import styles from "../css/OrderInfo.module.css";
 import { Grid } from "@mui/material";
 import Typography from "../components/Typography";
+import { useLocation } from "react-router-dom";
 
-function OrderInfo({ id, isWorker }) {
+function OrderInfo({ isWorker }) {
   const [order, setOrder] = useState({});
   const [orderStatus, setOrderStatus] = useState("");
   const [offerIdx, setOfferIdx] = useState(null);
+
+  const location = useLocation();
+  const { id } = location.state;
 
   useEffect(() => {
     getOrder();
@@ -224,9 +228,9 @@ function OrderInfo({ id, isWorker }) {
             </Grid>
 
             <Grid item>
-              <div>
+              {/* <div>
                 <TapsList />
-              </div>
+              </div> */}
             </Grid>
           </Grid>
         </div>

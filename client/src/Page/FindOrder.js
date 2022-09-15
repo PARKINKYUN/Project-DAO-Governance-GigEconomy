@@ -6,16 +6,17 @@ import axios from "axios";
 import withRoot from "../withRoot";
 import styles from "../css/FindOrder.module.css";
 import Link from "@mui/material/Link";
+import { Grid } from "@mui/material";
 
 function FindOrder() {
   const [orders, setOrders] = useState([]);
 
   const getOrders = async () =>
     await axios
-      .get("http://localhost:4000/orders", {})
+      .get("http://localhost:4000/orders")
       .then((res) => {
+        console.log(res.data.data);
         setOrders(res.data.data);
-        console.log(orders);
       })
       .catch((err) => console.error(err));
 
@@ -37,8 +38,12 @@ function FindOrder() {
           </Link>
         </div>
         <div className={styles.container}>
-          <div className={styles.item}>
-            {orders.map((order) => {
+          <Grid
+            container
+            spacing={{ xs: 2, md: 3 }}
+            columns={{ xs: 4, sm: 8, md: 12 }}
+          >
+            {orders.map((order, idx) => {
               const {
                 _id,
                 client_id,
@@ -47,17 +52,20 @@ function FindOrder() {
                 deadline,
                 compensation,
               } = order;
-              <OrderCard
-                id={_id}
-                client_id={client_id}
-                title={title}
-                category={category}
-                deadline={deadline}
-                compensation={compensation}
-              />;
+              return (
+                <Grid item xs={2} sm={4} md={4} index={idx}>
+                  <OrderCard
+                    id={_id}
+                    client_id={client_id}
+                    title={title}
+                    category={category}
+                    deadline={deadline}
+                    compensation={compensation}
+                  />
+                </Grid>
+              );
             })}
-            <OrderCard />
-          </div>
+          </Grid>
         </div>
       </div>
     </div>

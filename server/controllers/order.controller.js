@@ -22,6 +22,7 @@ module.exports = {
   // 오더 조회
   order_info: async (req, res) => {
     try {
+      console.log(req.params);
       const order = await order.getOrderById(req.params.id);
       if (!order) {
         return res.status(400).message("order를 불러오지 못했습니다.");
@@ -39,25 +40,14 @@ module.exports = {
   // 새로운 오더 생성
   new_order: async (req, res) => {
     try {
-      const accessToken = req.headers.authorization;
-      if (!accessToken) {
-        return res
-          .status(404)
-          .send({ data: null, message: "Invalid access token" });
-      }
-
-      const clientData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
-      if (clientData.account_type !== "client") {
-        return res.status(404).message("client only");
-      }
-      console.log(clientData);
-      const order = await order.postOrder(clientId, req.body);
-      if (!order) {
+      const clientId = getClientId(req, res);
+      const _order = await order.postOrder(req.body);
+      if (!_order) {
         return res.status(400).message("새로운 order를 생성하지 못했습니다.");
       }
 
       return res.status(200).send({
-        data: order._id,
+        data: _order._id,
         message: "order가 정상적으로 등록되었습니다.",
       });
     } catch (err) {
@@ -70,8 +60,7 @@ module.exports = {
   direct_order: async (req, res) => {
     try {
       const clientId = getClientId(req, res);
-
-      const order = await order.postOrder(clientId, req.params.id, req.body);
+      const order = await order.postOrder(req.params.id, req.body);
       if (!order) {
         return res.status(400).message("새로운 order를 생성하지 못했습니다.");
       }

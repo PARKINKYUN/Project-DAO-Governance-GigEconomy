@@ -18,7 +18,6 @@ const order = new mongoose.Schema({
   },
   status: {
     type: String,
-    required: true,
     enum: ["pending", "ongoing", "extended", "finished", "canceled"],
     default: "pending",
   },
@@ -41,7 +40,7 @@ const order = new mongoose.Schema({
   ],
   direct_order: {
     type: Boolean,
-    required: true,
+    default: false,
   },
   offers: [
     {
@@ -79,13 +78,14 @@ order.statics.getOrderById = async function (order_id) {
 };
 
 // 새로운 오더 생성
-order.statics.postOrder = async function (client_id, order_data) {
-  const { title, category, deadline, compensation, content, file } = order_data;
+order.statics.postOrder = async function (data) {
+  const { client_id, title, category, deadline, compensation, content, file } =
+    data;
   return await this.create({
     client_id: client_id,
+    worker_id: "TBD",
     title: title,
     category: category,
-    status: "pending",
     deadline: deadline,
     compensation: compensation,
     content: content,
@@ -94,16 +94,17 @@ order.statics.postOrder = async function (client_id, order_data) {
 };
 
 // 워커에게 직접 의뢰
-order.statics.directOrder = async function (client_id, worker_id, order_data) {
-  const { title, category, deadline, compensation, content, file } = order_data;
+order.statics.directOrder = async function (worker_id, data) {
+  const { client_id, title, category, deadline, compensation, content, file } =
+    data;
   return await this.create({
     client_id: client_id,
     worker_id: worker_id,
     title: title,
     category: category,
-    status: "pending",
     deadline: deadline,
     compensation: compensation,
+    direct_order: true,
     content: content,
     file: file,
   });
