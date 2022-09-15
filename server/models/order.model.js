@@ -73,9 +73,14 @@ order.statics.getAllOrders = async function () {
   return await this.find({ status: "pending" });
 };
 
-// 오더 조회
-order.statics.getOrderById = async function (order_id) {
-  return await this.findById(order_id);
+// client_id로 오더 정보 조회
+order.statics.getOrderByClient = async function (client_id) {
+  return await this.find({client_id: client_id});
+};
+
+// worker_id로 오더 정보 조회
+order.statics.getOrderByWorker = async function (worker_id) {
+  return await this.find({worker_id: worker_id});
 };
 
 // 새로운 오더 생성
