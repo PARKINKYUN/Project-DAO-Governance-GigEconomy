@@ -1,20 +1,28 @@
-import WorkerList from "../components/WorkerList";
+import WorkerCard from "../components/WorkerList";
 import withRoot from "../withRoot";
 import styles from "../css/FindWorker.module.css";
 import Typography from "../components/Typography";
 import { useEffect, useState } from "react";
+import React, { useReducer } from "react";
 import axios from "axios";
 
-function FindWorker() {
-  const [workers, setWorkers] = useState([]);
+function FindWorker({ token, userInfo }) {
+  const reducer = (state, action) => {
+    return [...state, ...action];
+  };
+  const [state, dispatch] = useReducer(reducer, []);
+  // const [workers, setWorkers] = useState([]);
 
   const getWorkers = async () => {
     const res = await axios.get("http://localhost:4000/workers");
-    setWorkers(res.data);
+    // setWorkers(res.data.data);
+    dispatch(res.data.data);
+    console.log(res.data.data);
   };
 
   useEffect(() => {
     getWorkers();
+    console.log("========================", state);
   }, []);
 
   return (
@@ -27,9 +35,14 @@ function FindWorker() {
       <div className={styles.container}>
         <div className={styles.item}>
           {workers.map((worker, idx) => {
-            <WorkerList nickname={worker.nickname} key={idx} />;
+            <WorkerCard
+              worker={worker}
+              token={token}
+              userInfo={userInfo}
+              key={idx}
+            />;
           })}
-          <WorkerList />
+          {/* <WorkerCard worker_id={"test002@gig.com"} nickname={"worker"} /> */}
         </div>
       </div>
     </div>
