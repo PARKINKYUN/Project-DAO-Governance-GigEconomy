@@ -53,7 +53,7 @@ function FindOrder() {
                 compensation,
               } = order;
               return (
-                <Grid item xs={2} sm={4} md={4} index={idx}>
+                <Grid item xs={2} sm={4} md={4} key={idx}>
                   <OrderCard
                     id={_id}
                     client_id={client_id}
@@ -61,6 +61,7 @@ function FindOrder() {
                     category={category}
                     deadline={deadline}
                     compensation={compensation}
+                    key={idx}
                   />
                 </Grid>
               );

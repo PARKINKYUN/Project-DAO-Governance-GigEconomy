@@ -22,7 +22,7 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
         // 서버로 유저의 토큰 balance 구해오는 함수 넣어야함
 
         getOrdersList();
-    }, [])
+    }, [token, userInfo])
 
     const getOrdersList = async () => {
         try {
@@ -31,7 +31,7 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
             let finishedData = [];
 
             const res = await axios.get('http://localhost:4000/orders/getOrderByClient', { headers: { authorization: token } });
-            const orderData = res.data.data.order;
+            const orderData = res.data.data;
             if (orderData) {
                 orderData.map((order) => {
                     if (order.status === "pending") {
@@ -50,6 +50,7 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
 
         } catch (err) {
             console.error(err);
+            navigate("/")
         }
     }
 
