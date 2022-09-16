@@ -15,7 +15,7 @@ import { useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom'
 
-function SignIn({ token, setToken, setUserInfo, setIsWorker }) {
+function SignIn({ setToken, setUserInfo, setIsWorker, setCookie }) {
   const [sent, setSent] = useState(false);
   const isWorker = useRef(false);
 
@@ -60,10 +60,13 @@ function SignIn({ token, setToken, setUserInfo, setIsWorker }) {
           const workerInfo = res.data.data.workerData;
           setToken(accessToken);
           setUserInfo(workerInfo);
+          setCookie('login', {token: accessToken, userInfo: workerInfo, isWorker: true}, {path: '/', maxAge: 2000});
           setIsWorker(true);
           navigate('/');
         } else {
           console.log("로그인 실패")
+          window.alert("사용자 정보가 일치하지 않습니다. 다시 로그인 해주세요.");
+          navigate('/');
         }
       } else {
         console.log("======================", email)
@@ -77,13 +80,18 @@ function SignIn({ token, setToken, setUserInfo, setIsWorker }) {
           const clientInfo = res.data.data.clientData;
           setToken(accessToken);
           setUserInfo(clientInfo);
+          setCookie('login', {token: accessToken, userInfo: clientInfo, isWorker: false}, {path: '/', maxAge: 2000});
           navigate('/');
         } else {
+          window.alert("사용자 정보가 일치하지 않습니다. 다시 로그인 해주세요.");
           console.log("로그인 실패")
+          navigate('/');
         }
       }
     } catch (err) {
       console.error(err);
+      window.alert("사용자 정보가 일치하지 않습니다. 다시 로그인 해주세요.");
+      navigate('/');
     }
   };
 

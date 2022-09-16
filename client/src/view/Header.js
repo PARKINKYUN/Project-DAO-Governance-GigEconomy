@@ -4,6 +4,9 @@ import Link from "@mui/material/Link";
 import AppBar from "../components/AppBar";
 import Toolbar from "../components/Toolbar";
 import { Link as RouterLink } from "react-router-dom";
+import SendIcon from '@mui/icons-material/Send';
+import Button from '@mui/material/Button';
+import { useNavigate } from 'react-router-dom';
 
 const rightLink = {
   fontSize: 16,
@@ -11,7 +14,18 @@ const rightLink = {
   ml: 3,
 };
 
-function Header({ token, isWorker }) {
+function Header({ token, isWorker, setToken, setUserInfo, setIsWorker, removeCookie }) {
+  const navigate = useNavigate();
+
+  const logout = () => {
+    removeCookie("login")
+    setToken("");
+    setUserInfo({});
+    setIsWorker(false);
+
+    navigate('/');
+  }
+
   return (
     <div>
       <AppBar position="fixed">
@@ -112,7 +126,14 @@ function Header({ token, isWorker }) {
                 </Link>
               </Box>
             </>
-            : null}
+            :
+            <>
+              <Box sx={{ flex: 0.3, display: "flex", justifyContent: "flex-end" }}>
+                <Button variant="contained" endIcon={<SendIcon />} onClick={logout}>
+                  Log Out
+                </Button>
+              </Box>
+            </>}
         </Toolbar>
       </AppBar>
       <Toolbar />

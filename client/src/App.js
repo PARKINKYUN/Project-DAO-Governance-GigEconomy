@@ -16,15 +16,25 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
 import ClientInfo from "./Page/ClientInfo";
 import WorkerInfo from "./Page/WorkerInfo";
+import { useCookies } from "react-cookie";
+import axios from "axios";
 
 function App() {
   const [token, setToken] = useState("");
   const [userInfo, setUserInfo] = useState({});
   const [isWorker, setIsWorker] = useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies(['login']);
 
   useEffect(() => {
+    if(cookies.login !== undefined){
+      const { token, userInfo, isWorker } = cookies.login;
+      setToken(token);
+      setUserInfo(userInfo);
+      setIsWorker(isWorker);
+    }
     console.log("ReRendering...");
-  }, [token, userInfo, isWorker]);
+    console.log("리덴더링. 토큰 출력 테스트", token)
+  }, [cookies, token, isWorker]);
 
   return (
     <BrowserRouter>
@@ -35,6 +45,8 @@ function App() {
           userInfo={userInfo}
           setUserInfo={setUserInfo}
           isWorker={isWorker}
+          removeCookie={removeCookie}
+          setIsWorker={setIsWorker}
         />
       </div>
       <Routes>
@@ -47,6 +59,7 @@ function App() {
               setToken={setToken}
               setUserInfo={setUserInfo}
               setIsWorker={setIsWorker}
+              setCookie={setCookie}
             />
           }
         />

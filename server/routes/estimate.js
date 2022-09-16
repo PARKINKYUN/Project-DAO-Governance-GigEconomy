@@ -6,6 +6,5 @@ router.post("/newEstimation", controller.newEstimation);
 router.get("/getResultByWorker", controller.getResultByWorker);
 router.get("/isTryable/:extimate_id", controller.isTryable);
 router.delete("/deleteEstimation", controller.deleteEstimation);
-router.patch("/updatereview", controller.updatereview);
 
 module.exports = router;

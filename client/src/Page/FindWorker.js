@@ -34,7 +34,7 @@ function FindWorker({ token, userInfo }) {
         >
           {workers.map((worker, idx) => {
             return (
-              <Grid item xs={2} sm={4} md={4} index={idx}>
+              <Grid item xs={2} sm={4} md={4} key={idx}>
                 <WorkerList worker={worker} token={token} userInfo={userInfo} key={idx} />
               </Grid>
             );
