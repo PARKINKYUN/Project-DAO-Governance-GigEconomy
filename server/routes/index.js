@@ -9,6 +9,7 @@ const taps = require("./taps");
 const clients = require("./clients");
 // const votes = require("./votes");
 const workers = require("./workers");
+const estimate = require("./estimate");
 
 router.use("/orders", orders);
 router.use("/proposals", proposals);
@@ -17,6 +18,7 @@ router.use("/taps", taps);
 router.use("/clients", clients);
 // router.use("/votes", votes);
 router.use("/workers", workers);
+router.use("/estimate", estimate);
 router.use("/", main);
 
 module.exports = router;

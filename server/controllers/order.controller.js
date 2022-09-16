@@ -46,8 +46,6 @@ module.exports = {
           .status(404)
           .send({ data: null, message: "Not autorized" });
       } else {
-        // accessToken 콘솔 찍어서 구조를 보고 수정해야함
-        // console.log(accessToken);
         const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
 
@@ -79,8 +77,6 @@ module.exports = {
           .status(404)
           .send({ data: null, message: "Not autorized" });
       } else {
-        // accessToken 콘솔 찍어서 구조를 보고 수정해야함
-        // console.log(accessToken);
         const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
 
@@ -297,36 +293,22 @@ module.exports = {
       res.status(400);
     }
   },
-};
 
-const getClientId = (req, res) => {
-  const accessToken = req.headers.authorization;
-  if (!accessToken) {
-    return res
-      .status(404)
-      .send({ data: null, message: "Invalid access token" });
-  }
-
-  const clientData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
-  if (clientData.account_type !== "client") {
-    return res.status(404).message("client only");
-  }
-
-  return clientData.client_id;
-};
-
-const getWorkerId = (req, res) => {
-  const accessToken = req.headers.authorization;
-  if (!accessToken) {
-    return res
-      .status(404)
-      .send({ data: null, message: "Invalid access token" });
-  }
-
-  const workerData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
-  if (workerData.account_type !== "worker") {
-    return res.status(404).message("worker only");
-  }
-
-  return workerData.worker_id;
+  // client가 order에 대한 평가를 수행했는지 여부 확인
+  isEstimated: async (req, res) => {
+    try {
+      return await isEstimated(req.params.order_id)
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  
+  // worker가 order에 대한 review를 작성했는지 여부 확인
+  isReviewed: async (req, res) => {
+    try {
+      return await this.isReviewed(req.params.order_id)
+    } catch (err) {
+      console.error(err);
+    }
+  },
 };
