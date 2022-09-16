@@ -3,7 +3,7 @@ import SingleTap from "./SingleTap";
 import styles from "../css/Tap.module.css";
 import axios from "axios";
 
-function TapsList({ token, userInfo, order_id }) {
+function TapsList({ token, userInfo, worker }) {
   const [taps, setTaps] = useState([]);
 
   const { client_id, worker_id } = userInfo;
@@ -15,16 +15,18 @@ function TapsList({ token, userInfo, order_id }) {
 
   const getTaps = async () => {
     try {
-      console.log("props", order_id, client_id, worker_id)
-      if(order_id) {
-        const res = await axios.get('http://localhost:4000/taps/taplistbyorder', { headers: {authorization: token}, params: order_id });
+      console.log("props", worker, client_id, worker_id)
+      if(worker) {
+        const res = await axios.get('http://localhost:4000/taps/taplistbyclient', { headers: {authorization: token} });
         const tapsInfo = res.data.data;
         if(tapsInfo !== undefined){
-          setTaps(tapsInfo);
+          const tapByWorker = tapsInfo.filter((tap) => tap.worker_id === worker.worker_id);
+          setTaps(tapByWorker);
         }
       } else if(client_id) {
         const res = await axios.get('http://localhost:4000/taps/taplistbyclient', { headers: {authorization: token} });
         const tapsInfo = res.data.data;
+        console.log("client tap list", tapsInfo)
         if(tapsInfo !== undefined){
           setTaps(tapsInfo);
         }

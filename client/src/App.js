@@ -56,7 +56,7 @@ function App() {
         />
         <Route path="/findorder" element={<FindOrder />} />
         <Route
-          path="/clientprofile"
+          path="/clientInfo"
           element={
             <ClientInfo
               token={token}

@@ -10,8 +10,8 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 function WorkerProfile() {
-  //const [worker, setWorker] = useState("");
   const [tap, setTap] = useState(false);
+  
   const location = useLocation();
   const { worker, userInfo, token } = location.state;
 
@@ -19,23 +19,7 @@ function WorkerProfile() {
     setTap((hidden) => !hidden);
   };
 
-  // const getWorker = async () => {
-  //   await axios
-  //     .get(`http://localhost:4000/workers/worker_info/${location.state.id}`, {
-  //       headers: { authorization: token },
-  //     })
-
-  //     .then((res) => {
-  //       console.log("==================", res.data.data);
-  //       // setWorker(res.data.data);
-  //     })
-  //     .catch((err) => console.log(err));
-  // };
-
-  useEffect(() => {
-    console.log("=========", worker);
-    // getWorker();
-    const { worker, userInfo, token } = location.state;
+  useEffect(() => {   
   }, []);
 
   return (
@@ -43,7 +27,7 @@ function WorkerProfile() {
       <div className={styles.profile}>
         <div className={styles.profileBox}>
           <Profile />
-          {/* <div className={styles.name}>name: {worker.nickname}</div> */}
+          <div className={styles.name}>name: {worker.nickname}</div>
           <div className={styles.toolBox}>
             <div>
               <Link
@@ -63,7 +47,7 @@ function WorkerProfile() {
           <div>Worker Review</div>
         </div>
         <div>
-          <TapsList token={token} userInfo={userInfo} />
+          <TapsList token={token} userInfo={userInfo} worker={worker} />
         </div>
         <div>
           {tap ? (
