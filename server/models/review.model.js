@@ -8,7 +8,7 @@ const review = new mongoose.Schema({
     type: String,
   },
   order_id: {
-    type: Number,
+    type: String,
   },
   content: {
     type: String,
@@ -17,12 +17,12 @@ const review = new mongoose.Schema({
 });
 
 //리뷰 조회(worker_id조회)
-review.statics.getReviewByworkerId = async (worker_id) => {
+review.statics.getReviewByWorkerId = async (worker_id) => {
   return await this.find({ worker_id: worker_id });
 };
 
 //리뷰 조회(order_id조회)
-review.statics.getReviewByorderId = async (order_id) => {
+review.statics.getReviewByOrderId = async (order_id) => {
   return await this.find({ order_id: order_id });
 };
 
