@@ -204,23 +204,26 @@ module.exports = {
           .send({ data: null, message: "Invalid access token" });
       } else {
         const userInfo = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+        if (!userInfo) {
+          res.status(404).send({ data: null, message: "Invalid account" });
+        } else {
+          const workerData = await workerModel.getWorkerInfoById(req.params.id);
+          console.log(workerData);
+          const workerInfo = {
+            worker_id: workerData[0].worker_id,
+            account_type: workerData[0].account_type,
+            nickname: workerData[0].nickname,
+            image: workerData[0].image,
+            gig_score: workerData[0].gig_score,
+            mod_authority: workerData[0].mod_authority,
+          };
+
+          return res
+            .status(200)
+            .send({ data: workerInfo, message: "Completed search" });
+        }
 
         console.log("User information: ", userInfo);
-
-        const workerInfo = null;
-        // 특정 사용자의 정보 조회
-        // 다른 models가 구현되어야 코딩 가능함
-        //
-        //
-        // 작성 필요
-        //
-        //
-        //
-
-        return res.status(200).send({
-          data: workerInfo,
-          message: "Completed search",
-        });
       }
     } catch (err) {
       console.log(err);
@@ -251,7 +254,7 @@ module.exports = {
   },
 
   // 워커의 pending 상태 전환(true || false)
-  toggleStatus: async (req, res) => {
+  toggleStatus: async () => {
     try {
       const workerId = getWorkerId(res, req);
 
@@ -276,7 +279,7 @@ module.exports = {
   },
 
   // pending 상태의 오더 리스트(worker가 offer를 보낸 order)
-  listPending: async (req, res) => {
+  listPending: async () => {
     try {
       const workerId = getWorkerId(res.req);
 
@@ -299,7 +302,7 @@ module.exports = {
   },
 
   // ongoing, extended 상태의 오더 리스트
-  listInProgress: async (req, res) => {
+  listInProgress: async () => {
     try {
       const workerId = getWorkerId(res.req);
 
@@ -322,7 +325,7 @@ module.exports = {
   },
 
   // finished, canceled 상태의 오더 리스트
-  listPastOrders: async (req, res) => {
+  listPastOrders: async () => {
     try {
       const workerId = getWorkerId(res.req);
 

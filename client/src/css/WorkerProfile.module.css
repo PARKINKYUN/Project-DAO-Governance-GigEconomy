@@ -8,6 +8,7 @@
 }
 .profileBox {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   border-bottom: 2px solid #c3cfd9;
   padding: 10px;
@@ -19,4 +20,8 @@
   align-items: center;
   border-bottom: 2px solid #c3cfd9;
   padding: 10px;
+}
+.toolBox {
+  justify-content: center;
+  align-items: center;
 }

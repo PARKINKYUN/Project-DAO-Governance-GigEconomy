@@ -10,6 +10,7 @@ import WorkerProfile from "./Page/WorkerProfile";
 import CreateOrder from "./components/CreateOrder";
 import OrderInfo from "./Page/OrderInfo";
 import Governance from "./Page/Governance";
+import DirectOrder from "./components/DirectOrder";
 import Main from "./Page/Main";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -49,7 +50,10 @@ function App() {
             />
           }
         />
-        <Route path="/findworker" element={<FindWorker />} />
+        <Route
+          path="/findworker"
+          element={<FindWorker userInfo={userInfo} token={token} />}
+        />
         <Route path="/findorder" element={<FindOrder />} />
         <Route
           path="/clientprofile"
@@ -77,6 +81,11 @@ function App() {
           path="/createorder"
           element={<CreateOrder userInfo={userInfo} token={token} />}
         />
+        <Route
+          path="/directeorder"
+          element={<DirectOrder userInfo={userInfo} token={token} />}
+        />
+
         <Route path="/governance" element={<Governance />} />
       </Routes>
       <div>
