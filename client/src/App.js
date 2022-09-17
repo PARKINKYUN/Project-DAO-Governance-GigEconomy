@@ -15,6 +15,7 @@ import Main from "./Page/Main";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
 import ClientInfo from "./Page/ClientInfo";
+import CreateProposal from "./components/CreateProposal";
 import WorkerInfo from "./Page/WorkerInfo";
 import { useCookies } from "react-cookie";
 import axios from "axios";
@@ -101,8 +102,14 @@ function App() {
           path="/directOrder"
           element={<DirectOrder userInfo={userInfo} token={token} />}
         />
-
-        <Route path="/governance" element={<Governance />} />
+        <Route
+          path="/createproposal"
+          element={<CreateProposal userInfo={userInfo} token={token} />}
+        />
+        <Route
+          path="/governance"
+          element={<Governance userInfo={userInfo} token={token} />}
+        />
       </Routes>
       <div>
         <Footer />
