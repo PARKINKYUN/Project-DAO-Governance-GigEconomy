@@ -20,12 +20,11 @@ function FindWorker({ token, userInfo }) {
   }, []);
 
   return (
-    <div>
-      <div className={styles.head}>
-        <Typography variant="h3" gutterBottom marked="center" align="center">
-          Worker List
-        </Typography>
-      </div>
+    <div className={styles.main}>
+      <div className={styles.orderlist}>
+        <div className={styles.header}>
+          <div className={styles.text}>Workers List of Pending State</div>
+        </div>
       <div className={styles.container}>
         <Grid
           container
@@ -40,6 +39,7 @@ function FindWorker({ token, userInfo }) {
             );
           })}
         </Grid>
+        </div>
       </div>
     </div>
   );

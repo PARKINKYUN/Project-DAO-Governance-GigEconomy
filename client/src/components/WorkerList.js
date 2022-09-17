@@ -38,8 +38,8 @@ export default function WorkerList({ worker, userInfo, token }) {
             alt=""
           />
           <CardContent>
-            <Typography gutterBottom variant="h4" component="div">
-              {worker.nickname}
+            <Typography gutterBottom variant="h5" component="div">
+              <b>{worker.nickname}</b>
             </Typography>
           </CardContent>
         </CardActionArea>

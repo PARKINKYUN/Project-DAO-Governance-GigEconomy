@@ -56,6 +56,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
 
         } catch (err) {
             console.error(err);
+            navigate("/")
         }
     }
 
@@ -69,6 +70,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                         </Grid>
                         <Grid item xs={2}>
                             <div className={styles.name}>
+                                <h4>Current State</h4>
                                 <h4>ID</h4>
                                 <h4>Nickname</h4>
                                 <h4>Wallet Address</h4>
@@ -79,12 +81,13 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                         </Grid>
                         <Grid item xs={6}>
                             <div className={styles.name}>
+                                <h4>{userInfo.pending ? "작업중" : "휴식중"}</h4>
                                 <h4>{userInfo.worker_id}</h4>
                                 <h4>{userInfo.nickname}</h4>
                                 <h4>{userInfo.address}</h4>
                                 <h4>{userInfo.balance}</h4>
                                 <h4>{userInfo.gig_score}</h4>
-                                <h4>{userInfo.mod_athority}</h4>
+                                <h4>{userInfo.mod_authority ? "The Moderator Worker" : "The General Worker"}</h4>
                             </div>
                         </Grid>
                         <Grid item xs={2} justifyContent="center" alignItems="center" >
@@ -94,7 +97,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                 Pending
                                 </Button>)
                                 : (<Button variant="contained" size="medium" onClick={changeWorkerStatus}>
-                                Sleeping
+                                상태변경
                                 </Button>)}
                                 
                                 {/* 회원정보 수정페이지 제작해야함 */}
