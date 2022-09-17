@@ -90,12 +90,19 @@ worker.statics.getPendingWorker = async function () {
 
 // pending 상태 변경(true || false)
 worker.statics.togglePending = async function (worker_id) {
-  const worker = await this.findOne({ worker_id: worker_id });
-  if (worker.pending == false) {
-    return await worker.update({ pending: true });
-  }
-  if (worker.pending == true) {
-    return await worker.update({ pending: false });
+  const worker = await this.find({ worker_id: worker_id });
+  if (worker[0].pending === false) {
+    return await this.findOneAndUpdate(
+      { worker_id: worker_id },
+      { pending: true },
+      { new: true }
+    );
+  } else if (worker[0].pending === true) {
+    return await this.findOneAndUpdate(
+      { worker_id: worker_id },
+      { pending: true },
+      { new: true }
+    );
   }
 };
 

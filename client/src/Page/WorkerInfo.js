@@ -24,10 +24,30 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
         // 서버로 유저의 토큰 balance 구해오는 함수 넣어야함
 
         getOrdersList();
-    }, [])
+    }, [isWorkerPending])
 
-    const changeWorkerStatus = () => {
+    const changeWorkerStatus = async () => {
+        try {
+            // 1. 지갑에서 펜딩전환에 따라 비용 지불/환불 (컨트랙트 배포 후 server에서 처리하는 로직 구현해야함)
+            // 2. worker의 state 변경
+            // 3. DB에서 worker의 state 변경
+            if(isWorkerPending) {
+                const res = await axios.patch('http://localhost:4000/workers/toggle_status',
+                {workerId: userInfo.worker_id, workerStatus: userInfo.pending});
+                setIsWorkerPending(false);
+                
+            } else {
+                const res = await axios.patch('http://localhost:4000/workers/toggle_status',
+                {workerId: userInfo.worker_id, workerStatus: userInfo.pending});
+                setIsWorkerPending(true);
 
+            }
+
+            
+        } catch (err) {
+            console.error(err);
+            navigate("/workerInfo")
+        }
     }
 
     const getOrdersList = async () => {
@@ -81,7 +101,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                         </Grid>
                         <Grid item xs={6}>
                             <div className={styles.name}>
-                                <h4>{userInfo.pending ? "작업중" : "휴식중"}</h4>
+                                <h4>{userInfo.pending ? "Order를 기다리는 상태" : "Order를 받지 않는 상태"}</h4>
                                 <h4>{userInfo.worker_id}</h4>
                                 <h4>{userInfo.nickname}</h4>
                                 <h4>{userInfo.address}</h4>
@@ -92,13 +112,9 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                         </Grid>
                         <Grid item xs={2} justifyContent="center" alignItems="center" >
                             <Box sx={{ '& button': { m: 1 } }}>
-                                {isWorkerPending ?
-                                (<Button variant="contained" size="medium" onClick={changeWorkerStatus}>
-                                Pending
-                                </Button>)
-                                : (<Button variant="contained" size="medium" onClick={changeWorkerStatus}>
+                                <Button variant="contained" size="medium" onClick={changeWorkerStatus}>
                                 상태변경
-                                </Button>)}
+                                </Button>
                                 
                                 {/* 회원정보 수정페이지 제작해야함 */}
                                 {/* 회원정보 수정페이지 제작해야함 */}

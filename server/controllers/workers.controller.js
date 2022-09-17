@@ -254,23 +254,19 @@ module.exports = {
   },
 
   // 워커의 pending 상태 전환(true || false)
-  toggleStatus: async () => {
+  toggleStatus: async (req, res) => {
     try {
-      const workerId = getWorkerId(res, req);
-
-      const worker = await workerModel.togglePending(workerId);
+      const result = await workerModel.togglePending(req.body.workerId);
       if (!worker) {
-        return res.status(400).message("pending 리스트 등록에 실패했습니다.");
+        return res.status(400).send({data: null, message: "Worker 정보가 없습니다."});
+      }
+      
+      return res.status(200).send({data: , message: "Worker 정보가 없습니다."});message("pending 리스트에 등록되었습니다.");
       }
 
-      if (worker.pending == true) {
+      if (worker.pending === false) {
         // 블록체인과 연결하여 token을 deposit하는 등의 로직
-        return res.status(200).message("pending 리스트에 등록되었습니다.");
-      }
-
-      if (worker.pending == false) {
-        // 블록체인과 연결하여 token을 deposit하는 등의 로직
-        return res.status(200).message("더 이상 오더를 받지 않습니다.");
+        return res.status(200).send({data: null, message: "Worker 정보가 없습니다."});message("더 이상 오더를 받지 않습니다.");
       }
     } catch (err) {
       console.error(err);
