@@ -35,13 +35,18 @@ function NewTapForm({ token, writer, client_id, worker_id, order_id }) {
         content: newTapContent,
         order_id: order_id,
       };
-      
-      const res = await axios.post('http://localhost:4000/taps/newtap', newTap, {headers: {authorization: token}});
-      console.log(res.data.message)
+
+      const res = await axios.post(
+        "http://localhost:4000/taps/newtap",
+        newTap,
+        { headers: { authorization: token } }
+      );
+      console.log(res.data.message);
       setNewTapContent("");
     } catch (err) {
       console.error(err);
     }
+    window.location.reload();
   };
 
   return (
