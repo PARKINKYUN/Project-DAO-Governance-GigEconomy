@@ -22,7 +22,7 @@ export default function OrderCard({
           {/* <CardMedia component="img" height="140" src={src} alt="" /> */}
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
-              {title}
+              <b>{title}</b>
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Client: {client_id}
