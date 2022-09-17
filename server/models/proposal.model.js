@@ -9,11 +9,22 @@ const proposal = new mongoose.Schema({
     type: String,
     required: true,
   },
-  status: {
+  proposal_id: {
+    type: Number,
+    required: true,
+    unique: true,
+  },
+  worker_id: {
     type: String,
     required: true,
-    enum: ["pending", "voting", "concluded"],
-    default: "pending",
+  },
+  up: {
+    type: Number,
+    default: 0,
+  },
+  down: {
+    type: Number,
+    default: 0,
   },
 });
 
