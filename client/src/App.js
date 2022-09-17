@@ -23,17 +23,17 @@ function App() {
   const [token, setToken] = useState("");
   const [userInfo, setUserInfo] = useState({});
   const [isWorker, setIsWorker] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies(['login']);
+  const [cookies, setCookie, removeCookie] = useCookies(["login"]);
 
   useEffect(() => {
-    if(cookies.login !== undefined){
+    if (cookies.login !== undefined) {
       const { token, userInfo, isWorker } = cookies.login;
       setToken(token);
       setUserInfo(userInfo);
       setIsWorker(isWorker);
     }
     console.log("ReRendering...");
-    console.log("리덴더링. 토큰 출력 테스트", token)
+    console.log("리덴더링. 토큰 출력 테스트", token);
   }, [cookies, token, isWorker]);
 
   return (
@@ -88,14 +88,17 @@ function App() {
             />
           }
         />
-        <Route path="/workerprofile" element={<WorkerProfile />} />
+        <Route
+          path="/workerprofile"
+          element={<WorkerProfile userInfo={userInfo} token={token} />}
+        />
         <Route path="/orderinfo" element={<OrderInfo />} />
         <Route
           path="/createorder"
           element={<CreateOrder userInfo={userInfo} token={token} />}
         />
         <Route
-          path="/directeorder"
+          path="/directOrder"
           element={<DirectOrder userInfo={userInfo} token={token} />}
         />
 

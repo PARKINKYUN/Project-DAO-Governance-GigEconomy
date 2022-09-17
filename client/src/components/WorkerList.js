@@ -4,31 +4,12 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "./Typography";
 import { CardActionArea } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+import Link from "@mui/material/Link";
 
-export default function WorkerList({ worker, userInfo, token }) {
-  const navigate = useNavigate();
-
-  React.useEffect(() => {
-  }, []);
-
-  const onClick = () => {
-    navigate("/workerprofile", {
-      state: {
-        worker: worker,
-        userInfo: userInfo,
-        token: token,
-      },
-    });
-  };
-
+export default function WorkerList({ worker }) {
   return (
-    // <Link
-    //   component={RouterLink}
-    //   state={{ worker, token, userInfo }}
-    //   to="/workerprofile"
-    // >
-    <div onClick={onClick}>
+    <Link component={RouterLink} state={{ worker }} to="/workerprofile">
       <Card sx={{ maxWidth: 345 }} style={{ marginBottom: "20px" }}>
         <CardActionArea>
           <CardMedia
@@ -44,7 +25,6 @@ export default function WorkerList({ worker, userInfo, token }) {
           </CardContent>
         </CardActionArea>
       </Card>
-    </div>
-    //</Link>
+    </Link>
   );
 }

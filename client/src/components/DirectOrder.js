@@ -13,9 +13,11 @@ import withRoot from "../withRoot";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
-function DirectOrder(userInfo) {
+function DirectOrder({ userInfo, token }) {
+  console.log(userInfo);
   const [sent, setSent] = useState(false);
   const location = useLocation();
+  const { worker_id } = location.state.worker;
 
   const navigate = useNavigate();
 
@@ -24,39 +26,23 @@ function DirectOrder(userInfo) {
     const { title, deadline, compensation, content } = values;
 
     try {
-      if (location.state.workerId === null) {
-        const res = await axios.post("http://localhost:4000/orders/new_order", {
+      const res = await axios.post(
+        `http://localhost:4000/orders/direct_order/${worker_id}`,
+        {
           title: title,
           client_id: userInfo.client_id,
+          worker_id: location.state.workerId,
           deadline: deadline,
           compensation: compensation,
           content: content,
-        });
-        if (res.status === 200) {
-          window.alert("새로운 오더를 성공적으로 작성했습니다.");
-          navigate(-1);
-        } else {
-          console.log("오더작성 실패");
-        }
-      }
-      if (location.state.workerId !== null) {
-        const res = await axios.post(
-          `http://localhost:4000/orders/direct_order/${location.state.workerId}`,
-          {
-            title: title,
-            client_id: userInfo.client_id,
-            worker_id: location.state.workerId,
-            deadline: deadline,
-            compensation: compensation,
-            content: content,
-          }
-        );
-        if (res.status === 200) {
-          window.alert("새로운 오더를 성공적으로 작성했습니다.");
-          navigate(-1);
-        } else {
-          console.log("오더작성 실패");
-        }
+        },
+        { headers: { authorization: token } }
+      );
+      if (res.status === 200) {
+        window.alert("새로운 오더를 성공적으로 작성했습니다.");
+        navigate(-1);
+      } else {
+        console.log("오더작성 실패");
       }
     } catch (err) {
       console.error(err);
@@ -65,7 +51,6 @@ function DirectOrder(userInfo) {
 
   return (
     <React.Fragment>
-      <Header />
       <OrderForm>
         <React.Fragment>
           <Typography variant="h3" gutterBottom marked="center" align="center">

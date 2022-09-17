@@ -111,6 +111,7 @@ module.exports = {
       if (!userInfo) {
         return res.status(404).send({ data: null, message: "Invalid token" });
       }
+
       const _order = await order.postOrder(req.body);
       if (!_order) {
         return res.status(400).message("새로운 order를 생성하지 못했습니다.");
@@ -129,14 +130,25 @@ module.exports = {
   // 워커에게 직접 의뢰하기
   direct_order: async (req, res) => {
     try {
-      const clientId = getClientId(req, res);
-      const order = await order.postOrder(req.params.id, req.body);
+      const accessToken = req.headers.authorization;
+      console.log(accessToken);
+      if (!accessToken) {
+        return res.status(404).send({ data: null, message: "Not autorized" });
+      }
+
+      const token = accessToken.split(" ")[0];
+      const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+      if (!userInfo) {
+        return res.status(404).send({ data: null, message: "Invalid token" });
+      }
+
+      const _order = await order.directOrder(req.params.id, req.body);
       if (!order) {
         return res.status(400).message("새로운 order를 생성하지 못했습니다.");
       }
 
       return res.status(200).send({
-        data: order._id,
+        data: _order._id,
         message: "order가 정상적으로 등록되었습니다.",
       });
     } catch (err) {
