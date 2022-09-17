@@ -42,9 +42,7 @@ module.exports = {
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {
-        return res
-          .status(404)
-          .send({ data: null, message: "Not autorized" });
+        return res.status(404).send({ data: null, message: "Not autorized" });
       } else {
         const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
@@ -55,7 +53,9 @@ module.exports = {
           const orderInfo = await order.getOrderByClient(userInfo.client_id);
           console.log("client_id로 오더 정보 조회 완료", orderInfo);
 
-          return res.status(200).send({ data: orderInfo, message: "Searching success" })
+          return res
+            .status(200)
+            .send({ data: orderInfo, message: "Searching success" });
         }
       }
     } catch (err) {
@@ -73,9 +73,7 @@ module.exports = {
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {
-        return res
-          .status(404)
-          .send({ data: null, message: "Not autorized" });
+        return res.status(404).send({ data: null, message: "Not autorized" });
       } else {
         const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
@@ -86,7 +84,9 @@ module.exports = {
           const orderInfo = await order.getOrderByWorker(userInfo.worker_id);
           console.log("worker_id로 오더 정보 조회 완료", orderInfo);
 
-          return res.status(200).send({ data: orderInfo, message: "Searching success" })
+          return res
+            .status(200)
+            .send({ data: orderInfo, message: "Searching success" });
         }
       }
     } catch (err) {
@@ -101,7 +101,16 @@ module.exports = {
   // 새로운 오더 생성
   new_order: async (req, res) => {
     try {
-      const clientId = getClientId(req, res);
+      const accessToken = req.headers.authorization;
+      if (!accessToken) {
+        return res.status(404).send({ data: null, message: "Not autorized" });
+      }
+
+      const token = accessToken.split(" ")[0];
+      const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+      if (!userInfo) {
+        return res.status(404).send({ data: null, message: "Invalid token" });
+      }
       const _order = await order.postOrder(req.body);
       if (!_order) {
         return res.status(400).message("새로운 order를 생성하지 못했습니다.");
@@ -297,16 +306,16 @@ module.exports = {
   // client가 order에 대한 평가를 수행했는지 여부 확인
   isEstimated: async (req, res) => {
     try {
-      return await isEstimated(req.params.order_id)
+      return await isEstimated(req.params.order_id);
     } catch (err) {
       console.error(err);
     }
   },
-  
+
   // worker가 order에 대한 review를 작성했는지 여부 확인
   isReviewed: async (req, res) => {
     try {
-      return await this.isReviewed(req.params.order_id)
+      return await this.isReviewed(req.params.order_id);
     } catch (err) {
       console.error(err);
     }

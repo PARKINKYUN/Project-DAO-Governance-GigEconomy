@@ -29,11 +29,7 @@ function FindOrder() {
       <div className={styles.orderlist}>
         <div className={styles.header}>
           <div className={styles.text}>Order List</div>
-          <Link
-            component={RouterLink}
-            to="/createorder"
-            state={{ workerId: null }}
-          >
+          <Link component={RouterLink} to="/createorder">
             New Order
           </Link>
         </div>

@@ -17,50 +17,29 @@ function CreateOrder({ userInfo, token }) {
   const [sent, setSent] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  console.log(userInfo);
 
   const handleSubmit = async (values) => {
     setSent(true);
     const { title, deadline, compensation, content } = values;
 
     try {
-      if (location.state.workerId === null) {
-        const res = await axios.post(
-          "http://localhost:4000/orders/new_order",
-          {
-            title: title,
-            client_id: userInfo.client_id,
-            deadline: deadline,
-            compensation: compensation,
-            content: content,
-          },
-          { headers: { authorization: token } }
-        );
-        if (res.status === 200) {
-          window.alert("새로운 오더를 성공적으로 작성했습니다.");
-          navigate(-1);
-        } else {
-          console.log("오더작성 실패");
-        }
-      }
-      if (location.state.workerId !== null) {
-        const res = await axios.post(
-          `http://localhost:4000/orders/direct_order/${location.state.workerId}`,
-          {
-            title: title,
-            client_id: userInfo.client_id,
-            worker_id: location.state.workerId,
-            deadline: deadline,
-            compensation: compensation,
-            content: content,
-          },
-          { headers: { authorization: userInfo.token } }
-        );
-        if (res.status === 200) {
-          window.alert("새로운 오더를 성공적으로 작성했습니다.");
-          navigate(-1);
-        } else {
-          console.log("오더작성 실패");
-        }
+      const res = await axios.post(
+        "http://localhost:4000/orders/new_order",
+        {
+          title: title,
+          client_id: userInfo.client_id,
+          deadline: deadline,
+          compensation: compensation,
+          content: content,
+        },
+        { headers: { authorization: token } }
+      );
+      if (res.status === 200) {
+        window.alert("새로운 오더를 성공적으로 작성했습니다.");
+        navigate(-1);
+      } else {
+        console.log("오더작성 실패");
       }
     } catch (err) {
       console.error(err);
