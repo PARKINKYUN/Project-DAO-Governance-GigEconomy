@@ -9,18 +9,17 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-function WorkerProfile() {
+function WorkerProfile({ token, userInfo }) {
   const [tap, setTap] = useState(false);
-  
+
   const location = useLocation();
-  const { worker, userInfo, token } = location.state;
+  const { worker } = location.state;
 
   const onClick = () => {
     setTap((hidden) => !hidden);
   };
 
-  useEffect(() => {   
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <div className={styles.main}>
@@ -30,11 +29,7 @@ function WorkerProfile() {
           <div className={styles.name}>name: {worker.nickname}</div>
           <div className={styles.toolBox}>
             <div>
-              <Link
-                component={RouterLink}
-                to="/directeorder"
-                state={{ workerId: null }}
-              >
+              <Link component={RouterLink} to="/directOrder" state={{ worker }}>
                 Direct Order
               </Link>
             </div>
