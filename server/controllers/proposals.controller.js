@@ -1,8 +1,9 @@
 const proposalModel = require("../models/proposal.model");
+const jwt = require("jsonwebtoken");
 
 module.exports = {
   // pending 상태 제안 리스트
-  getPendingProposals: async () => {
+  getProposals: async (req, res) => {
     try {
       const proposals = await proposalModel.getProposals("pending");
       if (!proposals) {
@@ -52,21 +53,44 @@ module.exports = {
   },
 
   // 제안 올리기
-  postProposal: async () => {
+  postProposal: async (req, res) => {
     try {
-      modCheck(res, req);
+      const accessToken = req.headers.authorization;
 
-      const proposal = await proposalModel.newProposal(req.body);
-      if (!proposal) {
-        return res.status(400).message("제안을 올리지 못했습니다.");
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const latestProposal = await proposalModel.getLatestProposalId();
+          console.log("=========번호=========", latestProposal)
+          const proposal_number = latestProposal[0].proposal_id;
+          console.log("==================")
+
+          const newProposal = {
+            proposal_id: proposal_number + 1,
+            title: req.body.title,
+            content: req.body.content,
+            worker_id: userInfo.worker_id,
+          };
+          const inputData = await proposalModel.saveProposal(newProposal)
+          console.log("Wow! 새로운 제안이 저장되었습니다.", inputData);
+
+          return res.status(200).send({ data: inputData, message: "Created new proposal" })
+        }
       }
-
-      return res
-        .status(200)
-        .send({ data: proposal._id, message: "제안을 올렸습니다." });
     } catch (err) {
-      console.error(err);
-      return res.status(400);
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't create new proposal",
+      });
     }
   },
 
