@@ -8,7 +8,7 @@ import styles from "../css/FindOrder.module.css";
 import Link from "@mui/material/Link";
 import { Grid } from "@mui/material";
 
-function FindOrder() {
+function FindOrder( token, userInfo, isWorker ) {
   const [orders, setOrders] = useState([]);
 
   const getOrders = async () =>
@@ -39,25 +39,15 @@ function FindOrder() {
             spacing={{ xs: 2, md: 3 }}
             columns={{ xs: 4, sm: 8, md: 12 }}
           >
-            {orders.map((order, idx) => {
-              const {
-                _id,
-                client_id,
-                title,
-                category,
-                deadline,
-                compensation,
-              } = order;
+            {orders.map((order) => {
               return (
-                <Grid item xs={2} sm={4} md={4} key={idx}>
+                <Grid item xs={2} sm={4} md={4} key={order._id}>
                   <OrderCard
-                    id={_id}
-                    client_id={client_id}
-                    title={title}
-                    category={category}
-                    deadline={deadline}
-                    compensation={compensation}
-                    key={idx}
+                    order={order}
+                    key={order._id}
+                    token={token}
+                    userInfo={userInfo}
+                    isWorker={isWorker}
                   />
                 </Grid>
               );

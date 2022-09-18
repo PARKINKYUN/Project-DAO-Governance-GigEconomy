@@ -47,7 +47,10 @@ module.exports = {
             nickname: workerInfo[0].nickname,
             address: workerInfo[0].address,
             image: workerInfo[0].image,
+            pending: workerInfo[0].pending,
             mod_authority: workerInfo[0].mod_authority,
+            balance: workerInfo[0].balance, ////////////////// 컨트랙트 배포후 수정해야함
+            gig_score: workerInfo[0].gig_score, //////////////// 여기도 수정해야함
           };
 
           console.log("workerData", workerData);
@@ -173,11 +176,13 @@ module.exports = {
         console.log("DB 업데이트된 Token의 양: ", updateBalance.balance);
 
         const workerInfo = {
-          worker_id: workerData.worker_id,
-          nickname: workerData.nickname,
-          address: workerData.address,
-          balance: balance,
-          image: workerData.image,
+          worker_id: workerInfo[0].worker_id,
+          account_type: workerInfo[0].account_type,
+          nickname: workerInfo[0].nickname,
+          address: workerInfo[0].address,
+          image: workerInfo[0].image,
+          pending: workerInfo[0].pending,
+          mod_authority: workerInfo[0].mod_authority,
         };
 
         return res
@@ -256,18 +261,20 @@ module.exports = {
   // 워커의 pending 상태 전환(true || false)
   toggleStatus: async (req, res) => {
     try {
+      // 현재 상태가 pending(false) 이면 true 전환하면서 토큰을 지불해야함. 토큰 환불은 하지 않음.
+      if(!req.body.currentStatus) {
+        // 
+        // web3 토큰 지불 로직이 들어가야함
+        //
+        //
+
+      }
       const result = await workerModel.togglePending(req.body.workerId);
-      if (!worker) {
+      if (!result) {
         return res.status(400).send({data: null, message: "Worker 정보가 없습니다."});
       }
       
-      return res.status(200).send({data: , message: "Worker 정보가 없습니다."});message("pending 리스트에 등록되었습니다.");
-      }
-
-      if (worker.pending === false) {
-        // 블록체인과 연결하여 token을 deposit하는 등의 로직
-        return res.status(200).send({data: null, message: "Worker 정보가 없습니다."});message("더 이상 오더를 받지 않습니다.");
-      }
+      return res.status(200).send({data: result, message: "pending 리스트에 등록되었습니다."});
     } catch (err) {
       console.error(err);
       res.status(400);

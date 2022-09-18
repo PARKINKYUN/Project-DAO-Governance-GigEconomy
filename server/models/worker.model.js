@@ -85,22 +85,23 @@ worker.statics.getWorkerInfoById = async function (worker_id) {
 
 // pending 상태의 워커 리스트
 worker.statics.getPendingWorker = async function () {
-  return await this.find();
+  return await this.find({pending: true});
 };
 
 // pending 상태 변경(true || false)
 worker.statics.togglePending = async function (worker_id) {
   const worker = await this.find({ worker_id: worker_id });
+
   if (worker[0].pending === false) {
     return await this.findOneAndUpdate(
-      { worker_id: worker_id },
+      { worker_id: worker[0].worker_id },
       { pending: true },
       { new: true }
     );
   } else if (worker[0].pending === true) {
     return await this.findOneAndUpdate(
-      { worker_id: worker_id },
-      { pending: true },
+      { worker_id: worker[0].worker_id },
+      { pending: false },
       { new: true }
     );
   }

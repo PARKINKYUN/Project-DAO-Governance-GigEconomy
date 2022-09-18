@@ -7,29 +7,48 @@ import styles from "../css/OrderInfo.module.css";
 import { Grid } from "@mui/material";
 import Typography from "../components/Typography";
 import { useLocation } from "react-router-dom";
+import NewTapForm from "../components/NewTapForm";
 
-function OrderInfo({ isWorker }) {
-  const [order, setOrder] = useState("");
+function OrderInfo() {
+  const [orderItem, setOrderItem] = useState({});
   const [orderStatus, setOrderStatus] = useState("");
   const [offerIdx, setOfferIdx] = useState(null);
+  const [taps, setTaps] = useState([]);
+  const [flag, setFlag] = useState(false);
 
   const location = useLocation();
-  const { id } = location.state;
+  const { order, token, userInfo, isWorker } = location.state;
 
   useEffect(() => {
     getOrder();
+
+    // taps 리스트 받아오기. order_id로 가져와서 해당 order에 접근한 worker가 작성한 탭만 노출
+    const getTaps = async () => {
+      const res = await axios.get(`http://localhost:4000/taps/taplistbyorder/${order._id}`, { headers: {authorization: token} });
+      const tapsInfo = res.data.data;
+      if(tapsInfo !== undefined){
+        const tapByWorker = tapsInfo.filter((tap) => tap.worker_id === userInfo.worker_id);
+        setTaps(tapByWorker);
+      }
+    }
+    
   }, [orderStatus, offerIdx]);
 
   const chooseOffer = (e) => {
     setOfferIdx(e.target.index);
   };
 
+  // flag 전환
+  const onClick = () => {
+    setFlag((hidden) => !hidden);
+  };
+
   // 오더 정보 불러오기
   const getOrder = async () =>
     await axios
-      .get(`http://localhost:4000/orders/order_info/${id}`)
+      .get(`http://localhost:4000/orders/order_info/${order._id}`)
       .then((res) => {
-        setOrder(res.data.data);
+        setOrderItem(res.data.data);
       })
       .catch((err) => console.error(err));
 
@@ -52,11 +71,11 @@ function OrderInfo({ isWorker }) {
     if (isWorker === true) return console.log("클라이언트만 가능합니다.");
     offerIdx !== null
       ? await axios
-          .patch(`http://localhost:4000/order_info/${id}/client_start`, {
-            offer_idx: offerIdx,
-          })
-          .then(() => setOrderStatus("ongoing"))
-          .catch((err) => console.error(err))
+        .patch(`http://localhost:4000/order_info/${order._id}/client_start`, {
+          offer_idx: offerIdx,
+        })
+        .then(() => setOrderStatus("ongoing"))
+        .catch((err) => console.error(err))
       : console.log("오퍼를 선택해주세요.");
   };
 
@@ -64,7 +83,7 @@ function OrderInfo({ isWorker }) {
   const workerStartOrder = async () => {
     if (isWorker === false) return console.log("워커만 가능합니다.");
     await axios
-      .patch(`http://localhost:4000/order_info/${id}/worker_start`)
+      .patch(`http://localhost:4000/order_info/${order._id}/worker_start`)
       .then(() => setOrderStatus("ongoing"))
       .catch((err) => console.error(err));
   };
@@ -87,7 +106,7 @@ function OrderInfo({ isWorker }) {
   const finishOrder = async () => {
     if (isWorker === true) return console.log("클라이언트만 가능합니다.");
     await axios
-      .patch(`http://localhost:4000/order_info/${id}/finish`)
+      .patch(`http://localhost:4000/order_info/${order._id}/finish`)
       .then(() => setOrderStatus("finished"))
       .catch((err) => console.error(err));
   };
@@ -96,7 +115,7 @@ function OrderInfo({ isWorker }) {
     if (isWorker === false) {
       return (
         <div>
-          {order.offers.map((offer, idx) => {
+          {orderItem.offers.map((offer, idx) => {
             <OfferCard
               index={idx}
               worker={offer.worker}
@@ -112,7 +131,7 @@ function OrderInfo({ isWorker }) {
     if (isWorker === true) {
       return (
         <div>
-          {order.offers.map((offer) => {
+          {orderItem.offers.map((offer) => {
             <div>
               <OfferCard
                 worker={offer.worker}
@@ -143,7 +162,7 @@ function OrderInfo({ isWorker }) {
     }
   };
   const handlePendingOrder = () => {
-    if (order.direct_order === true) {
+    if (orderItem.direct_order === true) {
       if (isWorker === false) {
         return (
           <div>{/* <button onClick={removeOrder}>Remove Order</button> */}</div>
@@ -157,7 +176,7 @@ function OrderInfo({ isWorker }) {
         );
       }
     }
-    if (order.direct_order === false) {
+    if (orderItem.direct_order === false) {
       if (isWorker === false) {
         return (
           <div>
@@ -186,27 +205,41 @@ function OrderInfo({ isWorker }) {
     <div className={styles.main}>
       <div className={styles.order}>
         <div className={styles.orderBox}>
-          <Grid
-            container
-            direction="column"
-            justifyContent="center"
-            alignItems="stretch"
-            columnSpacing={{ xs: 1 }}
-          >
-            <Grid item>
-              <Typography variant="body2" color="text.secondary">
-                {order.title}
-              </Typography>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
               <div className={styles.name}>
-                <h4>Client: {order.client_id}</h4>
-                <h4>Worker: {order.worker_id}</h4>
-                <h4>Deadline: {order.deadline}</h4>
-                <h4>compensation: {order.compensation}</h4>
-                <h4>Status: {order.status}</h4>
+                <Typography variant="body2" color="text.secondary">
+                  <h2>{orderItem.title}</h2>
+                </Typography>
               </div>
             </Grid>
-
-            {order.direct_order === true && order.status === "pending" ? (
+            <Grid item xs={3}>
+              <div className={styles.name}>
+                <Typography variant="body2" color="text.secondary">
+                  <h4>Client:</h4>
+                  <h4>Worker:</h4>
+                  <h4>Deadline:</h4>
+                  <h4>compensation:</h4>
+                  <h4>Status:</h4>
+                  <h4>Content</h4>
+                </Typography>
+              </div>
+            </Grid>
+            <Grid item xs={9}>
+              <div className={styles.name}>
+                <Typography variant="body2" color="text.secondary">
+                  <h4>{orderItem.client_id}</h4>
+                  <h4>{orderItem.worker_id}</h4>
+                  <h4>{orderItem.deadline}</h4>
+                  <h4>{orderItem.compensation}</h4>
+                  <h4>{orderItem.status}</h4>
+                  <h4>{orderItem.content}</h4>
+                </Typography>
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container spacing={3}>
+            {orderItem.direct_order === true && orderItem.status === "pending" ? (
               <Grid item>
                 <Typography variant="body2" color="text.secondary">
                   Offers
@@ -220,17 +253,27 @@ function OrderInfo({ isWorker }) {
                 orderController
               </Typography>
               <div>
-                {order.status === "pending" ? handlePendingOrder() : null}
-                {order.status === "ongoing" || order.status === "extended"
+                {orderItem.status === "pending" ? handlePendingOrder() : null}
+                {orderItem.status === "ongoing" || orderItem.status === "extended"
                   ? handleOngoingOrder()
                   : null}
               </div>
             </Grid>
-
             <Grid item>
-              {/* <div>
-                <TapsList />
-              </div> */}
+              <div>
+                {flag ? (
+                  <NewTapForm
+                    token={token}
+                    writer={userInfo.worker_id}
+                    client_id={orderItem.client_id}
+                    worker_id={userInfo.worker_id}
+                    order={orderItem._id}
+                  />
+                ) : null}
+              </div>
+              <div>
+                <TapsList token={token} userInfo={userInfo} taps={taps} />
+              </div>
             </Grid>
           </Grid>
         </div>

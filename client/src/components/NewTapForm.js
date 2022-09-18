@@ -1,22 +1,17 @@
 import styles from "../css/Tap.module.css";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 
 // ****** props는 이대로 유지합니다. 재사용을 위해 수정하지 마세요 ******
 // writer 는 접속중인 사용자의 아이디 값을 받습니다.
 // order_id는 연결된 order가 있으면 넣고, 아니면 props를 안줘도 됩니다.
-function NewTapForm({ token, writer, client_id, worker_id, order_id }) {
+const NewTapForm = ({ token, writer, client_id, worker_id, order_id }) => {
   const [newTapContent, setNewTapContent] = useState("");
 
-  // let reciever;
-  // let newTap;
-  // useEffect(()=>{
-  //   if(writer !== client_id){
-  //     reciever = client_id;
-  //   } else if(writer !== worker_id) {
-  //     reciever = worker_id;
-  //   }
-  // }, [])
+  const navigate = useNavigate();
 
   const onTextChange = (e) => {
     setNewTapContent(e.target.value);
@@ -35,25 +30,39 @@ function NewTapForm({ token, writer, client_id, worker_id, order_id }) {
         content: newTapContent,
         order_id: order_id,
       };
-      
-      const res = await axios.post('http://localhost:4000/taps/newtap', newTap, {headers: {authorization: token}});
-      console.log(res.data.message)
+
+      const res = await axios.post(
+        "http://localhost:4000/taps/newtap",
+        newTap,
+        { headers: { authorization: token } }
+      );
+
       setNewTapContent("");
+      window.alert("똑똑~! 상대에게 새로운 메시지를 전송했습니다!")
+      navigate("/workerInfo", { replace: true });
     } catch (err) {
       console.error(err);
+      window.alert("Oops!!! 메시지 전송을 실패했습니다!!!")
+      navigate("/");
     }
   };
 
   return (
-    <form className={styles.writingArea} onSubmit={onSubmit}>
-      <input
-        className={styles.newTapContent}
-        value={newTapContent}
-        onChange={onTextChange}
-        placeholder=""
-      />
-      <button className={styles.submitNewTap}>submit</button>
-    </form>
+    <li className={styles.taps}>
+      <Grid container spacing={2} alignItems="flex-end">
+        <Grid item xs={10}>
+          <input
+            className={styles.newTapContent}
+            value={newTapContent}
+            onChange={onTextChange}
+            placeholder="여기에 메시지를 남겨주세요."
+          />
+        </Grid>
+        <Grid item xs={2} >
+          <Button variant="contained" size="small" onClick={onSubmit}>Submit</Button>
+        </Grid>
+      </Grid>
+    </li>
   );
 }
 

@@ -13,7 +13,7 @@ import withRoot from "../withRoot";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
-function CreateOrder({ userInfo, token }) {
+function CreateProposal({ userInfo, token }) {
   const [sent, setSent] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,29 +23,46 @@ function CreateOrder({ userInfo, token }) {
     const { title, deadline, compensation, content } = values;
 
     try {
-      const res = await axios.post(
-        "http://localhost:4000/orders/new_order",
-        {
-          title: title,
-          client_id: userInfo.client_id,
-          deadline: deadline,
-          compensation: compensation,
-          content: content,
-        },
-        { headers: { authorization: token } }
-      );
-
-      if (res.status === 200) {
-        window.alert("새로운 오더를 성공적으로 작성했습니다.");
-        navigate("/clientInfo");
-      } else {
-        console.log("오더작성 실패");
-        window.alert("새로운 Order 등록이 실패하였습니다. 다시 등록해주세요.")
-        navigate("/clientInfo");
+      if (location.state.workerId === null) {
+        const res = await axios.post(
+          "http://localhost:4000/orders/new_order",
+          {
+            title: title,
+            client_id: userInfo.client_id,
+            deadline: deadline,
+            compensation: compensation,
+            content: content,
+          },
+          { headers: { authorization: token } }
+        );
+        if (res.status === 200) {
+          window.alert("새로운 오더를 성공적으로 작성했습니다.");
+          navigate(-1);
+        } else {
+          console.log("오더작성 실패");
+        }
+      }
+      if (location.state.workerId !== null) {
+        const res = await axios.post(
+          `http://localhost:4000/orders/direct_order/${location.state.workerId}`,
+          {
+            title: title,
+            client_id: userInfo.client_id,
+            worker_id: location.state.workerId,
+            deadline: deadline,
+            compensation: compensation,
+            content: content,
+          },
+          { headers: { authorization: userInfo.token } }
+        );
+        if (res.status === 200) {
+          window.alert("새로운 오더를 성공적으로 작성했습니다.");
+          navigate(-1);
+        } else {
+          console.log("오더작성 실패");
+        }
       }
     } catch (err) {
-      window.alert("새로운 Order 등록이 실패하였습니다. 다시 등록해주세요.")
-      navigate("/clientInfo")
       console.error(err);
     }
   };
@@ -55,7 +72,7 @@ function CreateOrder({ userInfo, token }) {
       <OrderForm>
         <React.Fragment>
           <Typography variant="h3" gutterBottom marked="center" align="center">
-            New Order
+            Create Proposal
           </Typography>
         </React.Fragment>
         <Form onSubmit={handleSubmit} subscription={{ submitting: true }}>
@@ -76,30 +93,12 @@ function CreateOrder({ userInfo, token }) {
                 required
                 size="large"
               />
+
               <Field
                 component={RFTextField}
                 disabled={submitting || sent}
                 fullWidth
-                label="Deadline"
-                margin="normal"
-                name="deadline"
-                required
-                size="large"
-              />
-              <Field
-                component={RFTextField}
-                disabled={submitting || sent}
-                fullWidth
-                label="Compensation"
-                margin="normal"
-                name="compensation"
-                required
-                size="large"
-              />
-              <Field
-                component={RFTextField}
-                disabled={submitting || sent}
-                fullWidth
+                multiline
                 label="Content"
                 margin="normal"
                 name="content"
@@ -131,4 +130,4 @@ function CreateOrder({ userInfo, token }) {
   );
 }
 
-export default withRoot(CreateOrder);
+export default withRoot(CreateProposal);

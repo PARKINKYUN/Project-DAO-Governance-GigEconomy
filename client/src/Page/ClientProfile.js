@@ -4,8 +4,8 @@ import Profile from "../components/Profile";
 import TapsList from "../components/TapsList";
 
 
-// client에 맞게 내용 모두 수정해야함
-//
+// 
+// 사용안함...삭제할 페이지
 //
 //
 function ClientProfile() {

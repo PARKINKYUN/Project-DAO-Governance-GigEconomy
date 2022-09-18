@@ -79,8 +79,13 @@ const order = new mongoose.Schema({
 
 // pending 상태인 모든 order 조회
 order.statics.getAllOrders = async function () {
-  return await this.find({ status: "pending" });
+  return await this.find({ status: "pending", direct_order: "false" });
 };
+
+// order_id로 오더 정보 조회
+order.statics.getOrderById = async function (id) {
+  return await this.find({_id: id});
+}
 
 // client_id로 오더 정보 조회
 order.statics.getOrderByClient = async function (client_id) {

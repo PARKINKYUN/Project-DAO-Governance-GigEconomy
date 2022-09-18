@@ -5,7 +5,7 @@ import TapsList from "../components/TapsList";
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import Order from "../components/OrderCard";
+import OrderCard from "../components/OrderCard";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
     const [pending, setPending] = useState([]);
     const [ongoing, setOngoing] = useState([]);
     const [finished, setFinished] = useState([]);
+    const [taps, setTaps] = useState([]);
 
     const navigate = useNavigate();
 
@@ -22,6 +23,16 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
         // 서버로 유저의 토큰 balance 구해오는 함수 넣어야함
 
         getOrdersList();
+
+        const getTaps = async () => {
+            const res = await axios.get('http://localhost:4000/taps/taplistbyclient', { headers: {authorization: token} });
+            const tapsInfo = res.data.data;
+            console.log("client tap list", tapsInfo)
+            if(tapsInfo !== undefined){
+              setTaps(tapsInfo);
+            }
+        }
+        getTaps();
     }, [token, userInfo])
 
     const getOrdersList = async () => {
@@ -97,24 +108,54 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
                 </div>
                 <div className={styles.reviewBox}>
                     <h3>Order 대기</h3>
-                    {pending.map((order, idx) => {
-                        <Order key={idx} _id={order._id} client_id={order.client_id} title={order.title} deadline={order.deadline} compensation={order.compensation} />
+                    {pending.map((order) => {
+                        return (
+                            <Grid item xs={2} sm={4} md={4} key={order._id}>
+                              <OrderCard
+                                order={order}
+                                key={order._id}
+                                token={token}
+                                userInfo={userInfo}
+                                isWorker={false}
+                              />
+                            </Grid>
+                          );
                     })}
                 </div>
                 <div className={styles.reviewBox}>
                     <h3>Order 작업 중</h3>
-                    {ongoing.map((order, idx) => {
-                        <Order key={idx} _id={order._id} client_id={order.client_id} title={order.title} deadline={order.deadline} compensation={order.compensation} />
+                    {ongoing.map((order) => {
+                                      return (
+                                        <Grid item xs={2} sm={4} md={4} key={order._id}>
+                                          <OrderCard
+                                            order={order}
+                                            key={order._id}
+                                            token={token}
+                                            userInfo={userInfo}
+                                            isWorker={false}
+                                          />
+                                        </Grid>
+                                      );
                     })}
                 </div>
                 <div className={styles.reviewBox}>
                     <h3>Order 종료</h3>
-                    {finished.map((order, idx) => {
-                        <Order key={idx} _id={order._id} client_id={order.client_id} title={order.title} deadline={order.deadline} compensation={order.compensation} />
+                    {finished.map((order) => {
+                                      return (
+                                        <Grid item xs={2} sm={4} md={4} key={order._id}>
+                                          <OrderCard
+                                            order={order}
+                                            key={order._id}
+                                            token={token}
+                                            userInfo={userInfo}
+                                            isWorker={false}
+                                          />
+                                        </Grid>
+                                      );
                     })}
                 </div>
                 <div>
-                    <TapsList token={token} userInfo={userInfo} />
+                    <TapsList token={token} userInfo={userInfo} taps={taps} />
                 </div>
             </div>
         </div>

@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const estimate = new mongoose.Schema({
   estimate_id: {
     type: Number,
+    unique: true,
   },
   worker_id: {
     type: String,
@@ -19,6 +20,7 @@ const estimate = new mongoose.Schema({
   },
   score: {
     type: Number,
+    required: true,
   },
   isTry: {
     type: Boolean,
