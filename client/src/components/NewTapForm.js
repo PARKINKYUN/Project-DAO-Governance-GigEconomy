@@ -45,6 +45,7 @@ const NewTapForm = ({ token, writer, client_id, worker_id, order_id }) => {
       window.alert("Oops!!! 메시지 전송을 실패했습니다!!!")
       navigate("/");
     }
+    window.location.reload();
   };
 
   return (
