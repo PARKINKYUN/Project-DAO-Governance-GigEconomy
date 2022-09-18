@@ -27,9 +27,9 @@ module.exports = {
         return res.status(400).message("order를 불러오지 못했습니다.");
       }
 
-      console.log("order를 불러왔습니다.");
+      console.log("order를 불러왔습니다.", _order[0]);
 
-      return res.status(200).send({ data: _order });
+      return res.status(200).send({ data: _order[0] });
     } catch (err) {
       console.error(err);
       res.status(400);

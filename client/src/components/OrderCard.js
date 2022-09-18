@@ -7,31 +7,24 @@ import { CardActionArea } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import Link from "@mui/material/Link";
 
-export default function OrderCard({
-  id,
-  client_id,
-  title,
-  category,
-  deadline,
-  compensation,
-}) {
+export default function OrderCard({ order, token, userInfo, isWorker }) {
   return (
-    <Link component={RouterLink} to="/OrderInfo" state={{ id }}>
+    <Link component={RouterLink} to="/OrderInfo" state={{ order, token, userInfo, isWorker}}>
       <Card sx={{ maxWidth: 345 }} style={{ marginBottom: "20px" }}>
         <CardActionArea>
           {/* <CardMedia component="img" height="140" src={src} alt="" /> */}
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
-              <b>{title}</b>
+              <b>{order.title}</b>
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Client: {client_id}
+              Client: {order.client_id}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Deadline: {deadline}
+              Deadline: {order.deadline}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Compensation: {compensation}
+              Compensation: {order.compensation}
             </Typography>
           </CardContent>
         </CardActionArea>

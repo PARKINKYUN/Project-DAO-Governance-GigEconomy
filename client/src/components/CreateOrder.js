@@ -17,7 +17,6 @@ function CreateOrder({ userInfo, token }) {
   const [sent, setSent] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  console.log(userInfo);
 
   const handleSubmit = async (values) => {
     setSent(true);
@@ -35,13 +34,18 @@ function CreateOrder({ userInfo, token }) {
         },
         { headers: { authorization: token } }
       );
+
       if (res.status === 200) {
         window.alert("새로운 오더를 성공적으로 작성했습니다.");
-        navigate(-1);
+        navigate("/clientInfo");
       } else {
         console.log("오더작성 실패");
+        window.alert("새로운 Order 등록이 실패하였습니다. 다시 등록해주세요.")
+        navigate("/clientInfo");
       }
     } catch (err) {
+      window.alert("새로운 Order 등록이 실패하였습니다. 다시 등록해주세요.")
+      navigate("/clientInfo")
       console.error(err);
     }
   };

@@ -18,7 +18,6 @@ import ClientInfo from "./Page/ClientInfo";
 import CreateProposal from "./components/CreateProposal";
 import WorkerInfo from "./Page/WorkerInfo";
 import { useCookies } from "react-cookie";
-import axios from "axios";
 
 function App() {
   const [token, setToken] = useState("");
@@ -34,7 +33,7 @@ function App() {
       setIsWorker(isWorker);
     }
     console.log("ReRendering...");
-    console.log("리덴더링. 토큰 출력 테스트", token);
+    console.log("접속자 정보", userInfo);
   }, [cookies, token, isWorker]);
 
   return (
@@ -68,7 +67,7 @@ function App() {
           path="/findworker"
           element={<FindWorker userInfo={userInfo} token={token} />}
         />
-        <Route path="/findorder" element={<FindOrder />} />
+        <Route path="/findorder" element={<FindOrder userInfo={userInfo} token={token} isWorker={isWorker} />} />
         <Route
           path="/clientInfo"
           element={
