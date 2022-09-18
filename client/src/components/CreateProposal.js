@@ -3,8 +3,6 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import { Field, Form, FormSpy } from "react-final-form";
 import Typography from "../components/Typography";
-
-import Header from "../view/Header";
 import OrderForm from "../view/OrderForm";
 import RFTextField from "../form/RFTextField";
 import FormButton from "../form/FormButton";
@@ -13,57 +11,38 @@ import withRoot from "../withRoot";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
-function CreateProposal({ userInfo, token }) {
+function CreateProposal() {
   const [sent, setSent] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
+  const { userInfo, token } = location.state;
+
   const handleSubmit = async (values) => {
     setSent(true);
-    const { title, deadline, compensation, content } = values;
+    const { title, content } = values;
+
+    console.log(title, content, "-=========", userInfo, token)
 
     try {
-      if (location.state.workerId === null) {
-        const res = await axios.post(
-          "http://localhost:4000/orders/new_order",
-          {
-            title: title,
-            client_id: userInfo.client_id,
-            deadline: deadline,
-            compensation: compensation,
-            content: content,
-          },
-          { headers: { authorization: token } }
-        );
-        if (res.status === 200) {
-          window.alert("새로운 오더를 성공적으로 작성했습니다.");
-          navigate(-1);
-        } else {
-          console.log("오더작성 실패");
-        }
+      const res = await axios.post("http://localhost:4000/proposals/newproposal",
+        {
+          title: title,
+          content: content,
+        },
+        { headers: { authorization: token } }
+      );
+      if (res.status === 200) {
+        window.alert("새로운 제안을 성공적으로 작성했습니다.");
+      } else {
+        window.alert("새로운 제안 작성에 실패했습니다. 다시 시도해주세요.")
+        console.log("제안 작성 실패");
       }
-      if (location.state.workerId !== null) {
-        const res = await axios.post(
-          `http://localhost:4000/orders/direct_order/${location.state.workerId}`,
-          {
-            title: title,
-            client_id: userInfo.client_id,
-            worker_id: location.state.workerId,
-            deadline: deadline,
-            compensation: compensation,
-            content: content,
-          },
-          { headers: { authorization: userInfo.token } }
-        );
-        if (res.status === 200) {
-          window.alert("새로운 오더를 성공적으로 작성했습니다.");
-          navigate(-1);
-        } else {
-          console.log("오더작성 실패");
-        }
-      }
+      navigate(-1);
     } catch (err) {
       console.error(err);
+      window.alert("오류가 발생하여 메인페이지로 이동합니다.")
+      navigate("/");
     }
   };
 
