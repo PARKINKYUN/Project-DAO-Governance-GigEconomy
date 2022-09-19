@@ -17,6 +17,7 @@ import { useState, useEffect } from "react";
 import ClientInfo from "./Page/ClientInfo";
 import CreateProposal from "./components/CreateProposal";
 import WorkerInfo from "./Page/WorkerInfo";
+import ReRendering from "./Page/ReRendering";
 import { useCookies } from "react-cookie";
 
 function App() {
@@ -52,63 +53,18 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route
-          path="/signin"
-          element={
-            <SignIn
-              setToken={setToken}
-              setUserInfo={setUserInfo}
-              setIsWorker={setIsWorker}
-              setCookie={setCookie}
-            />
-          }
-        />
-        <Route
-          path="/findworker"
-          element={<FindWorker userInfo={userInfo} token={token} />}
-        />
+        <Route path="/signin" element={<SignIn setToken={setToken} setUserInfo={setUserInfo} setIsWorker={setIsWorker} setCookie={setCookie}/>} />
+        <Route path="/findworker" element={<FindWorker userInfo={userInfo} token={token} />}/>
         <Route path="/findorder" element={<FindOrder userInfo={userInfo} token={token} isWorker={isWorker} />} />
-        <Route
-          path="/clientInfo"
-          element={
-            <ClientInfo
-              token={token}
-              userInfo={userInfo}
-              setUserInfo={setUserInfo}
-            />
-          }
-        />
-        <Route
-          path="/workerInfo"
-          element={
-            <WorkerInfo
-              token={token}
-              userInfo={userInfo}
-              setUserInfo={setUserInfo}
-            />
-          }
-        />
-        <Route
-          path="/workerprofile"
-          element={<WorkerProfile userInfo={userInfo} token={token} />}
-        />
+        <Route path="/clientInfo" element={<ClientInfo token={token} userInfo={userInfo} setUserInfo={setUserInfo} />}/>
+        <Route path="/workerInfo" element={<WorkerInfo token={token} userInfo={userInfo} setUserInfo={setUserInfo} />}/>
+        <Route path="/ReRendering" element={<ReRendering token={token} userInfo={userInfo} setUserInfo={setUserInfo} />}/>
+        <Route path="/workerprofile" element={<WorkerProfile userInfo={userInfo} token={token} />}/>
         <Route path="/orderinfo" element={<OrderInfo />} />
-        <Route
-          path="/createorder"
-          element={<CreateOrder userInfo={userInfo} token={token} />}
-        />
-        <Route
-          path="/directOrder"
-          element={<DirectOrder userInfo={userInfo} token={token} />}
-        />
-        <Route
-          path="/createproposal"
-          element={<CreateProposal userInfo={userInfo} token={token} />}
-        />
-        <Route
-          path="/governance"
-          element={<Governance userInfo={userInfo} token={token} />}
-        />
+        <Route path="/createorder" element={<CreateOrder userInfo={userInfo} token={token} />}/>
+        <Route path="/directOrder" element={<DirectOrder userInfo={userInfo} token={token} />}/>
+        <Route path="/createproposal" element={<CreateProposal userInfo={userInfo} token={token} />} />
+        <Route path="/governance" element={<Governance userInfo={userInfo} token={token} />}/>
       </Routes>
       <div>
         <Footer />

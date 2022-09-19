@@ -44,6 +44,9 @@ const worker = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  introduction: {
+    type: String,
+  },
 });
 
 // 회원가입

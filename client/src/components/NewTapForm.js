@@ -1,7 +1,7 @@
 import styles from "../css/Tap.module.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 
@@ -12,6 +12,12 @@ const NewTapForm = ({ token, writer, client_id, worker_id, order_id }) => {
   const [newTapContent, setNewTapContent] = useState("");
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentLocation = location.pathname;
+
+  useEffect(() =>{
+    
+  }, [])
 
   const onTextChange = (e) => {
     setNewTapContent(e.target.value);
@@ -39,10 +45,7 @@ const NewTapForm = ({ token, writer, client_id, worker_id, order_id }) => {
 
       setNewTapContent("");
       window.alert("똑똑~! 상대에게 새로운 메시지를 전송했습니다!")
-      // 클라이언트나 워커 인포에서 진입할 때는 전혀 다른 페이지로 가게 된다...ㅠㅠ
-      // 클라이언트와 워커 인포에 있는 플래그를 프랍스로 가져와서 분기에 따라 다르게 보여지는 로직을 선택해야 할 듯...
-      // window.location.reload();
-      // navigate(-1);
+      navigate("/ReRendering");
     } catch (err) {
       console.error(err);
       window.alert("Oops!!! 메시지 전송을 실패했습니다!!!")

@@ -26,7 +26,7 @@ const tap = new mongoose.Schema({
     required: true,
   },
   order_id: {
-    type: Number,
+    type: String,
   },
   createdAt: {
     type: Date,

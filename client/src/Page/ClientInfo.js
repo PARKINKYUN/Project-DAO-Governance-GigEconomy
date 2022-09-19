@@ -102,12 +102,15 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
                                 <Button variant="contained" size="medium" onClick={() => navigate('/')}>
                                     회원정보수정
                                 </Button>
+                                <Button variant="contained" size="medium" onClick={() => navigate('/')}>
+                                    토큰 전송
+                                </Button>
                             </Box>
                         </Grid>
                     </Grid>
                 </div>
                 <div className={styles.reviewBox}>
-                    <h3>Order 대기</h3>
+                    <h4>Order 대기</h4>
                     {pending.map((order) => {
                         return (
                             <Grid item xs={2} sm={4} md={4} key={order._id}>
@@ -123,7 +126,7 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
                     })}
                 </div>
                 <div className={styles.reviewBox}>
-                    <h3>Order 작업 중</h3>
+                    <h4>Order 작업 중</h4>
                     {ongoing.map((order) => {
                                       return (
                                         <Grid item xs={2} sm={4} md={4} key={order._id}>
@@ -139,7 +142,7 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
                     })}
                 </div>
                 <div className={styles.reviewBox}>
-                    <h3>Order 종료</h3>
+                    <h4>Order 종료</h4>
                     {finished.map((order) => {
                                       return (
                                         <Grid item xs={2} sm={4} md={4} key={order._id}>

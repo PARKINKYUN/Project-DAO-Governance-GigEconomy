@@ -8,19 +8,19 @@ import styles from "../css/FindOrder.module.css";
 import Link from "@mui/material/Link";
 import { Grid } from "@mui/material";
 
-function FindOrder( token, userInfo, isWorker ) {
+function FindOrder( token ) {
   const [orders, setOrders] = useState([]);
 
   const getOrders = async () =>
     await axios
       .get("http://localhost:4000/orders")
       .then((res) => {
-        console.log(res.data.data);
         setOrders(res.data.data);
       })
       .catch((err) => console.error(err));
 
   useEffect(() => {
+    console.log("findorder 페이지 props 정보", token)
     getOrders();
   }, []);
 
@@ -41,13 +41,11 @@ function FindOrder( token, userInfo, isWorker ) {
           >
             {orders.map((order) => {
               return (
-                <Grid item xs={2} sm={4} md={4} key={order._id}>
+                <Grid item xs={2} sm={4} md={3} key={order._id}>
                   <OrderCard
                     order={order}
                     key={order._id}
                     token={token}
-                    userInfo={userInfo}
-                    isWorker={isWorker}
                   />
                 </Grid>
               );

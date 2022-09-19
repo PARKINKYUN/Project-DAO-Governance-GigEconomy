@@ -11,14 +11,20 @@ const SingleTap = ({ token, userInfo, tap }) => {
 
   useEffect(() => {
     const { client_id, worker_id } = userInfo;
-    if(client_id){
+    if(client_id && client_id === tap.writer){
       setUserId(client_id);
       setReciever(tap.worker_id);
-    } else if(worker_id){
+    } else if(client_id && client_id !== tap.writer){
+      setUserId(client_id);
+      setReciever(tap.client_id);
+    } else if(worker_id && worker_id === tap.writer){
       setUserId(worker_id);
       setReciever(tap.client_id);
+    } else if(worker_id && worker_id !== tap.writer){
+      setUserId(worker_id);
+      setReciever(tap.worker_id);
     }
-  },[])
+  }, [])
 
   const changeRetapState = () => {
     if (reTapState) {
