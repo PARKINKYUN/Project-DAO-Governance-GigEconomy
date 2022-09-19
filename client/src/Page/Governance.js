@@ -6,15 +6,33 @@ import Link from "@mui/material/Link";
 import { Link as RouterLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Proposal from "../components/Proposal";
+import NewPolicy from "../components/NewPolicy";
 
 function Governance({ token, userInfo }) {
   const [voting, setVoting] = useState([]);
   const [policies, setPolicies] = useState([]);
   const [proposals, setProposals] = useState([]);
+  const [updateNow, setUpdateNow] = useState(true);
+
+  // 부모 컴포넌트 리렌더링을 위한 후크
+  const updateFunc = () => {
+    setUpdateNow(!updateNow)
+  }
+
+  // 제안 만료일 설정 (여기서는 7일)
+  const EXPIRED_PROPOSAL_TIME = 7 * 24 * 60 * 60 * 1000;
+  // 제안이 통과되기 위한 정족수(%)
+  const QUORUM = 50;
+  // 제안이 통과되기 위한 최소 참여자 수
+  const minParticipants = 10;
 
   useEffect(() => {
 
-
+    // 최근 업데이트된 정책 읽어오기
+    getPolicies();
+    // 진행중인 제안 읽어오기
+    getProposals();
   }, [])
 
   // 현재 진행중인 Vote를 web3를 이용해 실시간으로 읽어옴
@@ -31,36 +49,48 @@ function Governance({ token, userInfo }) {
   // 투표가 종료되고 실제로 정책에 반영되면
   // 반영된 내용을 DB에 저장하고...
   // 이 함수를 통해 그 내용을 DB에서 읽어옴
-  const getPolicies = () => {
-
-
+  const getPolicies = async () => {
+    const res = await axios.get("http://localhost:4000/policies/", { headers: { authorization: token } });
+    const recentPolicies = res.data.data;
+    setPolicies(recentPolicies);
   }
 
   // DB에서 현재 up/down 진행중인 제안을 읽어옴
   // 제안을 읽어옴과 동시에 기간이 만료된 제안은 상태를 변경하고 상태변수에 넣지 않는다.
-  const getProposals = () => {
+  // 제안에 대한 최소 참여자 수와 정족수를 만족한 제안은 상태변수에 넣지 않고, DB정보를 업데이트 한다.
+  const getProposals = async () => {
+    const res = await axios.get("http://localhost:4000/proposals/getOnPostProposals", { headers: { authorization: token } });
+    console.log(res.data.data);
+    const proposalsData = res.data.data;
 
+    let filteredProposal = [];
+    for await (const proposal of proposalsData) {
+      const up = proposal.up;
+      const down = proposal.down;
+      const checkMinParticipants = (up + down) >= minParticipants;
+      const checkQuorum = (100 * up / (up + down)) >= QUORUM;
 
+      if (proposal.createdAt + EXPIRED_PROPOSAL_TIME >= Date.now()) {
+        await axios.patch("http://localhost:4000/proposals/expiredProposal", proposal.proposal_id, { headers: { authorization: token } });
+      } else if (checkMinParticipants && checkQuorum) {
+        await axios.patch("http://localhost:4000/proposals/successfulProposal", proposal.proposal_id, { headers: { authorization: token } });
+      } else {
+        filteredProposal.push(proposal);
+      }
+    }
+    console.log("최소참여자와 정족수 조건을 만족하지 않았지만, 기간이 만료되지 않은 제안", filteredProposal);
+    setProposals(filteredProposal);
   }
 
-  // proposal에 up을 추가한다.
-  const handlerUpProposal = () => {
-
-  }
-
-  // proposal에 down을 추가한다.
-  const handlerDownProposal = () => {
-
-  }
-
-  // vote / create proposal 버튼은 감춰있습니다.
   return (
     <div style={{ padding: "10px" }}>
       <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
         <li className={styles.taps}>
           <Grid container spacing={1}>
+
+            {/* 투표에 가기 전 전체적인 공감대를 얻을 수 있는지 확인하기 위하여 새로운 제안을 생성한다 */}
             <Grid item xs={2}>
-              {userInfo.mod_authority !== false ? (
+              {userInfo.mod_authority === true ? (
                 <Button variant="contained" size="small">
                   <Link
                     style={{ color: "white" }}
@@ -71,10 +101,16 @@ function Governance({ token, userInfo }) {
                     Create Proposal
                   </Link>
                 </Button>
-              ) : null}
+              ) :
+                <Button variant="contained" disabled size="small">
+                  Create Proposal
+                </Button>
+              }
             </Grid>
+
+            {/* 워커가 클라이언트의 평가에 납득하지 못하는 경우 try를 신청하면, moderator들이 판단을 한다. */}
             <Grid item xs={2}>
-              {userInfo.mod_authority !== false ? (
+              {userInfo.mod_authority === true ? (
                 <Button variant="contained" size="small">
                   <Link
                     style={{ color: "white" }}
@@ -85,19 +121,38 @@ function Governance({ token, userInfo }) {
                     Judge Estimation
                   </Link>
                 </Button>
-              ) : null}
-            </Grid>
-            <Grid item xs={2}>
-              {userInfo.mod_authority !== false ? (
-                <Button variant="contained" size="small">
-                  View Transactions
+              ) :
+                <Button variant="contained" disabled size="small">
+                  Judge Estimation
                 </Button>
-              ) : null}
+              }
             </Grid>
+
+            {/* 투표, 펜딩전환, 토큰전송 등으로 발생한 트랜잭션 정보를 검색한다. */}
             <Grid item xs={2}>
-              {userInfo.mod_authority !== false ? (
+              <Button variant="contained" size="small">
+                View Transactions
+              </Button>
+            </Grid>
+
+            {/* 어떤 제안을 올리기 전에 개발팀에게 기술적 범위에 대한 문의를 한다 */}
+            <Grid item xs={2}>
+              {userInfo.mod_authority === true ? (
                 <Button variant="contained" size="small">
                   Contact Support Team
+                </Button>
+              ) :
+                <Button variant="contained" disabled size="small">
+                  Contact Support Team
+                </Button>
+              }
+            </Grid>
+
+            {/* 유지 보수를 담당하는 개발팀 전용 메뉴. 통과된 제안을 트랜잭션으로 만들고 컨트랙트를 실행하여 투표로 진입하게 한다 */}
+            <Grid item xs={2}>
+              {userInfo.account_type === "dev_team" ? (
+                <Button variant="contained" size="small">
+                  Development Team
                 </Button>
               ) : null}
             </Grid>
@@ -108,7 +163,7 @@ function Governance({ token, userInfo }) {
       {/*------------voting in progress------------*/}
       <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
         <div>
-          <h4>Voting in progress</h4>
+          <h3>Voting in progress</h3>
         </div>
         <li className={styles.taps}>
           <Grid container spacing={2}>
@@ -116,7 +171,7 @@ function Governance({ token, userInfo }) {
               date:
             </Grid>
             <Grid item xs={10}>
-              <div> content</div>
+              <div>content</div>
             </Grid>
             <Grid item xs={2}>
               {userInfo.mod_authority !== false ? (
@@ -132,7 +187,7 @@ function Governance({ token, userInfo }) {
       {/*------------voting result------------*/}
       <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
         <div>
-          <h4>Voting result</h4>
+          <h3>Voting result</h3>
         </div>
         <li className={styles.taps}>
           <Grid container spacing={2}>
@@ -149,45 +204,17 @@ function Governance({ token, userInfo }) {
       {/*------------Changed Policy------------*/}
       <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
         <div>
-          <h4>Changed Policies</h4>
+          <h3>Changed Policies</h3>
         </div>
-        <li className={styles.taps}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              date:
-            </Grid>
-            <Grid item xs={12}>
-              <div> content</div>
-            </Grid>
-          </Grid>
-        </li>
+        {policies.map((policy) => { return <NewPolicy key={policy._id} policy={policy} /> })}
       </div>
 
       {/*------------Proposal------------*/}
       <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
         <div>
-          <h4>Proposals</h4>
+          <h3>Proposals</h3>
         </div>
-        <li className={styles.taps}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              date:
-            </Grid>
-            <Grid item xs={10}>
-              <div> content</div>
-            </Grid>
-            <Grid item xs={1}>
-              <Button variant="contained" size="small" onClick={handlerUpProposal}>
-                Up
-              </Button>
-            </Grid>
-            <Grid item xs={1}>
-              <Button variant="contained" size="small" onClick={handlerDownProposal}>
-                Down
-              </Button>
-            </Grid>
-          </Grid>
-        </li>
+        {proposals.map((proposal) => { return <Proposal key={proposal.proposal_id} proposal={proposal} token={token} userInfo={userInfo} /> })}
       </div>
     </div>
   );

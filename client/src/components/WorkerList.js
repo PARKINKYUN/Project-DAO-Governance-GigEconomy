@@ -19,8 +19,11 @@ export default function WorkerList({ worker }) {
             alt=""
           />
           <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              <b>{worker.nickname}</b>
+            <Typography variant="subtitle2" gutterBottom>
+              {worker.nickname}
+            </Typography>
+            <Typography variant="overline" display="block" gutterBottom>
+              {worker.introduction}
             </Typography>
           </CardContent>
         </CardActionArea>

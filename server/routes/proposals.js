@@ -2,13 +2,14 @@ const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/proposals.controller");
 
-router.get("/proposals", controller.getProposals); // 전체 제안 리스트
-router.get("/proposals/voting", controller.getVotingProposals); // voting 제안 리스트
+router.get("/getOnPostProposals", controller.getOnPostProposals); // 전체 제안 리스트
 router.get("/proposals/concluded", controller.getConcludedProposals); // concluded 제안 리스트
 router.post("/newproposal", controller.postProposal); // 제안 올리기
-router.get("/proposal/:id", controller.getProposal); // 제안 조회
-router.patch("/proposal/:id", controller.editProposal); // 제안 수정
+router.get("/checkSelector/:proposal_id", controller.checkSelector); // 워커가 해당 제안에 대한 선택을 이미 했는지 여부 반환
+router.patch("/expiredProposal", controller.expiredProposal); // 기간 만료된 제안의 상태 수정
+router.patch("/upCount", controller.upCount); // up 클릭 시 숫자 올리기
+router.patch("/downCount", controller.downCount); // down 클릭 시 숫자 내리기
+router.patch("/successfulProposal", controller.successfulProposal); // 정족수에 도달하여 성공한 제안 등록
 router.delete("/proposal/:id", controller.removeProposal); // 제안 삭제
-module.exports = router;
 
-//모더레이트가 되면 정책에 대한 제안을 올릴 수 있다.
+module.exports = router;

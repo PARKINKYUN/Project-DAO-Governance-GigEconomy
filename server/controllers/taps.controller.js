@@ -50,22 +50,23 @@ module.exports = {
     taplistbyorder: async (req, res) => {
         try {
             const accessToken = req.headers.authorization;
+            console.log("11111111")
 
             if (!accessToken) {
                 return res
                     .status(404)
                     .send({ data: null, message: "Not autorized" });
             } else {
-                // accessToken 콘솔 찍어서 구조를 보고 수정해야함
-                // console.log(accessToken);
                 const token = accessToken.split(" ")[0];
                 const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+                console.log("11222222222222111111")
 
                 if(!userInfo){
                     return res.status(404).send({ data: null, message: "Invalid token" });
                 } else {
-                    const tapInfo = await tapmodel.getTapsByOrderId(req.params.order_id);
-                    console.log("Order ID로 tap 정보 조회 완료", tapInfo)
+                    console.log(req.params)
+                    const tapInfo = await tapmodel.getTapsByOrderId(req.params._id);
+                    console.log("Order ID로 tap 정보 조회 완료")
 
                     return res.status(200).send({ data: tapInfo, message: "Searching success"})
                 }

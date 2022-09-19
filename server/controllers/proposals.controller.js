@@ -1,37 +1,192 @@
 const proposalModel = require("../models/proposal.model");
+const proposalSelector = require("../models/proposalSelector.model");
 const jwt = require("jsonwebtoken");
 
 module.exports = {
-  // pending 상태 제안 리스트
-  getProposals: async (req, res) => {
+  // 진행중인 제안 리스트
+  getOnPostProposals: async (req, res) => {
     try {
-      const proposals = await proposalModel.getProposals("pending");
-      if (!proposals) {
-        return res.status(400).message("제안 리스트를 불러오지 못했습니다.");
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const proposalInfo = await proposalModel.getOnPostProposals();
+
+          return res.status(200).send({ data: proposalInfo, message: "Searching success" })
+        }
       }
-      return res
-        .status(200)
-        .send({ data: proposals, message: "제안 리스트를 불러왔습니다." });
     } catch (err) {
-      console.error(err);
-      return res.status(400);
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
     }
   },
 
-  // voting 상태 제안 리스트
-  getVotingProposals: async () => {
+  // 정족수에 도달하여 성공한 제안의 상태 변경
+  successfulProposal: async (req, res) => {
     try {
-      const proposals = await proposalModel.getProposals("voting");
-      if (!proposals) {
-        return res.status(400).message("제안 리스트를 불러오지 못했습니다.");
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const proposalInfo = await proposalModel.successfulProposal(req.body.proposal_id);
+          console.log("해당 제안이 성공하여 노출되지 않습니다.", proposalInfo)
+
+          return res.status(200).send({ data: proposalInfo, message: "Searching success" })
+        }
       }
-      return res.status(200).send({
-        data: proposals,
-        message: "투표 중인 제안 리스트를 불러왔습니다.",
-      });
     } catch (err) {
-      console.error(err);
-      return res.status(400);
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
+    }
+  },
+
+  // 기간 만료된 제안의 상태 변경
+  expiredProposal: async (req, res) => {
+    try {
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const proposalInfo = await proposalModel.expiredProposal(req.body.proposal_id);
+          console.log("해당 제안이 더이상 노출되지 않습니다.", proposalInfo)
+
+          return res.status(200).send({ data: proposalInfo, message: "Searching success" })
+        }
+      }
+    } catch (err) {
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
+    }
+  },
+
+  // up 선택시 정보 변경
+  upCount: async (req, res) => {
+    try {
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const proposalInfo = await proposalModel.upCount(req.body.proposal_id);
+          const selector = await proposalSelector.saveSeletor({proposal_id: req.body.proposal_id, worker_id: userInfo.worker_id});
+          console.log("해당 제안의 up count가 1 증가하였습니다.", proposalInfo)
+
+          return res.status(200).send({ data: selector, message: "Searching success" })
+        }
+      }
+    } catch (err) {
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
+    }
+  },
+
+  // down 선택시 정보 변경
+  downCount: async (req, res) => {
+    try {
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const proposalInfo = await proposalModel.downCount(req.body.proposal_id);
+          const selector = await proposalSelector.saveSeletor({proposal_id: req.body.proposal_id, worker_id: userInfo.worker_id});
+          console.log("해당 제안의 down count가 1 증가하였습니다.", proposalInfo)
+
+          return res.status(200).send({ data: selector, message: "Searching success" })
+        }
+      }
+    } catch (err) {
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
+    }
+  },
+
+  // worker가 해당 proposal에 이미 선택을 했는지 여부 반환
+  checkSelector: async (req, res) => {
+    try {
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const selector = await proposalSelector.checkSelector({proposal_id: req.params.proposal_id, worker_id: userInfo.worker_id});
+          console.log("worker가 해당 제안을 선택한 횟수", selector)
+
+          return res.status(200).send({ data: selector, message: "Searching success" })
+        }
+      }
+    } catch (err) {
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
     }
   },
 
@@ -69,9 +224,7 @@ module.exports = {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
           const latestProposal = await proposalModel.getLatestProposalId();
-          console.log("=========번호=========", latestProposal)
           const proposal_number = latestProposal[0].proposal_id;
-          console.log("==================")
 
           const newProposal = {
             proposal_id: proposal_number + 1,

@@ -42,9 +42,9 @@ proposal.statics.getLatestProposalId = async function () {
   return await this.find({}).sort({ proposal_id: -1 }).limit(1);
 }
 
-// 제안 리스트
-proposal.statics.getProposals = async (status) => {
-  return this.find({ status: status });
+// 진행중인 제안 리스트
+proposal.statics.getOnPostProposals = async function () {
+  return await this.find({ status: "onPost" });
 };
 
 // 제안 올리기
@@ -58,25 +58,28 @@ proposal.statics.saveProposal = async function (obj) {
   return await _proposal.save();
 }
 
-// 제안 조회
-proposal.statics.proposalById = async (id) => {
-  return this.findById(id);
-};
+// 정족수에 도달하여 성공한 제안의 상태 수정
+proposal.statics.successfulProposal = async function (proposal_id) {
+  return await this.findOneAndUpdate({ proposal_id: proposal_id }, {status: "onBallot"});
+}
 
-// 제안 수정
-proposal.statics.modifyProposal = async (id, data) => {
-  const { title, content } = data;
-  return this.findOneAndUpdate(
-    { _id: id },
-    {
-      title: title,
-      content: content,
-    }
-  );
-};
-// 제안 삭제
-proposal.statics.deleteProposal = async (id) => {
-  return this.findByIdAndRemove(id);
-};
+// 기간이 만료된 제안의 상태 수정
+proposal.statics.expiredProposal = async function (proposal_id) {
+  return await this.findOneAndUpdate({ proposal_id: proposal_id }, {status: "rejected"});
+}
+
+// 제안 up 선택
+proposal.statics.upCount = async function (proposal_id) {
+  const proposal = await this.find({ proposal_id: proposal_id});
+  const newCount = proposal[0].up + 1;
+  return await this.findOneAndUpdate({ proposal_id: proposal_id }, {up: newCount});
+}
+
+// 제안 downs 선택
+proposal.statics.downCount = async function (proposal_id) {
+  const proposal = await this.find({ proposal_id: proposal_id});
+  const newCount = proposal[0].down + 1;
+  return await this.findOneAndUpdate({ proposal_id: proposal_id }, {down: newCount});
+}
 
 module.exports = mongoose.model("Proposal", proposal)

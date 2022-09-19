@@ -10,8 +10,6 @@ module.exports = {
         return res.status(400).message("order 리스트를 불러오지 못했습니다.");
       }
 
-      console.log("pending 중인 order를 불러왔습니다.");
-
       return res.status(200).send({ data: orders });
     } catch (err) {
       console.error(err);
@@ -26,8 +24,6 @@ module.exports = {
       if (!_order) {
         return res.status(400).message("order를 불러오지 못했습니다.");
       }
-
-      console.log("order를 불러왔습니다.", _order[0]);
 
       return res.status(200).send({ data: _order[0] });
     } catch (err) {

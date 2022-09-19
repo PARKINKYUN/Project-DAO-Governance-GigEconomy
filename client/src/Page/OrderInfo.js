@@ -4,53 +4,69 @@ import OfferCard from "../components/OfferCard";
 import TapsList from "../components/TapsList";
 import withRoot from "../withRoot";
 import styles from "../css/OrderInfo.module.css";
-import { Grid } from "@mui/material";
+import styles2 from "../css/Tap.module.css";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 import Typography from "../components/Typography";
 import { useLocation } from "react-router-dom";
 import NewTapForm from "../components/NewTapForm";
 
 function OrderInfo() {
+  const [offers, setOffers] = useState([]);
+  const [taps, setTaps] = useState([]);
+  const [tapFlag, setTapFlag] = useState(false);
+
+
+
+
   const [orderItem, setOrderItem] = useState({});
   const [orderStatus, setOrderStatus] = useState("");
   const [offerIdx, setOfferIdx] = useState(null);
-  const [taps, setTaps] = useState([]);
-  const [flag, setFlag] = useState(false);
+
 
   const location = useLocation();
-  const { order, token, userInfo, isWorker } = location.state;
+  const order = location.state.order;
+  const { isWorker, token, userInfo } = location.state.token;
 
   useEffect(() => {
+    console.log("OrderInfo 페이지 props 정보", order, isWorker, token, userInfo );
     getOrder();
 
     // taps 리스트 받아오기. order_id로 가져와서 해당 order에 접근한 worker가 작성한 탭만 노출
-    const getTaps = async () => {
-      const res = await axios.get(`http://localhost:4000/taps/taplistbyorder/${order._id}`, { headers: {authorization: token} });
-      const tapsInfo = res.data.data;
-      if(tapsInfo !== undefined){
-        const tapByWorker = tapsInfo.filter((tap) => tap.worker_id === userInfo.worker_id);
-        setTaps(tapByWorker);
-      }
-    }
-    
+    // getTaps();
+
   }, [orderStatus, offerIdx]);
+
+  const getTaps = async () => {
+    const res = await axios.get(`http://localhost:4000/taps/taplistbyorder/${order._id}`, { headers: { authorization: token } });
+    const tapsInfo = res.data.data;
+    console.log(tapsInfo)
+    if (tapsInfo !== undefined) {
+      const tapByWorker = tapsInfo.filter((tap) => tap.worker_id === userInfo.worker_id);
+      console.log(tapByWorker)
+      setTaps(tapByWorker);
+    }
+  }
 
   const chooseOffer = (e) => {
     setOfferIdx(e.target.index);
   };
 
   // flag 전환
-  const onClick = () => {
+  const toggleNewTap = () => {
     setFlag((hidden) => !hidden);
   };
 
   // 오더 정보 불러오기
-  const getOrder = async () =>
+  const getOrder = async () => {
+    console.log("여기다여기다여기다")
     await axios
       .get(`http://localhost:4000/orders/order_info/${order._id}`)
       .then((res) => {
         setOrderItem(res.data.data);
       })
       .catch((err) => console.error(err));
+  }
 
   // 오더 수정
   // const editOrder = async () => {
@@ -203,8 +219,8 @@ function OrderInfo() {
 
   return (
     <div className={styles.main}>
-      <div className={styles.order}>
-        <div className={styles.orderBox}>
+      <div className={styles.profile}>
+        <div className={styles.reviewBox}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <div className={styles.name}>
@@ -238,45 +254,104 @@ function OrderInfo() {
               </div>
             </Grid>
           </Grid>
-          <Grid container spacing={3}>
-            {orderItem.direct_order === true && orderItem.status === "pending" ? (
-              <Grid item>
-                <Typography variant="body2" color="text.secondary">
-                  Offers
-                </Typography>
-                {handleOffers()}
-              </Grid>
-            ) : null}
-
-            <Grid item>
-              <Typography variant="body2" color="text.secondary">
-                orderController
-              </Typography>
-              <div>
-                {orderItem.status === "pending" ? handlePendingOrder() : null}
-                {orderItem.status === "ongoing" || orderItem.status === "extended"
-                  ? handleOngoingOrder()
-                  : null}
-              </div>
-            </Grid>
-            <Grid item>
-              <div>
-                {flag ? (
-                  <NewTapForm
-                    token={token}
-                    writer={userInfo.worker_id}
-                    client_id={orderItem.client_id}
-                    worker_id={userInfo.worker_id}
-                    order={orderItem._id}
-                  />
-                ) : null}
-              </div>
-              <div>
-                <TapsList token={token} userInfo={userInfo} taps={taps} />
-              </div>
-            </Grid>
-          </Grid>
         </div>
+        <div className={styles.reviewBox}>
+          <h4>Offer List : 총 00명이 지원했습니다.</h4>
+          <li className={styles.taps}>
+            {/* 오퍼 리스트 */}
+            <Grid container spacing={3}>
+              {orderItem.direct_order === true && orderItem.status === "pending" ? (
+                <Grid item xs={12}>
+                  <Typography variant="body2" color="text.secondary">
+                    Offer List
+                  </Typography>
+
+                </Grid>
+              ) : null}
+
+              <Grid item xs={3}>
+                {handleOffers()}
+                <div>
+                  {orderItem.status === "pending" ? handlePendingOrder() : null}
+                  {orderItem.status === "ongoing" || orderItem.status === "extended"
+                    ? handleOngoingOrder()
+                    : null}
+                </div>
+              </Grid>
+              <Grid item xs={12}>
+                <div>
+                  {flag ? (
+                    <NewTapForm
+                      token={token}
+                      writer={userInfo.worker_id}
+                      client_id={orderItem.client_id}
+                      worker_id={userInfo.worker_id}
+                      order={orderItem._id}
+                    />
+                  ) : null}
+                </div>
+                <div>
+                  <TapsList token={token} userInfo={userInfo} taps={taps} />
+                </div>
+              </Grid>
+            </Grid>
+          </li>
+        </div>
+
+        {/* 버튼 모음 */}
+        <div className={styles.reviewBox}>
+          <li className={styles2.taps}>
+            <Grid container spacing={1}>
+              {/* 다이렉트 오더인 경우 워커에게만 노출. */}
+              {/* 다이렉트 오더가 아니라면 오더 생성자(클라이언트)에게만 노출. 클라이언트가 오퍼카드를 클릭하면 시작버튼을 누를 수 있다. */}
+              <Grid item xs={2}>
+                <Button variant="contained" size="small">
+                  작업 시작
+                </Button>
+              </Grid>
+              {/* 작업 취소는 오더가 펜딩 상태일 때만 가능하다. */}
+              <Grid item xs={2}>
+                <Button variant="contained" size="small">
+                  작업 취소
+                </Button>
+              </Grid>
+              {/* 작업 완료는 클라이언트에게만 노출된다. */}
+              <Grid item xs={2}>
+                <Button variant="contained" size="small">
+                  작업 완료
+                </Button>
+              </Grid>
+              {/* 작업 연장은 클라이언트에게만 노출된다. */}
+              <Grid item xs={2}>
+                <Button variant="contained" size="small">
+                  작업 연장
+                </Button>
+              </Grid>
+            </Grid>
+          </li>
+        </div>
+
+        {/*         <div className={styles.container}>
+          <Grid
+            container
+            spacing={{ xs: 2, md: 3 }}
+            columns={{ xs: 4, sm: 8, md: 12 }}
+          >
+            {orders.map((order) => {
+              return (
+                <Grid item xs={2} sm={4} md={3} >
+                  <OrderCard
+
+                  />
+                </Grid>
+              );
+            })}
+          </Grid>
+        </div> */}
+
+
+
+
       </div>
     </div>
   );

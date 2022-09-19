@@ -34,7 +34,7 @@ function FindWorker({ token, userInfo }) {
             {workers.map((worker, idx) => {
               const { worker_id, nickname } = worker;
               return (
-                <Grid item xs={2} sm={4} md={4} key={idx}>
+                <Grid item xs={2} sm={4} md={3} key={idx}>
                   <WorkerList
                     worker={worker}
                     worker_id={worker_id}

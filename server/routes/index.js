@@ -10,6 +10,7 @@ const clients = require("./clients");
 // const votes = require("./votes");
 const workers = require("./workers");
 const estimate = require("./estimate");
+const policies = require("./policies")
 
 router.use("/orders", orders);
 router.use("/proposals", proposals);
@@ -19,6 +20,7 @@ router.use("/clients", clients);
 // router.use("/votes", votes);
 router.use("/workers", workers);
 router.use("/estimate", estimate);
+router.use("/policies", policies);
 router.use("/", main);
 
 module.exports = router;

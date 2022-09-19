@@ -14,13 +14,6 @@ function WorkerProfile({ token, userInfo }) {
   const [flag, setFlag] = useState(false);
   const [taps, setTaps] = useState([]);
 
-  ///
-  /// 기억하라........ 브라우저 한 페이지에 보이는 모든 상태 변수는 그 페이지 컴포넌트부터 시작해서 내려가야 한다!!!!
-  /// 그러니까 워커 프로필은 워커프로필에 taps 정보가 있어야 하고
-  /// order 에서 오더 프로필은 오더 인포에 taps 정보가 있어야 하고
-  /// 마이인포(클라이언트, 워커 각각)에서도 taps 정보가 있어야 한다.
-  /// 따라서 taps리스트에 별도 분기점은 처음부터 필요가 없다!!! 설계가 잘못되었던 것.... ㅠㅠㅠㅠㅠㅠ
-
   const navigate = useNavigate();
   const location = useLocation();
   const { worker } = location.state;
