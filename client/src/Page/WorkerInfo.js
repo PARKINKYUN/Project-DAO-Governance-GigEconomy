@@ -76,7 +76,6 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                         finishedData.push(order);
                     }
                 })
-                console.log("펜딩데이터", pendingData)
                 setPending(pendingData);
                 setOngoing(ongoingData);
                 setFinished(finishedData);

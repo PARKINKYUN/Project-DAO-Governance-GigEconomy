@@ -24,13 +24,11 @@ function SignUp({ history }) {
   const navigate = useNavigate();
 
   const handleIsWorker = () => {
-    console.log("변경전", isWorker)
     if (isWorker.current) {
       isWorker.current = false;
     } else {
       isWorker.current = true;
     }
-    console.log("변경후", isWorker)
   }
 
   const validate = (values) => {

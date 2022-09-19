@@ -20,8 +20,6 @@ module.exports = {
                 } else {
                     const latestTap = await tapmodel.getLatestTapId();
                     const tap_number = latestTap[0].tap_id;
-                    console.log("==================", tap_number)
-                    console.log(req.body)
 
                     const newTap = {
                         tap_id: tap_number + 1,
@@ -32,7 +30,7 @@ module.exports = {
                         order_id: req.body.order_id
                     };
                     const inputTap = await tapmodel.saveTap(newTap)
-                    console.log("똑똑! 새로운 tap이 저장되었습니다.", inputTap);
+                    console.log("똑똑! 새로운 tap이 저장되었습니다.");
 
                     return res.status(200).send({ data: inputTap, message: "Created new tap"})
                 }
@@ -50,7 +48,6 @@ module.exports = {
     taplistbyorder: async (req, res) => {
         try {
             const accessToken = req.headers.authorization;
-            console.log("11111111")
 
             if (!accessToken) {
                 return res
@@ -59,14 +56,12 @@ module.exports = {
             } else {
                 const token = accessToken.split(" ")[0];
                 const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
-                console.log("11222222222222111111")
 
                 if(!userInfo){
                     return res.status(404).send({ data: null, message: "Invalid token" });
                 } else {
-                    console.log(req.params)
-                    const tapInfo = await tapmodel.getTapsByOrderId(req.params._id);
-                    console.log("Order ID로 tap 정보 조회 완료")
+                    const tapInfo = await tapmodel.getTapsByOrderId(req.params.order_id);
+                    console.log("Order ID로 tap 정보 조회 완료", tapInfo.length);
 
                     return res.status(200).send({ data: tapInfo, message: "Searching success"})
                 }
@@ -213,8 +208,6 @@ module.exports = {
                     .status(404)
                     .send({ data: null, message: "Not autorized" });
             } else {
-                // accessToken 콘솔 찍어서 구조를 보고 수정해야함
-                // console.log(accessToken);
                 const token = accessToken.split(" ")[0];
                 const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
 
@@ -228,7 +221,6 @@ module.exports = {
                 }
             }
         } catch (err) {
-            // console.log(err);
             res.status(400).send({
                 data: null,
                 message: "Can't update tap",
@@ -243,7 +235,6 @@ module.exports = {
 
             return res.status(200).send({ data: tapNumber, message: "Searching success"})
         } catch (err) {
-            // console.log(err);
             res.status(400).send({
                 data: null,
                 message: "Can't search",

@@ -15,7 +15,7 @@ export default function WorkerList({ worker }) {
           <CardMedia
             component="img"
             height="140"
-            src={require("../img/hj.jpeg")}
+            src={require("../img/worker2.jpg")}
             alt=""
           />
           <CardContent>

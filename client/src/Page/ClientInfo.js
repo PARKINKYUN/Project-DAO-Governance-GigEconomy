@@ -27,7 +27,6 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
         const getTaps = async () => {
             const res = await axios.get('http://localhost:4000/taps/taplistbyclient', { headers: {authorization: token} });
             const tapsInfo = res.data.data;
-            console.log("client tap list", tapsInfo)
             if(tapsInfo !== undefined){
               setTaps(tapsInfo);
             }

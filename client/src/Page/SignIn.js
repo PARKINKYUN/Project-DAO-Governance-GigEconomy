@@ -22,13 +22,11 @@ function SignIn({ setToken, setUserInfo, setIsWorker, setCookie }) {
   const navigate = useNavigate();
 
   const handleIsWorker = () => {
-    console.log("변경전", isWorker)
     if (isWorker.current) {
       isWorker.current = false;
     } else {
       isWorker.current = true;
     }
-    console.log("변경후", isWorker)
   }
 
   const validate = (values) => {
@@ -69,12 +67,10 @@ function SignIn({ setToken, setUserInfo, setIsWorker, setCookie }) {
           navigate('/');
         }
       } else {
-        console.log("======================", email)
         const res = await axios.post('http://localhost:4000/clients/login', {
           client_id: email,
           password: password
         })
-        console.log(res.data)
         if (res.status === 200) {
           const accessToken = res.data.data.accessToken;
           const clientInfo = res.data.data.clientData;
