@@ -8,37 +8,56 @@ import styles2 from "../css/Tap.module.css";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Typography from "../components/Typography";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import NewTapForm from "../components/NewTapForm";
 
 function OrderInfo() {
+  const [orderItem, setOrderItem] = useState({});
   const [offers, setOffers] = useState([]);
+  const [offer, serOffer] = useState();
   const [taps, setTaps] = useState([]);
   const [tapFlag, setTapFlag] = useState(false);
 
-
-
-
-  const [orderItem, setOrderItem] = useState({});
-  const [orderStatus, setOrderStatus] = useState("");
-  const [offerIdx, setOfferIdx] = useState(null);
-
-
+  const navigate = useNavigate();
   const location = useLocation();
-  const order = location.state.order;
-  const { isWorker, token, userInfo } = location.state.token;
+  const { token, order } = location.state;
+  const { userInfo, isWorker } = token;
 
   useEffect(() => {
-    console.log("OrderInfo 페이지 props 정보", order, isWorker, token, userInfo );
-    getOrder();
+    console.log("OrderInfo 페이지 props 정보", order, token);
+    // 오더 정보 셋팅
+    setOrderItem(order);
+
+    // 오퍼 리스트 가져오기
+    getOffers();
 
     // taps 리스트 받아오기. order_id로 가져와서 해당 order에 접근한 worker가 작성한 탭만 노출
-    // getTaps();
+    getTaps();
 
-  }, [orderStatus, offerIdx]);
+  }, []);
 
+  // flag 전환
+  const toggleNewTap = () => {
+    setTapFlag((hidden) => !hidden);
+  };
+
+  // order_id로 offer 리스트 읽어오기
+  const getOffers = async () => {
+    try {
+      const res = await axios.get(`http://localhost:4000/offers/offerslistbyorder/${order._id}`, { headers: { authorization: token.token } });
+      const offersInfo = res.data.data;
+      console.log("오더에 지원한 오퍼 리스트", offersInfo);
+      setOffers(offersInfo);
+    } catch (err) {
+      console.error(err);
+      window.alert("서버 전송 오류! 이전 페이지로 돌아갑니다.")
+      navigate(-1);
+    }
+  }
+
+  // order_id로 탭 리스트 읽어오기 (order_id와 worker_id가 모두 일치해야함)
   const getTaps = async () => {
-    const res = await axios.get(`http://localhost:4000/taps/taplistbyorder/${order._id}`, { headers: { authorization: token } });
+    const res = await axios.get(`http://localhost:4000/taps/taplistbyorder/${order._id}`, { headers: { authorization: token.token } });
     const tapsInfo = res.data.data;
     console.log(tapsInfo)
     if (tapsInfo !== undefined) {
@@ -48,172 +67,90 @@ function OrderInfo() {
     }
   }
 
+  // offer 중 하나를 선택했을 때 이벤트
   const chooseOffer = (e) => {
-    setOfferIdx(e.target.index);
+    console.log("선택한 Offer의 정보", e.target)
+    serOffer(e.target.index);
   };
 
-  // flag 전환
-  const toggleNewTap = () => {
-    setFlag((hidden) => !hidden);
+  // 오더 삭제. 펜딩 상태의 오더만 삭제 가능. 이미 작업 지시가 들어간 오더는 삭제할 수 없다.
+  // (*** 오더 수정 기능은 고의적으로 넣지 않음. 오더를 수행하는 워커와의 분쟁으로 이어질 수 있음 ***)
+  const removeOrder = async () => {
+    try {
+      const res = await axios.delete(`http://localhost:4000/order_info/${order._id}/remove`, { headers: { authorization: token.token } });
+      console.log("오더 삭제 완료");
+      window.alert("등록했던 Order가 정상적으로 삭제되었습니다.");
+      navigate(-1);
+    } catch (err) {
+      console.log(err);
+      window.alert("오류가 발생하였습니다. 다시 시도해주세요.");
+      navigate("/ReRendering");
+    }
   };
-
-  // 오더 정보 불러오기
-  const getOrder = async () => {
-    console.log("여기다여기다여기다")
-    await axios
-      .get(`http://localhost:4000/orders/order_info/${order._id}`)
-      .then((res) => {
-        setOrderItem(res.data.data);
-      })
-      .catch((err) => console.error(err));
-  }
-
-  // 오더 수정
-  // const editOrder = async () => {
-  //   await axios
-  //     .patch(`http://localhost:4000/order_info/${_id}/edit`)
-  //     .catch((err) => console.error(err));
-  // };
-
-  // 오더 삭제
-  // const removeOrder = async () => {
-  //   await axios
-  //     .patch(`http://localhost:4000/order_info/${_id}/remove`)
-  //     .catch((err) => console.error(err));
-  // };
 
   // 클라이언트가 워커의 제안을 선택하여 오더 시작
   const clientStartOrder = async () => {
-    if (isWorker === true) return console.log("클라이언트만 가능합니다.");
-    offerIdx !== null
-      ? await axios
-        .patch(`http://localhost:4000/order_info/${order._id}/client_start`, {
-          offer_idx: offerIdx,
-        })
-        .then(() => setOrderStatus("ongoing"))
-        .catch((err) => console.error(err))
-      : console.log("오퍼를 선택해주세요.");
+    try {
+      if(isWorker === false && offer.worker_id !== null){
+        const res = await axios.patch(`http://localhost:4000/order_info/${order._id}/client_start`,
+        { offer: offer }, { headers: { authorization: token.token } });
+        console.log("오더 작업 시작");
+        window.alert("등록했던 Order의 작업이 시작되었습니다.");
+        navigate("/ReRendering");
+      }
+    } catch (err) {
+      console.log(err);
+      window.alert("오류가 발생하였습니다. 다시 시도해주세요.");
+      navigate("/ReRendering");
+    }
   };
 
   // 워커가 direct_order를 통해 생성된 오더 시작
   const workerStartOrder = async () => {
-    if (isWorker === false) return console.log("워커만 가능합니다.");
-    await axios
-      .patch(`http://localhost:4000/order_info/${order._id}/worker_start`)
-      .then(() => setOrderStatus("ongoing"))
-      .catch((err) => console.error(err));
+    try {
+      if(isWorker === true && order.direct_order === true){
+        const res = await axios.patch(`http://localhost:4000/order_info/${order._id}/worker_start`,
+        { offer: offer }, { headers: { authorization: token.token } });
+        console.log("오더 작업 시작");
+        window.alert("해당 Order의 작업이 시작되었습니다.");
+        navigate("/ReRendering");
+      }
+    } catch (err) {
+      console.log(err);
+      window.alert("오류가 발생하였습니다. 다시 시도해주세요.");
+      navigate("/ReRendering");
+    }
   };
 
-  // 오더 연장
-  // const extendOrder = async () => {
-  //   await axios
-  //     .patch(`http://localhost:4000/order_info/${_id}/extend`)
-  //     .catch((err) => console.error(err));
-  // };
-
-  // 오더 취소
-  // const cancelOrder = async () => {
-  //   await axios
-  //     .patch(`http://localhost:4000/order_info/${_id}/cancel`)
-  //     .catch((err) => console.error(err));
-  // };
+  // 만기일이 도래한 오더에 대한 기간 연장. client만 가능하다.
+  const extendOrder = async () => {
+    try {
+      if(isWorker === false){
+        const res = await axios.patch(`http://localhost:4000/order_info/${order._id}/extend`, { headers: { authorization: token.token } });
+        console.log("오더 작업 기간 연장");
+        window.alert("Order의 작업 기간이 연장되었습니다.");
+        navigate("/ReRendering");
+      }
+    } catch (err) {
+      console.log(err);
+      window.alert("오류가 발생하였습니다. 다시 시도해주세요.");
+      navigate("/ReRendering");
+    }
+  };
 
   // 오더 완료
   const finishOrder = async () => {
-    if (isWorker === true) return console.log("클라이언트만 가능합니다.");
-    await axios
-      .patch(`http://localhost:4000/order_info/${order._id}/finish`)
-      .then(() => setOrderStatus("finished"))
-      .catch((err) => console.error(err));
-  };
-
-  const handleOffers = () => {
-    if (isWorker === false) {
-      return (
-        <div>
-          {orderItem.offers.map((offer, idx) => {
-            <OfferCard
-              index={idx}
-              worker={offer.worker}
-              deadline={offer.deadline}
-              compensation={offer.compensation}
-              message={offer.message}
-              onClick={chooseOffer}
-            />;
-          })}
-        </div>
-      );
-    }
-    if (isWorker === true) {
-      return (
-        <div>
-          {orderItem.offers.map((offer) => {
-            <div>
-              <OfferCard
-                worker={offer.worker}
-                deadline={offer.deadline}
-                compensation={offer.compensation}
-                message={offer.message}
-              />
-            </div>;
-          })}
-          {/* <button onClick={handleOpen}>Make Offer</button>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={style}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                Text in a modal
-              </Typography>
-              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-              </Typography>
-            </Box>
-          </Modal> */}
-        </div>
-      );
-    }
-  };
-  const handlePendingOrder = () => {
-    if (orderItem.direct_order === true) {
-      if (isWorker === false) {
-        return (
-          <div>{/* <button onClick={removeOrder}>Remove Order</button> */}</div>
-        );
+    try {
+      if(isWorker === false){
+        const res = await axios.patch(`http://localhost:4000/order_info/${order._id}/finish`, { headers: { authorization: token.token } });
+        console.log("오더 작업 완료");
+        window.alert("등록했던 Order의 작업이 완료되었습니다.");
+        navigate("/ReRendering");
       }
-      if (isWorker === true) {
-        return (
-          <div>
-            <button onClick={workerStartOrder}>Start Order</button>
-          </div>
-        );
-      }
-    }
-    if (orderItem.direct_order === false) {
-      if (isWorker === false) {
-        return (
-          <div>
-            {/* <button onClick={editOrder}>Edit Order</button>
-            <button onClick={removeOrder}>Remove Order</button> */}
-            <button onClick={clientStartOrder}>Start Order</button>
-          </div>
-        );
-      }
-    }
-  };
-
-  const handleOngoingOrder = () => {
-    if (isWorker === false) {
-      return (
-        <div>
-          {/* <button onClick={extendOrder}>Extend Order</button>
-          <button onClick={cancelOrder}>Cancel Order</button> */}
-          <button onClick={finishOrder}>Finish Order</button>
-        </div>
-      );
+    } catch (err) {
+      console.log(err);
+      window.alert("오류가 발생하였습니다. 다시 시도해주세요.");
+      navigate("/ReRendering");
     }
   };
 
@@ -270,17 +207,13 @@ function OrderInfo() {
               ) : null}
 
               <Grid item xs={3}>
-                {handleOffers()}
                 <div>
-                  {orderItem.status === "pending" ? handlePendingOrder() : null}
-                  {orderItem.status === "ongoing" || orderItem.status === "extended"
-                    ? handleOngoingOrder()
-                    : null}
+
                 </div>
               </Grid>
               <Grid item xs={12}>
                 <div>
-                  {flag ? (
+                  {tapFlag ? (
                     <NewTapForm
                       token={token}
                       writer={userInfo.worker_id}
