@@ -8,7 +8,7 @@ import styles from "../css/FindOrder.module.css";
 import Link from "@mui/material/Link";
 import { Grid } from "@mui/material";
 
-function FindOrder( token ) {
+function FindOrder( {token, userInfo, isWorker} ) {
   const [orders, setOrders] = useState([]);
 
   const getOrders = async () =>
@@ -20,7 +20,6 @@ function FindOrder( token ) {
       .catch((err) => console.error(err));
 
   useEffect(() => {
-    console.log("findorder 페이지 props 정보", token)
     getOrders();
   }, []);
 
@@ -29,9 +28,10 @@ function FindOrder( token ) {
       <div className={styles.orderlist}>
         <div className={styles.header}>
           <div className={styles.text}>Order List</div>
+          {isWorker ? null :
           <Link component={RouterLink} to="/createorder">
             New Order
-          </Link>
+          </Link>}
         </div>
         <div className={styles.container}>
           <Grid
@@ -46,6 +46,8 @@ function FindOrder( token ) {
                     order={order}
                     key={order._id}
                     token={token}
+                    userInfo={userInfo}
+                    isWorker={isWorker}
                   />
                 </Grid>
               );

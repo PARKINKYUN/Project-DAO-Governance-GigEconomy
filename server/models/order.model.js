@@ -26,7 +26,7 @@ const order = new mongoose.Schema({
     required: true,
   },
   compensation: {
-    type: Number,
+    type: String,
     required: true,
   },
   content: {
@@ -42,26 +42,6 @@ const order = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  offers: [
-    {
-      worker: {
-        type: String,
-        required: true,
-      },
-      deadline: {
-        type: String,
-        required: true,
-      },
-      compensation: {
-        type: Number,
-        required: true,
-      },
-      message: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
   score: {
     type: Number,
   },
@@ -159,22 +139,14 @@ order.statics.postOffer = async function (order_id, worker_id, offer) {
   );
 };
 
-// 클라이언트가 제안을 선택, 오더의 상태를 진행중으로
-order.statics.setWorkerAndStart = async function (order_id, offer_index) {
-  const order = await this.findById(order_id);
-  const { worker, deadline, compensation } = order.offers[offer_index];
-  const _order = {
-    worker_id: worker,
-    status: "ongoing",
-    deadline: deadline,
-    compensation: compensation,
-  };
-  return await order.update(_order);
-};
-
-// 워커가 클라이언트의 의뢰를 수락, 오더의 상태를 진행중으로
-order.statics.acceptRequestAndStart = async function (order_id) {
-  return await this.findByIdAndUpdate(order_id, { status: "ongoing" });
+// order_id에 대한 작업 시작! 오더에 데이터를 추가하고 상태를 진행중으로 변경 (현재 사용중인 함수. 삭제 금지)
+order.statics.beginwork = async function (obj) {
+  return await this.findOneAndUpdate({ _id: obj._id }, {
+    worker_id: obj.worker_id,
+    status: obj.status,
+    deadline: obj.deadline,
+    compensation: obj.compensation,
+   });
 };
 
 // 오더 연장
@@ -193,7 +165,7 @@ order.statics.finish = async function (order_id) {
 };
 
 // 오더 삭제 (pending, requested 상태인 오더만 가능)
-order.statics.removeOrder = async function (order_id) {
+order.statics.remove = async function (order_id) {
   await this.findByIdAndRemove(order_id);
 };
 

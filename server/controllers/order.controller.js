@@ -47,7 +47,7 @@ module.exports = {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
           const orderInfo = await order.getOrderByClient(userInfo.client_id);
-          console.log("client_id로 오더 정보 조회 완료", orderInfo);
+          console.log("client_id로 오더 정보 조회 완료");
 
           return res
             .status(200)
@@ -55,7 +55,6 @@ module.exports = {
         }
       }
     } catch (err) {
-      // console.log(err);
       res.status(400).send({
         data: null,
         message: "Can't search",
@@ -78,7 +77,7 @@ module.exports = {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
           const orderInfo = await order.getOrderByWorker(userInfo.worker_id);
-          console.log("worker_id로 오더 정보 조회 완료", orderInfo);
+          console.log("worker_id로 오더 정보 조회 완료");
 
           return res
             .status(200)
@@ -127,7 +126,6 @@ module.exports = {
   direct_order: async (req, res) => {
     try {
       const accessToken = req.headers.authorization;
-      console.log(accessToken);
       if (!accessToken) {
         return res.status(404).send({ data: null, message: "Not autorized" });
       }
@@ -197,62 +195,61 @@ module.exports = {
   },
 
   // 클라이언트가 제안 선택, 오더 시작
-  clientStart: async (req, res) => {
+  beginwork: async (req, res) => {
     try {
-      const clientId = getClientId(req, res);
+      const accessToken = req.headers.authorization;
 
-      const order = await order.setWorkerAndStart(
-        req.params.id,
-        req.body.offer_index
-      );
-      if (!order) {
-        return res.status(400).message("제안이 없습니다.");
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const offersData = await order.beginwork(req.body);
+          console.log("offers 상태 변경 완료", offersData)
+          return res.status(200).send({ data: offersData, message: "Searching success" })
+        }
       }
-
-      return res
-        .status(200)
-        .send({ data: order._id, message: "오더가 시작되었습니다." });
     } catch (err) {
-      console.error(err);
-      res.status(400);
-    }
-  },
-
-  // 워커가 오더 수락, 오더 시작
-  workerStart: async (req, res) => {
-    try {
-      const workerId = getWorkerId(req, res);
-
-      const order = await order.acceptRequestAndStart(req.params.id);
-      if (!order) {
-        return res.status(400).message("에러가 발생했습니다.");
-      }
-
-      return res
-        .status(200)
-        .send({ data: order._id, message: "오더가 시작되었습니다." });
-    } catch (err) {
-      console.error(err);
-      res.status(400);
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
     }
   },
 
   // 오더 연장
   extend: async (req, res) => {
     try {
-      const clientId = getClientId(req, res);
+      const accessToken = req.headers.authorization;
 
-      const order = await order.extent(req.params.id);
-      if (!order) {
-        return res.status(400).message("에러가 발생했습니다.");
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const orderData = await order.extend(req.body.order_id);
+          console.log("offers 상태 변경 완료", orderData)
+          return res.status(200).send({ data: orderData, message: "Searching success" })
+        }
       }
-
-      return res
-        .status(200)
-        .send({ data: order._id, message: "오더가 연장되었습니다." });
     } catch (err) {
-      console.error(err);
-      res.status(400);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
     }
   },
 
@@ -278,36 +275,60 @@ module.exports = {
   // 오더 완료
   finish: async (req, res) => {
     try {
-      const clientId = getClientId(req, res);
+      const accessToken = req.headers.authorization;
 
-      const order = await order.finish(req.params.id);
-      if (!order) {
-        return res.status(400).message("에러가 발생했습니다.");
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const orderData = await order.finish(req.body.order_id);
+          console.log("offers 상태 변경 완료", orderData)
+          return res.status(200).send({ data: orderData, message: "Searching success" })
+        }
       }
-
-      return res
-        .status(200)
-        .send({ data: order._id, message: "오더가 완료되었습니다." });
     } catch (err) {
-      console.error(err);
-      res.status(400);
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
     }
   },
 
   // 오더 삭제
   remove: async (req, res) => {
     try {
-      const workerId = getWorkerId(req, res);
+      const accessToken = req.headers.authorization;
 
-      const removedOrder = await order.removeOrder(req.params.id);
-      if (!removedOrder) {
-        return res.status(400).message("오더의 삭제에 실패하였습니다.");
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const orderData = await order.remove(req.body.order_id);
+          console.log("offers 삭제 완료", orderData)
+          return res.status(200).send({ data: orderData, message: "Searching success" })
+        }
       }
-
-      return res.status(200).message("오더가 삭제되었습니다.");
     } catch (err) {
-      console.error(err);
-      res.status(400);
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
     }
   },
 

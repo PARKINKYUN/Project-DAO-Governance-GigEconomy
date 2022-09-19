@@ -29,7 +29,7 @@ module.exports = {
                     const inputData = await policymodel.saveNewPolicy(newPolicy)
                     console.log("WoW~!!! 새로운 정책이 시행되었습니다.", inputData);
 
-                    return res.status(200).send({ data: inputTap, message: "Created new policy"})
+                    return res.status(200).send({ data: inputData, message: "Created new policy"})
                 }
             }
         } catch (err) {

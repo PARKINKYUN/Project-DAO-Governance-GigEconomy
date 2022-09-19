@@ -47,6 +47,10 @@ const worker = new mongoose.Schema({
   introduction: {
     type: String,
   },
+  pendingAt: {
+    type: Date,
+    default: Date.now,
+  }
 });
 
 // 회원가입
@@ -88,17 +92,18 @@ worker.statics.getWorkerInfoById = async function (worker_id) {
 
 // pending 상태의 워커 리스트
 worker.statics.getPendingWorker = async function () {
-  return await this.find({pending: true});
+  return await this.find({pending: true}).sort({pendingAt: 1});
 };
 
 // pending 상태 변경(true || false)
 worker.statics.togglePending = async function (worker_id) {
+  const newDate = Date.now();
   const worker = await this.find({ worker_id: worker_id });
 
   if (worker[0].pending === false) {
     return await this.findOneAndUpdate(
       { worker_id: worker[0].worker_id },
-      { pending: true },
+      { pending: true, pendingAt: newDate},
       { new: true }
     );
   } else if (worker[0].pending === true) {
