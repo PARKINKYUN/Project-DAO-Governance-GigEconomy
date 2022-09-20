@@ -12,11 +12,8 @@ const NewTapForm = ({ token, writer, client_id, worker_id, order_id }) => {
   const [newTapContent, setNewTapContent] = useState("");
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const currentLocation = location.pathname;
 
   useEffect(() =>{
-    
   }, [])
 
   const onTextChange = (e) => {

@@ -4,18 +4,16 @@ import Box from "@mui/material/Box";
 import { Field, Form, FormSpy } from "react-final-form";
 import Typography from "../components/Typography";
 
-import Header from "../view/Header";
 import OrderForm from "../view/OrderForm";
 import RFTextField from "../form/RFTextField";
 import FormButton from "../form/FormButton";
 import FormFeedback from "../form/FormFeedback";
 import withRoot from "../withRoot";
 import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function CreateOrder({ userInfo, token }) {
   const [sent, setSent] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
 
   const handleSubmit = async (values) => {
@@ -31,6 +29,7 @@ function CreateOrder({ userInfo, token }) {
           deadline: deadline,
           compensation: compensation,
           content: content,
+          image: userInfo.image,
         },
         { headers: { authorization: token } }
       );

@@ -11,6 +11,7 @@ import CreateOrder from "./components/CreateOrder";
 import OrderInfo from "./Page/OrderInfo";
 import Governance from "./Page/Governance";
 import DirectOrder from "./components/DirectOrder";
+import UpdateInfo from "./Page/UpdateInfo";
 import Main from "./Page/Main";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -34,7 +35,6 @@ function App() {
       setIsWorker(isWorker);
     }
     console.log("ReRendering...");
-    console.log("접속자 정보", userInfo);
   }, [cookies, token, isWorker]);
 
   return (
@@ -60,11 +60,12 @@ function App() {
         <Route path="/workerInfo" element={<WorkerInfo token={token} userInfo={userInfo} setUserInfo={setUserInfo} />}/>
         <Route path="/ReRendering" element={<ReRendering token={token} userInfo={userInfo} setUserInfo={setUserInfo} />}/>
         <Route path="/workerprofile" element={<WorkerProfile userInfo={userInfo} token={token} />}/>
-        <Route path="/orderinfo" element={<OrderInfo />} />
+        <Route path="/orderinfo" element={<OrderInfo token={token} userInfo={userInfo} />} />
         <Route path="/createorder" element={<CreateOrder userInfo={userInfo} token={token} />}/>
         <Route path="/directOrder" element={<DirectOrder userInfo={userInfo} token={token} />}/>
         <Route path="/createproposal" element={<CreateProposal userInfo={userInfo} token={token} />} />
         <Route path="/governance" element={<Governance userInfo={userInfo} token={token} />}/>
+        <Route path="/updateinfo" element={<UpdateInfo userInfo={userInfo} token={token} setUserInfo={setUserInfo} isWorker={isWorker} />} />
       </Routes>
       <div>
         <Footer />

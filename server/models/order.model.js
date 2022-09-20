@@ -9,6 +9,10 @@ const order = new mongoose.Schema({
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+    default: "15d800c968085b51d2b364d095453ff2",
+  },
   worker_id: {
     type: String,
   },

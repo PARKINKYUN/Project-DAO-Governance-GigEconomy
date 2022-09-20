@@ -17,7 +17,7 @@ import { useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom'
 
-function SignUp({ history }) {
+function SignUp() {
   const [sent, setSent] = useState(false);
   const isWorker = useRef(false);
 
@@ -53,33 +53,43 @@ function SignUp({ history }) {
 
     // 사용자가 client인지 worker인지에 따라서 분기
     try {
-      if (isWorker.current) {
-        const res = await axios.post('http://localhost:4000/workers/join', {
+      const checkInputData = await axios.post('http://localhost:4000/clients/checkInpuData', { email: email, nickname: nickname });
+      if (checkInputData.data.data) {
+        if (isWorker.current) {
+          const res = await axios.post('http://localhost:4000/workers/join', {
             worker_id: email,
             nickname: nickname,
             password: password
           })
-        if (res.status === 200) {
-          window.alert("회원가입에 성공했습니다. 로그인 해주세요.")
-          navigate('/signin');
+          if (res.status === 200) {
+            window.alert("회원가입에 성공했습니다. 로그인 해주세요.")
+            navigate('/signin');
+          } else {
+            window.alert("회원가입 실패. 다시 시도해주세요.");
+            navigate("/ReRendering");
+          }
         } else {
-          console.log("회원가입 실패")
+          const res = await axios.post('http://localhost:4000/clients/join', {
+            client_id: email,
+            nickname: nickname,
+            password: password
+          })
+          if (res.status === 200) {
+            window.alert("회원가입에 성공했습니다. 로그인 해주세요.");
+            navigate('/signin');
+          } else {
+            window.alert("회원가입 실패. 다시 시도해주세요.");
+            navigate("/ReRendering");
+          }
         }
       } else {
-        const res = await axios.post('http://localhost:4000/clients/join', {
-          client_id: email,
-          nickname: nickname,
-          password: password
-        })
-        if (res.status === 200) {
-          window.alert("회원가입에 성공했습니다. 로그인 해주세요.");
-          navigate('/signin');
-        } else {
-          console.log("회원가입 실패")
-        }
+        window.alert("이미 존재하는 아이디 또는 닉네임입니다.")
+        navigate("/ReRendering");
       }
     } catch (err) {
       console.error(err);
+      window.alert("회원가입 실패. 다시 시도해주세요.");
+      navigate("/ReRendering");
     }
 
   };

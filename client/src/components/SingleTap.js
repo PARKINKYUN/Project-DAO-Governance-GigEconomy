@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import NewTapForm from "./NewTapForm";
 import { useState, useEffect } from "react";
 
-const SingleTap = ({ token, userInfo, tap }) => {
+const SingleTap = ({ token, userInfo, tap, order }) => {
   const [userId, setUserId] = useState("");
   const [reTapState, setReTapState] = useState(false);
   const [reciever, setReciever] = useState("");
@@ -55,7 +55,7 @@ const SingleTap = ({ token, userInfo, tap }) => {
           : null}
         </Grid>
       </Grid>
-      {reTapState ? <NewTapForm token={token} writer={userId} client_id={tap.client_id} worker_id={tap.worker_id} />
+      {reTapState ? <NewTapForm token={token} writer={userId} client_id={tap.client_id} worker_id={tap.worker_id} order_id={order._id} />
       : null}
     </li>
   );

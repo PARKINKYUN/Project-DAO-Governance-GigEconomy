@@ -40,7 +40,7 @@ function WorkerProfile({ token, userInfo }) {
         <div className={styles.profileBox}>
           <Grid container spacing={3}>
             <Grid item xs={2} justifyContent="center" alignItems="center" >
-              <Profile />
+              <Profile image={worker.image} />
             </Grid>
             <Grid item xs={2}>
               <div className={styles.name}>

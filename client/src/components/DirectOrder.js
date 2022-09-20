@@ -35,6 +35,7 @@ function DirectOrder({ userInfo, token }) {
           deadline: deadline,
           compensation: compensation,
           content: content,
+          image: userInfo.image,
         },
         { headers: { authorization: token } }
       );

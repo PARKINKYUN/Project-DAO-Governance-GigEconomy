@@ -51,6 +51,7 @@ module.exports = {
             mod_authority: workerInfo[0].mod_authority,
             balance: workerInfo[0].balance, ////////////////// 컨트랙트 배포후 수정해야함
             gig_score: workerInfo[0].gig_score, //////////////// 여기도 수정해야함
+            introduction: workerInfo[0].introduction,
           };
 
           console.log("workerData", workerData);
@@ -262,7 +263,7 @@ module.exports = {
   toggleStatus: async (req, res) => {
     try {
       // 현재 상태가 pending(false) 이면 true 전환하면서 토큰을 지불해야함. 토큰 환불은 하지 않음.
-      if(!req.body.currentStatus) {
+      if (!req.body.currentStatus) {
         // 
         // web3 토큰 지불 로직이 들어가야함
         //
@@ -271,10 +272,10 @@ module.exports = {
       }
       const result = await workerModel.togglePending(req.body.workerId);
       if (!result) {
-        return res.status(400).send({data: null, message: "Worker 정보가 없습니다."});
+        return res.status(400).send({ data: null, message: "Worker 정보가 없습니다." });
       }
-      
-      return res.status(200).send({data: result, message: "pending 리스트에 등록되었습니다."});
+
+      return res.status(200).send({ data: result, message: "pending 리스트에 등록되었습니다." });
     } catch (err) {
       console.error(err);
       res.status(400);
@@ -346,20 +347,31 @@ module.exports = {
       res.status(400);
     }
   },
+
+  // 회원 정보 변경
+  updateWorkerInfo: async (req, res) => {
+    try {
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res.status(404).send({ data: null, message: "Invalid access token" });
+      } else {
+        const workerData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+
+        if (workerData.account_type !== "worker") {
+          res.status(404).send({ data: null, message: "Invalid account" });
+        } else {
+          const updateInfo = await workerModel.setWorkerInfo(workerData.worker_id, req.body.image[0], req.file.filename, req.body.image[1]);
+
+          res.status(200).send({ data: req.file.filename, message: "Client info updated" })
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(404).send({ data: null, message: "Can't execute request" })
+    }
+  }
 };
 
-const getWorkerId = (req, res) => {
-  const accessToken = req.headers.authorization;
-  if (!accessToken) {
-    return res
-      .status(404)
-      .send({ data: null, message: "Invalid access token" });
-  }
 
-  const workerData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
-  if (workerData.account_type !== "worker") {
-    return res.status(404).message("worker only");
-  }
 
-  return workerData.worker_id;
-};
