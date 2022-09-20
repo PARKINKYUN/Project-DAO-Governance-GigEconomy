@@ -53,13 +53,13 @@ module.exports = {
             if (!accessToken) {
                 return res.status(404).send({ data: null, message: "Not autorized" });
             } else {
-                const token = accessToken.split("")[0];
+                const token = accessToken.split(" ")[0];
                 const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
 
                 if (!userInfo) {
                     return res.status(404).send({ data: null, message: "Invalid token" });
                 } else {
-                    const estimationInfo = await estimatemodel.getEstimationByWorker(userInfo.worker_id);
+                    const estimationInfo = await estimatemodel.getEstimationByWorker(req.params.worker_id);
 
                     const estimatedCount = estimationInfo.length;
                     let sumScore=0;
@@ -70,8 +70,9 @@ module.exports = {
                     const result = {
                         total_score: sumScore,
                         estimation_count: estimatedCount,
-                        average_score: sumScore/estimatedCount
+                        average_score: Math.round(sumScore/estimatedCount * 100) / 100,
                     }
+                    console.log(result)
 
                     return res
                         .status(200)

@@ -80,7 +80,7 @@ function ClientInfo({ token, userInfo }) {
                                 <h4>Token Amount</h4>
                             </div>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
                             <div className={styles.name}>
                                 <h4>{userInfo.client_id}</h4>
                                 <h4>{userInfo.nickname}</h4>
@@ -88,7 +88,7 @@ function ClientInfo({ token, userInfo }) {
                                 <h4>{userInfo.balance}</h4>
                             </div>
                         </Grid>
-                        <Grid item xs={2} justifyContent="center" alignItems="center" >
+                        <Grid item xs={4} justifyContent="center" alignItems="center" >
                             <Box sx={{ '& button': { m: 1 } }}>
                                 <Button variant="contained" size="medium" onClick={() => navigate('/createorder')}>
                                     Order 생성

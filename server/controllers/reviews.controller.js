@@ -40,20 +40,20 @@ module.exports = {
   },
 
   // order_id로 리뷰 조회
-  reviewlistbyorder: async (req, res) => {
+  reviewsListByWorker: async (req, res) => {
     try {
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {
         return res.status(404).send({ data: null, message: "Not autorized" });
       } else {
-        const token = accessToken.split("")[0];
+        const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
 
         if (!userInfo) {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-          const reviewInfo = reviewmodel.getReviewByOrderId(req.params.order_id);
+          const reviewInfo = await reviewmodel.getReviewByWorkerId(req.params.worker_id);
           return res
             .status(200)
             .send({ data: reviewInfo, message: "Searching success" });

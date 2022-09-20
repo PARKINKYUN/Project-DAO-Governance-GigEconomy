@@ -81,6 +81,11 @@ order.statics.getOrderByWorker = async function (worker_id) {
   return await this.find({worker_id: worker_id});
 };
 
+// worker_id로 오더 정보 조회
+order.statics.getFinishedOrderByWorker = async function (worker_id) {
+  return await this.find({worker_id: worker_id});
+};
+
 // 새로운 오더 생성
 order.statics.postOrder = async function (data) {
   const { client_id, title, category, deadline, compensation, content, file } =

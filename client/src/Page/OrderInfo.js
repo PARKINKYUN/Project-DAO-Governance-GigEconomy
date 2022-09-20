@@ -437,7 +437,8 @@ function OrderInfo() {
                   </Button>
                 }
                 {/* 탭 콘솔 오픈. 작업이 완료되면 더 이상 대화를 할 수 없다. */}
-                {orderItem.status === "pending" || orderItem.status === "ongoing" || orderItem.status === "extended" ?
+                {orderItem.status === "pending" && isWorker || orderItem.status === "pending" && orderItem.client_id === client_id ||
+                orderItem.status === "ongoing" || orderItem.status === "extended" ?
                   <Button variant="contained" size="medium" onClick={toggleNewTap}>
                     대화 하기
                   </Button>
