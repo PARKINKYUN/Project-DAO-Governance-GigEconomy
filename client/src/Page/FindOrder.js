@@ -48,6 +48,7 @@ function FindOrder( {token, userInfo, isWorker} ) {
                     token={token}
                     userInfo={userInfo}
                     isWorker={isWorker}
+                    image={order.image}
                   />
                 </Grid>
               );

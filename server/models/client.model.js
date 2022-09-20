@@ -22,7 +22,7 @@ const client = new mongoose.Schema({
   },  
   image: {
     type: String,
-    // default 값 필요함
+    default: "15d800c968085b51d2b364d095453ff2",
   },
   address: {
     type: String,
@@ -31,6 +31,9 @@ const client = new mongoose.Schema({
   balance: {
     type: Number,
     default: 0,
+  },
+  introduction: {
+    type: String,
   },
 });
 
@@ -41,14 +44,31 @@ client.methods.saveClient = async function () {
   return await this.save();
 };
 
+// 아이디와 nickname이 이미 존재하는지 확인
+client.statics.checkInputData = async function (client_id, nickname) {
+  const checkId = await this.find({client_id: client_id});
+  const checkNickname = await this.find({nickname: nickname});
+  if(checkId.length > 0 || checkNickname.length > 0) {
+    return false;
+  }
+  return true;
+}
+
+// 닉네임이 이미 존재하는지 확인
+client.statics.checkNickname = async function (nickname) {
+  const checkNickname = await this.find({nickname: nickname});
+  if(checkNickname.length > 0) {
+    return false;
+  }
+  return true;
+}
+
 // 회원정보 수정
-client.statics.setClientInfo = async function (
-  client_id,
-  obj
-) {
+// 회원정보 수정
+client.statics.setClientInfo = async function (client_id, nickname, image, introduction) {
   return await this.findOneAndUpdate(
     { client_id: client_id },
-    { nickname: obj.nickname, image: obj.image},
+    { nickname: nickname, image: image, introduction: introduction },
     { new: true }
   );
 };

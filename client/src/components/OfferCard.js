@@ -5,7 +5,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "./Typography";
 import { Button, CardActionArea, CardActions } from '@mui/material';
 
-export default function OfferCard({ worker, deadline, compensation, message, chooseOffer, offer }) {
+export default function OfferCard({ worker, deadline, compensation, message, chooseOffer, offer, image }) {
   const clickHandler = () => {
     chooseOffer(offer);
   }
@@ -13,7 +13,7 @@ export default function OfferCard({ worker, deadline, compensation, message, cho
   return (
     <Card sx={{ maxWidth: 345 }} style={{ marginBottom: "20px" }} >
       <CardActionArea >
-        <CardMedia component="img" height="140" src={require("../img/worker1.jpg")} alt="" />
+        <CardMedia component="img" height="140" src={"http://localhost:4000/images/" + image} alt="" />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div" name="worker">
             {worker}

@@ -55,7 +55,7 @@ tap.statics.getLatestTapId = async function () {
 // order id로 탭 조회
 tap.statics.getTapsByOrderId = async function (order_id) {
     console.log("모델쪽 오더 아이디", order_id)
-    return await this.find({ order_id: order_id });
+    return await this.find({ order_id: order_id }).sort({ tap_id: -1 });
 }
 
 // client id로 탭 조회

@@ -1,6 +1,7 @@
 const contract_abi = require("../contracts/contract_abi");
 const contract_address = require("../contracts/contract_address");
 const clientModel = require("../models/client.model");
+const workerModel = require("../models/worker.model");
 
 const jwt = require("jsonwebtoken");
 
@@ -51,7 +52,8 @@ module.exports = {
                         account_type: clientInfo[0].account_type,
                         nickname: clientInfo[0].nickname,
                         address: clientInfo[0].address,
-                        image: clientInfo[0].image
+                        image: clientInfo[0].image,
+                        introduction: clientInfo[0].introduction,
                     };
 
                     const accessToken = jwt.sign(
@@ -203,8 +205,8 @@ module.exports = {
                     process.env.ACCESS_SECRET
                 );
 
-                if(!userInfo){
-                    res.status(404).send({ data: null, message: "Invalid account"})
+                if (!userInfo) {
+                    res.status(404).send({ data: null, message: "Invalid account" })
 
                 } else {
                     const clientData = await clientModel.getClientInfoById(req.body.client_id);
@@ -232,29 +234,55 @@ module.exports = {
     updateClientInfo: async (req, res) => {
         try {
             const accessToken = req.headers.authorization;
-
-            if(!accessToken){
-                return res.status(404).send({ data: null, message: "Invalid access token" });
+      
+            if (!accessToken) {
+              return res.status(404).send({ data: null, message: "Invalid access token" });
             } else {
-                const clientData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
-
-                if( userInfo.account_type !== "client" ){
-                    res.status(404).send({ data: null, message: "Invalid account"});
-                } else {
-                    const inputData = {
-                        nickname: req.body.nickname,
-                        image: req.file.path,
-                    };
-
-                    const updateInfo = await clientModel.setClientInfo(clientData.client_id, inputData);
-
-                    res.status(200).send({ data: updateInfo, message: "Client info updated"})
-                }
+              const clientData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+      
+              if (clientData.account_type !== "client") {
+                res.status(404).send({ data: null, message: "Invalid account" });
+              } else {
+                const updateInfo = await clientModel.setClientInfo(clientData.client_id, req.body.image[0], req.file.filename, req.body.image[1]);
+      
+                res.status(200).send({ data: req.file.filename, message: "Client info updated" })
+              }
             }
+          } catch (err) {
+            console.error(err);
+            res.status(404).send({ data: null, message: "Can't execute request" })
+          }
+    },
 
+    // 아이디, 닉네임 중복 여부 확인
+    checkInpuData: async (req, res) => {
+        try {
+            const checkClient = await clientModel.checkInputData(req.body.email, req.body.nickname);
+            const checkWorker = await workerModel.checkInputData(req.body.email, req.body.nickname);
+
+            if (checkClient && checkWorker) {
+                return res.status(200).send({ data: true, message: "ok" });
+            }
+            return res.status(200).send({ data: false, message: "Already Exist!" })
         } catch (err) {
             console.error(err);
-            res.status(404).send({ data: null, message: "Can't execute request"})
+            res.status(404).send({ data: null, message: "Can't execute request" })
         }
-    }
+    },
+
+    // 아이디, 비밀번호 일치여부 확인
+    checkNickname: async (req, res) => {
+        try {
+            const checkClient = await clientModel.checkNickname(req.body.nickname);
+            const checkWorker = await workerModel.checkNickname(req.body.nickname);
+
+            if (checkClient && checkWorker) {
+                return res.status(200).send({ data: true, message: "ok" });
+            }
+            return res.status(200).send({ data: false, message: "Already Exist!" })
+        } catch (err) {
+            console.error(err);
+            res.status(404).send({ data: null, message: "Can't execute request" })
+        }
+    },
 };

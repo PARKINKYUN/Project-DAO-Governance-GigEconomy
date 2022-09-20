@@ -5,6 +5,10 @@ const offer = new mongoose.Schema({
         type: String,
         required: true,
     },
+    image: {
+        type: String,
+        default: "15d800c968085b51d2b364d095453ff2",
+    },
     client_id: {
         type: String,
         required: true,
@@ -32,12 +36,12 @@ const offer = new mongoose.Schema({
 
 // order에 지원한 오퍼 리스트.
 offer.statics.getOffers = async function (order_id) {
-    return await this.find({order_id: order_id});
+    return await this.find({ order_id: order_id });
 };
 
 // offer _id로 오퍼 조회
 offer.statics.getOffersById = async function (offer_id) {
-    return await this.find({_id: offer_id});
+    return await this.find({ _id: offer_id });
 }
 
 // 제안 올리기
@@ -59,7 +63,7 @@ offer.statics.updateOffer = async function (order_id, worker_id) {
         { order_id: order_id, worker_id: worker_id },
         { accepted: true },
         { new: true }
-      );
+    );
 };
 
 module.exports = mongoose.model("Offer", offer);

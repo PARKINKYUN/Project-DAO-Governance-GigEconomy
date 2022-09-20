@@ -22,10 +22,19 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
         // 토큰을 사용하여
         // 서버로 유저의 토큰 balance 구해오는 함수 넣어야함
 
+        console.log()
+
         getOrdersList();
-        
+
         getTaps();
     }, [])
+
+    // 거버넌스에 참여하는 Moderator가 되기 위한 gig-score 자격
+    const Mod_Contition = 1000;
+    // 자격이 되는 worker가 Moderator로 전환
+    const applyModerator = () => {
+        console.log("모더레이터로 전환되었습니다.")
+    }
 
     const getTaps = async () => {
         const res = await axios.get('http://localhost:4000/taps/taplistbyworker', { headers: { authorization: token } });
@@ -34,7 +43,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
             setTaps(tapsInfo);
         }
     }
-    
+
 
     const changeWorkerStatus = async () => {
         try {
@@ -65,7 +74,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
             let finishedData = [];
 
             const res = await axios.get('http://localhost:4000/orders/getOrderByWorker', { headers: { authorization: token } });
-            const orderData = res.data.data.order;
+            const orderData = res.data.data;
             if (orderData) {
                 orderData.map((order) => {
                     if (order.status === "pending") {
@@ -80,19 +89,10 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                 setOngoing(ongoingData);
                 setFinished(finishedData);
             }
-
-
         } catch (err) {
             console.error(err);
             navigate("/")
         }
-    }
-
-    // 거버넌스에 참여하는 Moderator가 되기 위한 gig-score 자격
-    const Mod_Contition = 1000;
-    // 자격이 되는 worker가 Moderator로 전환
-    const applyModerator = () => {
-        console.log("모더레이터로 전환되었습니다.")
     }
 
     return (
@@ -101,7 +101,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                 <div className={styles.profileBox}>
                     <Grid container spacing={3}>
                         <Grid item xs={2} justifyContent="center" alignItems="center" >
-                            <Profile />
+                            <Profile image={userInfo.image} />
                         </Grid>
                         <Grid item xs={2}>
                             <div className={styles.name}>
@@ -136,7 +136,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                 {/* 회원정보 수정페이지 제작해야함 */}
                                 {/* 회원정보 수정페이지 제작해야함 */}
                                 {/* 회원정보 수정페이지 제작해야함 */}
-                                <Button variant="contained" size="medium" onClick={() => navigate('/')}>
+                                <Button variant="contained" size="medium" onClick={() => navigate('/updateinfo')}>
                                     회원정보수정
                                 </Button>
                                 <Button variant="contained" size="medium" onClick={() => navigate('/')}>
@@ -152,52 +152,59 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                     </Grid>
                 </div>
                 <div className={styles.reviewBox}>
+
                     <h4>Order 대기</h4>
-                    {pending.map((order) => {
-                        return (
-                            <Grid item xs={2} sm={4} md={4} key={order._id}>
-                                <OrderCard
-                                    order={order}
-                                    key={order._id}
-                                    token={token}
-                                    userInfo={userInfo}
-                                    isWorker={true}
-                                />
-                            </Grid>
-                        );
-                    })}
+                    <Grid container spacing={3}>
+                        {pending.map((order) => {
+                            return (
+                                <Grid item xs={2} sm={4} md={4} key={order._id}>
+                                    <OrderCard
+                                        order={order}
+                                        key={order._id}
+                                        token={token}
+                                        userInfo={userInfo}
+                                        isWorker={true}
+                                    />
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
                 </div>
                 <div className={styles.reviewBox}>
                     <h4>Order 작업 중</h4>
-                    {ongoing.map((order) => {
-                        return (
-                            <Grid item xs={2} sm={4} md={4} key={order._id}>
-                                <OrderCard
-                                    order={order}
-                                    key={order._id}
-                                    token={token}
-                                    userInfo={userInfo}
-                                    isWorker={true}
-                                />
-                            </Grid>
-                        );
-                    })}
+                    <Grid container spacing={3}>
+                        {ongoing.map((order) => {
+                            return (
+                                <Grid item xs={2} sm={4} md={4} key={order._id}>
+                                    <OrderCard
+                                        order={order}
+                                        key={order._id}
+                                        token={token}
+                                        userInfo={userInfo}
+                                        isWorker={true}
+                                    />
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
                 </div>
                 <div className={styles.reviewBox}>
                     <h4>Order 종료</h4>
-                    {finished.map((order) => {
-                        return (
-                            <Grid item xs={2} sm={4} md={4} key={order._id}>
-                                <OrderCard
-                                    order={order}
-                                    key={order._id}
-                                    token={token}
-                                    userInfo={userInfo}
-                                    isWorker={true}
-                                />
-                            </Grid>
-                        );
-                    })}
+                    <Grid container spacing={3}>
+                        {finished.map((order) => {
+                            return (
+                                <Grid item xs={2} sm={4} md={4} key={order._id}>
+                                    <OrderCard
+                                        order={order}
+                                        key={order._id}
+                                        token={token}
+                                        userInfo={userInfo}
+                                        isWorker={true}
+                                    />
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
                 </div>
                 <div>
                     <TapsList token={token} userInfo={userInfo} taps={taps} />

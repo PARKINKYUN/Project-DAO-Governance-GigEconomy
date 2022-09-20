@@ -22,7 +22,7 @@ const worker = new mongoose.Schema({
   },
   image: {
     type: String,
-    // default 값 필요함
+    default: "15d800c968085b51d2b364d095453ff2",
   },
   pending: {
     type: Boolean,
@@ -61,13 +61,32 @@ worker.methods.saveWorker = async function () {
 };
 
 // 회원정보 수정
-worker.statics.setWorkerInfo = async function (worker_id, nickname, image) {
+worker.statics.setWorkerInfo = async function (worker_id, nickname, image, introduction) {
   return await this.findOneAndUpdate(
     { worker_id: worker_id },
-    { nickname: nickname, image: image },
+    { nickname: nickname, image: image, introduction: introduction },
     { new: true }
   );
 };
+
+// 아이디와 nickname이 이미 존재하는지 확인
+worker.statics.checkInputData = async function (worker_id, nickname) {
+  const checkId = await this.find({worker_id: worker_id});
+  const checkNickname = await this.find({nickname: nickname});
+  if(checkId.length > 0 || checkNickname.length > 0) {
+    return false;
+  }
+  return true;
+}
+
+// 닉네임이 이미 존재하는지 확인
+worker.statics.checkNickname = async function (nickname) {
+  const checkNickname = await this.find({nickname: nickname});
+  if(checkNickname.length > 0) {
+    return false;
+  }
+  return true;
+}
 
 // 회원정보 수정 (비밀번호)
 worker.statics.setWorkerPassword = async function (worker_id, password) {

@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function ClientInfo({ token, userInfo, setUserInfo }) {
+function ClientInfo({ token, userInfo }) {
     const [pending, setPending] = useState([]);
     const [ongoing, setOngoing] = useState([]);
     const [finished, setFinished] = useState([]);
@@ -25,10 +25,10 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
         getOrdersList();
 
         const getTaps = async () => {
-            const res = await axios.get('http://localhost:4000/taps/taplistbyclient', { headers: {authorization: token} });
+            const res = await axios.get('http://localhost:4000/taps/taplistbyclient', { headers: { authorization: token } });
             const tapsInfo = res.data.data;
-            if(tapsInfo !== undefined){
-              setTaps(tapsInfo);
+            if (tapsInfo !== undefined) {
+                setTaps(tapsInfo);
             }
         }
         getTaps();
@@ -70,7 +70,7 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
                 <div className={styles.profileBox}>
                     <Grid container spacing={3}>
                         <Grid item xs={2} justifyContent="center" alignItems="center" >
-                            <Profile />
+                            <Profile image={userInfo.image} />
                         </Grid>
                         <Grid item xs={2}>
                             <div className={styles.name}>
@@ -98,7 +98,7 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
                                 {/* 회원정보 수정페이지 제작해야함 */}
                                 {/* 회원정보 수정페이지 제작해야함 */}
                                 {/* 회원정보 수정페이지 제작해야함 */}
-                                <Button variant="contained" size="medium" onClick={() => navigate('/')}>
+                                <Button variant="contained" size="medium" onClick={() => navigate('/updateinfo')}>
                                     회원정보수정
                                 </Button>
                                 <Button variant="contained" size="medium" onClick={() => navigate('/')}>
@@ -110,51 +110,57 @@ function ClientInfo({ token, userInfo, setUserInfo }) {
                 </div>
                 <div className={styles.reviewBox}>
                     <h4>Order 대기</h4>
-                    {pending.map((order) => {
-                        return (
-                            <Grid item xs={2} sm={4} md={4} key={order._id}>
-                              <OrderCard
-                                order={order}
-                                key={order._id}
-                                token={token}
-                                userInfo={userInfo}
-                                isWorker={false}
-                              />
-                            </Grid>
-                          );
-                    })}
+                    <Grid container spacing={3}>
+                        {pending.map((order) => {
+                            return (
+                                <Grid item xs={2} sm={4} md={4} key={order._id}>
+                                    <OrderCard
+                                        order={order}
+                                        key={order._id}
+                                        token={token}
+                                        userInfo={userInfo}
+                                        isWorker={false}
+                                    />
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
                 </div>
                 <div className={styles.reviewBox}>
                     <h4>Order 작업 중</h4>
-                    {ongoing.map((order) => {
-                                      return (
-                                        <Grid item xs={2} sm={4} md={4} key={order._id}>
-                                          <OrderCard
-                                            order={order}
-                                            key={order._id}
-                                            token={token}
-                                            userInfo={userInfo}
-                                            isWorker={false}
-                                          />
-                                        </Grid>
-                                      );
-                    })}
+                    <Grid container spacing={3}>
+                        {ongoing.map((order) => {
+                            return (
+                                <Grid item xs={2} sm={4} md={4} key={order._id}>
+                                    <OrderCard
+                                        order={order}
+                                        key={order._id}
+                                        token={token}
+                                        userInfo={userInfo}
+                                        isWorker={false}
+                                    />
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
                 </div>
                 <div className={styles.reviewBox}>
                     <h4>Order 종료</h4>
-                    {finished.map((order) => {
-                                      return (
-                                        <Grid item xs={2} sm={4} md={4} key={order._id}>
-                                          <OrderCard
-                                            order={order}
-                                            key={order._id}
-                                            token={token}
-                                            userInfo={userInfo}
-                                            isWorker={false}
-                                          />
-                                        </Grid>
-                                      );
-                    })}
+                    <Grid container spacing={3}>
+                        {finished.map((order) => {
+                            return (
+                                <Grid item xs={2} sm={4} md={4} key={order._id}>
+                                    <OrderCard
+                                        order={order}
+                                        key={order._id}
+                                        token={token}
+                                        userInfo={userInfo}
+                                        isWorker={false}
+                                    />
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
                 </div>
                 <div>
                     <TapsList token={token} userInfo={userInfo} taps={taps} />

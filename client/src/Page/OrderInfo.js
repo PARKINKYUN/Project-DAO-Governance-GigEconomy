@@ -64,6 +64,7 @@ function OrderInfo() {
         deadline: deadline,
         compensation: compensation,
         message: message,
+        image: userInfo.image,
       };
       const res = await axios.post(`http://localhost:4000/offers/newofferbyorder`, newOffer, { headers: { authorization: token } });
       if (res.status === 200) {
@@ -98,14 +99,13 @@ function OrderInfo() {
   const getTaps = async () => {
     const res = await axios.get(`http://localhost:4000/taps/taplistbyorder/${order._id}`, { headers: { authorization: token } });
     const tapsInfo = res.data.data;
-    console.log(tapsInfo)
     // 접속자가 worker인 경우
     if (tapsInfo !== undefined && isWorker) {
-      const tapByWorker = tapsInfo.filter((tap) => tap.worker_id === userInfo.worker_id && tap.order_id === order._id);
+      const tapByWorker = tapsInfo.filter((tap) => tap.worker_id === userInfo.worker_id);
       setTaps(tapByWorker);
       // 접속자가 client인 경우, order 작성자에게만 노출
-    } else if (tapsInfo !== undefined && orderItem.client_id === userInfo.client_id) {
-      const tapByClient = tapsInfo.filter((tap) => tap.client_id === userInfo.client_id && tap.order_id === order._id);
+    } else if (tapsInfo !== undefined) {
+      const tapByClient = tapsInfo.filter((tap) => tap.client_id === userInfo.client_id);
       setTaps(tapByClient);
     }
   }
@@ -121,7 +121,7 @@ function OrderInfo() {
   // (*** 오더 수정 기능은 고의적으로 넣지 않음. 오더를 수행하는 워커와의 분쟁으로 이어질 수 있음 ***) ==================================
   const removeOrder = async () => {
     try {
-      const res = await axios.delete(`http://localhost:4000/orders/order_info/remove`, {data: {order_id: orderItem._id}, headers: { authorization: token } });
+      const res = await axios.delete(`http://localhost:4000/orders/order_info/remove`, { data: { order_id: orderItem._id }, headers: { authorization: token } });
       window.alert("등록했던 Order가 정상적으로 삭제되었습니다.");
       navigate(-1);
     } catch (err) {
@@ -134,25 +134,38 @@ function OrderInfo() {
   // 오더 시작 ==================================
   const beginWork = async () => {
     try {
-      const orderInfo = {
-        _id: offer[0].order_id,
-        worker_id: offer[0].worker_id,
-        status: "ongoing",
-        deadline: offer[0].deadline,
-        compensation: offer[0].compensation,
-      };
-      const offerInfo = {
-        order_id: offer[0].order_id,
-        worker_id: offer[0].worker_id
+      let orderInfo;
+      let offerInfo;
+      if (order.direct_order) {
+        orderInfo = {
+          _id: order._id,
+          worker_id: order.worker_id,
+          status: "ongoing",
+          deadline: order.deadline,
+          compensation: order.compensation,
+        };
+      } else {
+        orderInfo = {
+          _id: offer[0].order_id,
+          worker_id: offer[0].worker_id,
+          status: "ongoing",
+          deadline: offer[0].deadline,
+          compensation: offer[0].compensation,
+        };
+        offerInfo = {
+          order_id: offer[0].order_id,
+          worker_id: offer[0].worker_id
+        }
       }
-
       const resOrder = await axios.patch("http://localhost:4000/orders/order_info/beginwork", orderInfo, { headers: { authorization: token } });
       if (resOrder.status !== 200) {
         window.alert("작업을 시작하지 못하였습니다. 다시 시도해주세요.")
         return;
       }
-      const resOffer = await axios.patch("http://localhost:4000/offers/updateoffer", offerInfo, { headers: { authorization: token } });
-      console.log("오더 작업 시작!", resOffer);
+      if(!order.direct_order){
+        const resOffer = await axios.patch("http://localhost:4000/offers/updateoffer", offerInfo, { headers: { authorization: token } });
+      }
+      console.log("오더 작업 시작!");
       window.alert("선택한 작업이 시작되었습니다.");
       navigate(-1);
     } catch (err) {
@@ -164,21 +177,21 @@ function OrderInfo() {
 
   // 만기일이 도래한 오더에 대한 기간 연장. client만 가능하다. ==================================
   const extendOrder = async () => {
-      try {
-        const res = await axios.patch(`http://localhost:4000/orders/order_info/extend`, {order_id: orderItem._id}, { headers: { authorization: token } });
-        window.alert("선택한 Order의 작업 기간이 연장되었습니다.");
-        navigate("/clientInfo");
-      } catch (err) {
-        console.log(err);
-        window.alert("오류가 발생하였습니다. 다시 시도해주세요.");
-        navigate("/ReRendering");
-      }
+    try {
+      const res = await axios.patch(`http://localhost:4000/orders/order_info/extend`, { order_id: orderItem._id }, { headers: { authorization: token } });
+      window.alert("선택한 Order의 작업 기간이 연장되었습니다.");
+      navigate("/clientInfo");
+    } catch (err) {
+      console.log(err);
+      window.alert("오류가 발생하였습니다. 다시 시도해주세요.");
+      navigate("/ReRendering");
+    }
   };
 
   // 오더 완료 ==================================
   const finishOrder = async () => {
     try {
-      const res = await axios.patch(`http://localhost:4000/orders/order_info/finish`, {order_id: orderItem._id}, { headers: { authorization: token } });
+      const res = await axios.patch(`http://localhost:4000/orders/order_info/finish`, { order_id: orderItem._id }, { headers: { authorization: token } });
       window.alert("작업 중이었던 Order가 완료되었습니다.");
       navigate("/clientInfo");
     } catch (err) {
@@ -333,6 +346,7 @@ function OrderInfo() {
                     message={offer.message}
                     chooseOffer={chooseOffer}
                     offer={offer._id}
+                    image={offer.image}
                   />
                 </Grid>
               );
@@ -375,7 +389,7 @@ function OrderInfo() {
             <Grid item xs={4} justifyContent="center" alignItems="center" >
               <Box sx={{ '& button': { m: 1 } }}>
                 {/* 다이렉트 오더라면 오더를 받은 워커에게만 표시. 다이렉트가 아니라면 오더를 작성한 '클라이언트만' 오퍼를 선택했을 때만 표시 */}
-                {(orderItem.direct_order && orderItem.worker_id === worker_id) ||
+                {(orderItem.direct_order && orderItem.status === "pending" && orderItem.worker_id === worker_id) ||
                   (offer !== null && orderItem.client_id === client_id) ?
                   <Button variant="contained" size="medium" onClick={beginWork}>
                     작업 시작
@@ -416,7 +430,7 @@ function OrderInfo() {
                   </Button>
                 }
                 {/* 탭 콘솔 오픈. 대화하기. worker만 선택 가능 */}
-                {isWorker ?
+                {isWorker || orderItem.status === "ongoing" || orderItem.status === "extended" ?
                   <Button variant="contained" size="medium" onClick={toggleNewTap}>
                     대화 하기
                   </Button>
@@ -433,14 +447,19 @@ function OrderInfo() {
       {/* 대화하기를 누르면 활성화되는 tap 입력 form */}
       <div>
         {(tapFlag && isWorker) ?
-          <NewTapForm token={token.token} writer={worker_id} client_id={orderItem.client_id} worker_id={worker_id} order_id={orderItem._id} />
+          <NewTapForm token={token} writer={worker_id} client_id={orderItem.client_id} worker_id={worker_id} order_id={order._id} />
+          :
+          null
+        }
+        {(tapFlag && !isWorker) ?
+          <NewTapForm token={token} writer={client_id} client_id={client_id} worker_id={orderItem.worker_id} order_id={order._id} />
           :
           null
         }
       </div>
       {/* order 작성한 client와 접속한 worker탭 정보 보여주는 부분 */}
       <div>
-        <TapsList token={token} userInfo={userInfo} taps={taps} />
+        <TapsList token={token} userInfo={userInfo} taps={taps} order={order} />
       </div>
     </div>
   )
