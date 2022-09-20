@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
 const review = new mongoose.Schema({
-  review_id: {
-    type: Number,
-  },
   worker_id: {
     type: String,
   },
   order_id: {
+    type: String,
+  },
+  order_title: {
     type: String,
   },
   content: {
@@ -27,12 +27,12 @@ review.statics.getReviewByOrderId = async (order_id) => {
 };
 
 //리뷰 생성
-review.methods.saveReview = async (obj, idx) => {
+review.statics.saveReview = async function (obj) {
   const newReview = new this({
     worker_id: obj.worker_id,
     order_id: obj.order_id,
+    order_title: obj.order_title,
     content: obj.content,
-    review_id: idx,
   });
   return await newReview.save();
 };

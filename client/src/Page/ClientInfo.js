@@ -48,7 +48,7 @@ function ClientInfo({ token, userInfo }) {
                         pendingData.push(order);
                     } else if (order.status === "ongoing" || order.status === "extended") {
                         ongoingData.push(order);
-                    } else if (order.status === "finished" || order.status === "canceled") {
+                    } else if (order.status === "finished" && !order.isEstimated) {
                         finishedData.push(order);
                     }
                 })

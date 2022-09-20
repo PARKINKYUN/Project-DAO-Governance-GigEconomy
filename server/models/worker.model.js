@@ -46,6 +46,7 @@ const worker = new mongoose.Schema({
   },
   introduction: {
     type: String,
+    default: "소개글이 아직 등록되지 않았습니다."
   },
   pendingAt: {
     type: Date,
