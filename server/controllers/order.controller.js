@@ -332,21 +332,72 @@ module.exports = {
     }
   },
 
-  // client가 order에 대한 평가를 수행했는지 여부 확인
+  // client가 order에 대한 평가 수행
   isEstimated: async (req, res) => {
     try {
-      return await isEstimated(req.params.order_id);
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const isEstimated = await order.isEstimated(req.body.order_id);
+          if (isEstimated) {
+            return res.status(400).send({ data: null, message: "Already Reviewed" })
+          } else {
+            const changeIsEstimated = await order.updateScore(req.body.order_id, req.body.score);
+            return res.status(200).send({ data: changeIsReviewed, message: "Changed status" })
+          }
+        }
+      }
     } catch (err) {
-      console.error(err);
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
     }
   },
 
-  // worker가 order에 대한 review를 작성했는지 여부 확인
+  // worker가 order에 대한 review 작성하면 order의 상태도 변경
   isReviewed: async (req, res) => {
     try {
-      return await this.isReviewed(req.params.order_id);
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const isReviewed = await order.isReviewed(req.body.order_id);
+          console.log("dfkjdkfjdk", isReviewed)
+          if (isReviewed) {
+            return res.status(400).send({ data: null, message: "Already Reviewed" })
+          } else {
+            const changeIsReviewed = await order.updateReview(req.body.order_id);
+            return res.status(200).send({ data: changeIsReviewed, message: "Changed status" })
+          }
+        }
+      }
     } catch (err) {
-      console.error(err);
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
     }
   },
 };

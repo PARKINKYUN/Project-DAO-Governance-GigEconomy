@@ -19,25 +19,21 @@ module.exports = {
                 if (!userInfo) {
                     return res.status(404).send({ data: null, message: "Invalid token" });
                 } else {
-                    const latestEstimation = await estimatemodel.getLatestEstimationId();
-                    const estimation_number = latestEstimation[0].estimate_id;
-
                     const newEstimation = {
-                        estimate_id: estimation_number + 1,
                         worker_id: req.body.worker_id,
                         order_id: req.body.order_id,
                         client_id: req.body.client_id,
                         score: req.body.score,
                     };
-                    const inputReview = await estimatemodel.saveEstimation(newEstimation);
-                    console.log("똑똑! 새로운 review가 저장되었습니다.", inputReview);
+                    const inputReview = await new estimatemodel(newEstimation).saveEstimation();
 
                     // order 정보에서 score 업데이트
                     const updateOrder = await ordermodel.updateScore(req.body.order_id, req.body.score);
 
+                    console.log("똑똑! 새로운 평가가 저장되었습니다.", inputReview);
                     return res
                         .status(200)
-                        .send({ data: updateOrder, message: "Created new review" });
+                        .send({ data: updateOrder, message: "Created new evaluation" });
                 }
             }
         } catch (err) {

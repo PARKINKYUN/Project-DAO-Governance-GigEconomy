@@ -12,19 +12,14 @@ module.exports = {
           .status(404) //404 에러
           .send({ data: null, message: "Not autorized" }); // 유효하지 않는 데이터와 함께 검증되지 않았다는 메세지를 띄움
       } else {
-        // accessToken 콘솔 찍어서 구조를 보고 수정해야함
-        // console.log(accessToken);
         const token = accessToken.split(" ")[0]; //split(") [0] token만 가져온다.
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
 
         if (!userInfo) {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-          const latestreview = await reviewmodel.getLatestReviewId();
-          const review_number = latestreview[0].review_id;
-
           const newReview = {
-            review_id: review_number + 1,
+            order_title: req.body.order_title,
             worker_id: req.body.worker_id,
             order_id: req.body.order_id,
             content: req.body.content,
@@ -32,9 +27,7 @@ module.exports = {
           const inputReview = await reviewmodel.saveReview(newReview);
           console.log("똑똑! 새로운 review가 저장되었습니다.", inputReview);
 
-          return res
-            .status(200)
-            .send({ data: inputReview, message: "Created new review" });
+          return res.status(200).send({ data: inputReview, message: "Created new review" });
         }
       }
     } catch (err) {

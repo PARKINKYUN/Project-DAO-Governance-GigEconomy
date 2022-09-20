@@ -8,6 +8,7 @@ const SingleTap = ({ token, userInfo, tap, order }) => {
   const [userId, setUserId] = useState("");
   const [reTapState, setReTapState] = useState(false);
   const [reciever, setReciever] = useState("");
+  const [orderId, setOrderId] = useState("");
 
   useEffect(() => {
     const { client_id, worker_id } = userInfo;
@@ -24,6 +25,12 @@ const SingleTap = ({ token, userInfo, tap, order }) => {
       setUserId(worker_id);
       setReciever(tap.worker_id);
     }
+    if(order !== undefined){
+      setOrderId(order._id);
+    } else {
+      setOrderId("None Order Id");
+    }
+    
   }, [])
 
   const changeRetapState = () => {
@@ -55,7 +62,7 @@ const SingleTap = ({ token, userInfo, tap, order }) => {
           : null}
         </Grid>
       </Grid>
-      {reTapState ? <NewTapForm token={token} writer={userId} client_id={tap.client_id} worker_id={tap.worker_id} order_id={order._id} />
+      {reTapState ? <NewTapForm token={token} writer={userId} client_id={tap.client_id} worker_id={tap.worker_id} order_id={orderId} />
       : null}
     </li>
   );

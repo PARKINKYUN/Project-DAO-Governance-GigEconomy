@@ -206,24 +206,24 @@ order.statics.pastOrdersById = async function (accountType, id) {
 };
 
 // order에 대한 평가를 이미 진행하였는지 여부
-order.statics.isEstimated = async (order_id) => {
+order.statics.isEstimated = async function (order_id) {
   const order = await this.find({_id: order_id});
   return order[0].isEstimated === true;
 };
 
 // order에 대한 리뷰를 이미 작성했는지 여부
-order.statics.isReviewed = async (order_id) => {
+order.statics.isReviewed = async function (order_id) {
   const order = await this.find({_id: order_id});
   return order[0].isReviewed === true;
 };
 
 // order에 평가 점수 반영
-order.statics.updateScore = async (order_id, score) => {
+order.statics.updateScore = async function (order_id, score) {
   return await this.findOneAndUpdate({_id: order_id}, {score: score, isEstimated: true}, {new: true});
 };
 
 // order에 대한 리뷰 작성 여부 반영
-order.statics.updateScore = async (order_id) => {
+order.statics.updateReview = async function (order_id) {
   return await this.findOneAndUpdate({_id: order_id}, {isReviewed: true}, {new: true});
 };
 

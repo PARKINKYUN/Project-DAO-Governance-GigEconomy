@@ -64,7 +64,6 @@ client.statics.checkNickname = async function (nickname) {
 }
 
 // 회원정보 수정
-// 회원정보 수정
 client.statics.setClientInfo = async function (client_id, nickname, image, introduction) {
   return await this.findOneAndUpdate(
     { client_id: client_id },

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import OfferCard from "../components/OfferCard";
 import TapsList from "../components/TapsList";
+import PostReview from "../components/PostReview";
+import EstimateOrder from "../components/EstimateOrder";
 import withRoot from "../withRoot";
 import styles from "../css/Tap.module.css";
 import Grid from "@mui/material/Grid";
@@ -233,12 +235,17 @@ function OrderInfo() {
               </div>
             </Grid>
             <Grid item xs={4}>
-              {!orderItem.direct_order && isWorker ?
+              {!orderItem.direct_order && orderItem.status === "pending" && isWorker ?
                 <Button variant="contained" size="small" onClick={toggleNewOffer}>
                   Apply for this Order!
                 </Button>
-                : null
-              }
+                : null }
+              {orderItem.status === "finished" && orderItem.worker_id === worker_id && !orderItem.isReviewed && isWorker ?
+                <PostReview token={token} worker_id={worker_id} order_id={orderItem._id} order_title={orderItem.title} />
+                : null }
+              {orderItem.status === "finished" && orderItem.client_id === client_id && !orderItem.isEstimated && !isWorker ?
+                <EstimateOrder token={token} client_id={client_id} order_id={orderItem._id} worker_id={orderItem.worker_id} />
+                : null }
             </Grid>
           </Grid>
         </li>
@@ -429,8 +436,8 @@ function OrderInfo() {
                     작업 연장
                   </Button>
                 }
-                {/* 탭 콘솔 오픈. 대화하기. worker만 선택 가능 */}
-                {isWorker || orderItem.status === "ongoing" || orderItem.status === "extended" ?
+                {/* 탭 콘솔 오픈. 작업이 완료되면 더 이상 대화를 할 수 없다. */}
+                {orderItem.status === "pending" || orderItem.status === "ongoing" || orderItem.status === "extended" ?
                   <Button variant="contained" size="medium" onClick={toggleNewTap}>
                     대화 하기
                   </Button>

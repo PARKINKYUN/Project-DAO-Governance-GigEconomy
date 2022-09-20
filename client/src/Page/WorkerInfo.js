@@ -22,8 +22,6 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
         // 토큰을 사용하여
         // 서버로 유저의 토큰 balance 구해오는 함수 넣어야함
 
-        console.log()
-
         getOrdersList();
 
         getTaps();
@@ -43,7 +41,6 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
             setTaps(tapsInfo);
         }
     }
-
 
     const changeWorkerStatus = async () => {
         try {
@@ -81,7 +78,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                         pendingData.push(order);
                     } else if (order.status === "ongoing" || order.status === "extended") {
                         ongoingData.push(order);
-                    } else if (order.status === "finished" || order.status === "canceled") {
+                    } else if (order.status === "finished" && !order.isReviewed) {
                         finishedData.push(order);
                     }
                 })

@@ -6,8 +6,8 @@ router.get("/", controller.getOrderList); // pending 중인 order 리스트
 router.get("/order_info/:id", controller.order_info); // order_id로 order 정보 조회
 router.get("/getOrderByClient", controller.getOrderByClient); // client_id로 order 정보 조회
 router.get("/getOrderByWorker", controller.getOrderByWorker); // worker_id로 order 정보 조회
-router.get("/isEstimated/:id", controller.isEstimated); // order에 대한 평가 여부 조회
-router.get("/isReviewed/:id", controller.isReviewed); // order에 대한 리뷰 작성 여부 조회
+router.patch("/isEstimated/", controller.isEstimated); // order에 평가 반영
+router.patch("/isReviewed/", controller.isReviewed); // order에 대한 리뷰 저장
 router.post("/direct_order/:id", controller.direct_order); //워커에게 직접 의뢰하기(private)
 router.post("/new_order", controller.new_order); //findOrder 페이지에 표시되는 오더(public)
 
