@@ -17,12 +17,12 @@ const review = new mongoose.Schema({
 });
 
 //리뷰 조회(worker_id조회)
-review.statics.getReviewByWorkerId = async (worker_id) => {
+review.statics.getReviewByWorkerId = async function (worker_id){
   return await this.find({ worker_id: worker_id });
 };
 
 //리뷰 조회(order_id조회)
-review.statics.getReviewByOrderId = async (order_id) => {
+review.statics.getReviewByOrderId = async function (order_id) {
   return await this.find({ order_id: order_id });
 };
 
@@ -38,7 +38,7 @@ review.statics.saveReview = async function (obj) {
 };
 
 //리뷰 수정
-review.statics.setReview = async (review_id, content) => {
+review.statics.setReview = async function (review_id, content) {
   return await this.findOneAndUpdate(
     { review_id: review_id },
     { content: content },
@@ -47,7 +47,7 @@ review.statics.setReview = async (review_id, content) => {
 };
 
 //리뷰 삭제
-review.statics.removeReview = async (review_id) => {
+review.statics.removeReview = async function (review_id) {
   await this.findByIdAndRemove(review_id);
 };
 

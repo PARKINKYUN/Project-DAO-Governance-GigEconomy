@@ -12,6 +12,7 @@ import OrderInfo from "./Page/OrderInfo";
 import Governance from "./Page/Governance";
 import DirectOrder from "./components/DirectOrder";
 import UpdateInfo from "./Page/UpdateInfo";
+import ReviewsList from "./components/ReviewsList";
 import Main from "./Page/Main";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -65,6 +66,7 @@ function App() {
         <Route path="/directOrder" element={<DirectOrder userInfo={userInfo} token={token} />}/>
         <Route path="/createproposal" element={<CreateProposal userInfo={userInfo} token={token} />} />
         <Route path="/governance" element={<Governance userInfo={userInfo} token={token} />}/>
+        <Route path="/reviewslist" element={<ReviewsList token={token} userInfo={userInfo} />} />
         <Route path="/updateinfo" element={<UpdateInfo userInfo={userInfo} token={token} setUserInfo={setUserInfo} isWorker={isWorker} />} />
       </Routes>
       <div>

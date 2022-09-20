@@ -34,6 +34,26 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
         console.log("모더레이터로 전환되었습니다.")
     }
 
+    const getOrderByWorker = async () => {
+        try {
+    
+        } catch (err) {
+          console.error(err);
+          window.alert("페이지에 오류가 있습니다. 이전 페이지로 돌아갑니다.")
+          navigate(-1);
+        }
+      }
+    
+      const getEvaluation = async () => {
+        try {
+    
+        } catch (err) {
+          console.error(err);
+          window.alert("페이지에 오류가 있습니다. 이전 페이지로 돌아갑니다.")
+          navigate(-1);
+        }
+      }    
+
     const getTaps = async () => {
         const res = await axios.get('http://localhost:4000/taps/taplistbyworker', { headers: { authorization: token } });
         const tapsInfo = res.data.data;
@@ -111,7 +131,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                 <h4>Moderator</h4>
                             </div>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
                             <div className={styles.name}>
                                 <h4>{userInfo.pending ? "Order를 기다리는 상태" : "Order를 받지 않는 상태"}</h4>
                                 <h4>{userInfo.worker_id}</h4>
@@ -122,7 +142,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                 <h4>{userInfo.mod_authority ? "The Moderator Worker" : "The General Worker"}</h4>
                             </div>
                         </Grid>
-                        <Grid item xs={2} justifyContent="center" alignItems="center" >
+                        <Grid item xs={4} justifyContent="center" alignItems="center" >
                             <Box sx={{ '& button': { m: 1 } }}>
                                 <Button variant="contained" size="medium" onClick={changeWorkerStatus}>
                                     상태변경
@@ -135,6 +155,9 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                 {/* 회원정보 수정페이지 제작해야함 */}
                                 <Button variant="contained" size="medium" onClick={() => navigate('/updateinfo')}>
                                     회원정보수정
+                                </Button>
+                                <Button variant="contained" size="medium" onClick={() => navigate('/reviewslist', {state:{ token: token, userInfo: userInfo }})}>
+                                    나의 후기
                                 </Button>
                                 <Button variant="contained" size="medium" onClick={() => navigate('/')}>
                                     토큰 전송
