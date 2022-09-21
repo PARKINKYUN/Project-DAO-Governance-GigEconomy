@@ -8,6 +8,8 @@ import { Link as RouterLink } from "react-router-dom";
 import Link from "@mui/material/Link";
 
 export default function OrderCard({ order, token, userInfo, isWorker, image }) {
+  console.log(image, "오더카드 이미지 부분")
+
   return (
     <Link component={RouterLink} to="/OrderInfo" state={{ order, token, userInfo, isWorker, image }}>
       <Card sx={{ maxWidth: 345 }} style={{ marginBottom: "20px" }}>

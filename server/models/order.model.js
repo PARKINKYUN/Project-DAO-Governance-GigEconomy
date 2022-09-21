@@ -88,7 +88,7 @@ order.statics.getFinishedOrderByWorker = async function (worker_id) {
 
 // 새로운 오더 생성
 order.statics.postOrder = async function (data) {
-  const { client_id, title, category, deadline, compensation, content, file } =
+  const { client_id, title, category, deadline, compensation, content, file, image } =
     data;
   return await this.create({
     client_id: client_id,
@@ -99,6 +99,7 @@ order.statics.postOrder = async function (data) {
     compensation: compensation,
     content: content,
     file: file,
+    image: image,
   });
 };
 

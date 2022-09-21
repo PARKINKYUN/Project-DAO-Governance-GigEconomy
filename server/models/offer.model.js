@@ -53,6 +53,7 @@ offer.statics.saveNewOffer = async function (obj) {
         deadline: obj.deadline,
         compensation: obj.compensation,
         message: obj.message,
+        image: obj.image,
     });
     return await _offer.save();
 }
