@@ -88,6 +88,35 @@ module.exports = {
         }
     },
 
+    getEstimationByWorker: async (req, res) => {
+        try {
+            const accessToken = req.headers.authorization;
+
+            if (!accessToken) {
+                return res.status(404).send({ data: null, message: "Not autorized" });
+            } else {
+                const token = accessToken.split(" ")[0];
+                const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+                if (!userInfo) {
+                    return res.status(404).send({ data: null, message: "Invalid token" });
+                } else {
+                    const estimationData = await estimatemodel.getEstimationByWorker(req.params.worker_id);
+
+                    return res
+                        .status(200)
+                        .send({ data: estimationData, message: "Searching success" });
+                }
+            }
+        } catch (err) {
+            // console.log(err);
+            res.status(400).send({
+                data: null,
+                message: "Can't search",
+            });
+        }
+    },
+
     // try 성공한 평가 점수 삭제(order 정보에는 남기고, estimate 정보에서만 삭제한다!)
     deleteEstimation: async (req, res) => {
         try {
@@ -96,13 +125,13 @@ module.exports = {
             if (!accessToken) {
                 return res.status(404).send({ data: null, message: "Not autorized" });
             } else {
-                const token = accessToken.split("")[0];
+                const token = accessToken.split(" ")[0];
                 const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
 
                 if (!userInfo) {
                     return res.status(404).send({ data: null, message: "Invalid token" });
                 } else {
-                    const removeData = estimatemodel.removeEstimation(req.body.estimate_id);
+                    const removeData = await estimatemodel.removeEstimation(req.body.estimate_id);
 
                     return res
                         .status(200)
@@ -126,7 +155,7 @@ module.exports = {
             if (!accessToken) {
                 return res.status(404).send({ data: null, message: "Not autorized" });
             } else {
-                const token = accessToken.split("")[0];
+                const token = accessToken.split(" ")[0];
                 const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
 
                 if (!userInfo) {
@@ -137,6 +166,35 @@ module.exports = {
                     return res
                         .status(200)
                         .send({ data: estimation, message: "Searching success" });
+                }
+            }
+        } catch (err) {
+            // console.log(err);
+            res.status(400).send({
+                data: null,
+                message: "Can't search",
+            });
+        }
+    },
+
+    getTryingEstimations: async (req, res) => {
+        try {
+            const accessToken = req.headers.authorization;
+
+            if (!accessToken) {
+                return res.status(404).send({ data: null, message: "Not autorized" });
+            } else {
+                const token = accessToken.split(" ")[0];
+                const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+                if (!userInfo) {
+                    return res.status(404).send({ data: null, message: "Invalid token" });
+                } else {
+                    const estimationData = await estimatemodel.getTryingEstimations();
+
+                    return res
+                        .status(200)
+                        .send({ data: estimationData, message: "Searching success" });
                 }
             }
         } catch (err) {

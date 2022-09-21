@@ -22,7 +22,6 @@ const ReviewsList = () => {
 
     const getReviews = async () => {
         try {
-            console.log("리뷰 페이지", token, userInfo)
             const res = await axios.get(`http://localhost:4000/reviews/reviewlistbyworker/${userInfo.worker_id}`, { headers: { authorization: token } });
             console.log(res.data.data)
             setReviews(res.data.data);

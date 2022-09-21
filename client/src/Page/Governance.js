@@ -14,6 +14,7 @@ function Governance({ token, userInfo }) {
   const [policies, setPolicies] = useState([]);
   const [proposals, setProposals] = useState([]);
   const [updateNow, setUpdateNow] = useState(true);
+  const [tryCount, setTryCount] = useState(0);
 
   // 부모 컴포넌트 리렌더링을 위한 후크
   const updateFunc = () => {
@@ -28,7 +29,8 @@ function Governance({ token, userInfo }) {
   const minParticipants = 10;
 
   useEffect(() => {
-
+    // 새로 신청된 Try가 있는지 확인
+    getTryCount();
     // 최근 업데이트된 정책 읽어오기
     getPolicies();
     // 진행중인 제안 읽어오기
@@ -82,6 +84,11 @@ function Governance({ token, userInfo }) {
     setProposals(filteredProposal);
   }
 
+  const getTryCount = async () => {
+    const res = await axios.get(`http://localhost:4000/tryagainst/getOnBoardTry`, { headers: { authorization: token } });
+    setTryCount(res.data.data.length);
+  }
+
   return (
     <div style={{ padding: "10px" }}>
       <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
@@ -115,10 +122,10 @@ function Governance({ token, userInfo }) {
                   <Link
                     style={{ color: "white" }}
                     component={RouterLink}
-                    to="/createproposal"
+                    to="/judgeobjection"
                     state={{ token: token, userInfo: userInfo }}
                   >
-                    Judge Estimation
+                    Judge Estimation ({tryCount === 0 ? null : tryCount}건)
                   </Link>
                 </Button>
               ) :
@@ -214,7 +221,7 @@ function Governance({ token, userInfo }) {
         <div>
           <h3>Proposals</h3>
         </div>
-        {proposals.map((proposal) => { return <Proposal key={proposal.proposal_id} proposal={proposal} token={token} userInfo={userInfo} /> })}
+        {proposals.map((proposal) => { return <Proposal key={proposal.proposal_id} proposal={proposal} token={token} updateFunc={updateFunc} /> })}
       </div>
     </div>
   );

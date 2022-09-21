@@ -431,4 +431,34 @@ module.exports = {
       });
     }
   },
+
+  getEstimatedOrder: async (req, res) => {
+    try {
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res.status(404).send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const orderInfo = await order.getEstimatedOrder();
+          console.log("worker_id로 오더 정보 조회 완료");
+
+          return res
+            .status(200)
+            .send({ data: orderInfo, message: "Searching success" });
+        }
+      }
+    } catch (err) {
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
+    }
+  }
 };

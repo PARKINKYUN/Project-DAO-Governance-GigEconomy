@@ -37,11 +37,6 @@ const order = new mongoose.Schema({
     type: String,
     required: true,
   },
-  file: [
-    {
-      type: String,
-    },
-  ],
   direct_order: {
     type: Boolean,
     default: false,
@@ -59,6 +54,10 @@ const order = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  }
 });
 
 // pending 상태인 모든 order 조회
@@ -73,12 +72,12 @@ order.statics.getOrderById = async function (id) {
 
 // client_id로 오더 정보 조회
 order.statics.getOrderByClient = async function (client_id) {
-  return await this.find({client_id: client_id});
+  return await this.find({client_id: client_id}).sort({createdAt: -1});
 };
 
 // worker_id로 오더 정보 조회
 order.statics.getOrderByWorker = async function (worker_id) {
-  return await this.find({worker_id: worker_id});
+  return await this.find({worker_id: worker_id}).sort({createdAt: -1});
 };
 
 // worker_id로 오더 정보 조회
@@ -231,6 +230,11 @@ order.statics.updateScore = async function (order_id, score) {
 // order에 대한 리뷰 작성 여부 반영
 order.statics.updateReview = async function (order_id) {
   return await this.findOneAndUpdate({_id: order_id}, {isReviewed: true}, {new: true});
+};
+
+// 평가가 완료된 order만 조회하기 (try 판별용)
+order.statics.getEstimatedOrder = async function () {
+  return await this.find({isEstimated: true});
 };
 
 module.exports = mongoose.model("Order", order);

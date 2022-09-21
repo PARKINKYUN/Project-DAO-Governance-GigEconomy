@@ -190,23 +190,6 @@ module.exports = {
     }
   },
 
-  // concluded 상태 제안 리스트
-  getConcludedProposals: async () => {
-    try {
-      const proposals = await proposalModel.getProposals("concluded");
-      if (!proposals) {
-        return res.status(400).message("제안 리스트를 불러오지 못했습니다.");
-      }
-      return res.status(200).send({
-        data: proposals,
-        message: "투표가 끝난 제안 리스트를 불러왔습니다.",
-      });
-    } catch (err) {
-      console.error(err);
-      return res.status(400);
-    }
-  },
-
   // 제안 올리기
   postProposal: async (req, res) => {
     try {

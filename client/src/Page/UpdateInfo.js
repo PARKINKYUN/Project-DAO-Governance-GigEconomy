@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import styles from "../css/Tap.module.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -80,7 +81,9 @@ const UpdateInfo = ({ token, userInfo, isWorker, setUserInfo }) => {
 
   return (
     <Styles>
+      <li className={styles.taps}>
       <form onSubmit={handleSubmit}>
+      <li className={styles.taps}>
         <h1>회원 정보 수정</h1>
         <label>프로필 이미지 (Profile Image)</label>
         <input type="file" id="file" name="image" onChange={e => handleChangeImage(e)} />
@@ -89,13 +92,15 @@ const UpdateInfo = ({ token, userInfo, isWorker, setUserInfo }) => {
         <label>소개 (Introduction)</label>
         <textarea name="introduction" value={introduction} placeholder="자신을 멋지게 소개해보세요." onChange={e => handleChangeIntroduction(e)} />
         <input type="submit" className="submitButton" />
+        </li>
       </form>
+      </li>
     </Styles>
   );
 }
 
 const Styles = styled.div`
- background: mistyrose;
+ background: whitesmoke;
  padding: 20px;
 
  h1 {
@@ -110,8 +115,8 @@ const Styles = styled.div`
  }
 
  form {
-   background: white;
-   border: 1px solid #dedede;
+   background: whitesmoke;
+   border: 0px;
    display: flex;
    flex-direction: column;
    justify-content: space-around;
@@ -121,7 +126,7 @@ const Styles = styled.div`
  }
 
  input {
-   border: 1px solid #d9d9d9;
+   border: 0;
    border-radius: 4px;
    box-sizing: border-box;
    padding: 10px;
@@ -139,12 +144,14 @@ const Styles = styled.div`
 
  textarea {
 	resize: none;
-  min-height: 5rem;
+  min-height: 10rem;
   overflow-y: hidden;
+  border: 0px;
+  width: 100%;
  }
 
  .submitButton {
-   background-color: steelblue;
+   background-color: black;
    color: white;
    font-family: sans-serif;
    font-size: 14px;

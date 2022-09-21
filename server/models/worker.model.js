@@ -50,8 +50,12 @@ const worker = new mongoose.Schema({
   },
   pendingAt: {
     type: Date,
-    default: Date.now,
-  }
+    default: Date(0),
+  },
+  tryAt: {
+    type: Date,
+    default: Date(0),
+  },
 });
 
 // 회원가입

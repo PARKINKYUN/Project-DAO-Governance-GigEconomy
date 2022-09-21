@@ -12,7 +12,11 @@ import OrderInfo from "./Page/OrderInfo";
 import Governance from "./Page/Governance";
 import DirectOrder from "./components/DirectOrder";
 import UpdateInfo from "./Page/UpdateInfo";
+import TryAgainst from "./Page/TryAgainst";
+import PastOrdersList from "./Page/PastOrdersList";
+import PastOrdersListByWorker from "./Page/PastOrdersListByWorker";
 import ReviewsList from "./components/ReviewsList";
+import JudgeObjection from "./Page/JudgeObjection";
 import Main from "./Page/Main";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -66,8 +70,12 @@ function App() {
         <Route path="/directOrder" element={<DirectOrder userInfo={userInfo} token={token} />}/>
         <Route path="/createproposal" element={<CreateProposal userInfo={userInfo} token={token} />} />
         <Route path="/governance" element={<Governance userInfo={userInfo} token={token} />}/>
+        <Route path="/pastorderslist" element={<PastOrdersList token={token} userInfo={userInfo} />} />
+        <Route path="/pastorderslistbyworker" element={<PastOrdersListByWorker token={token} userInfo={userInfo} />} />
         <Route path="/reviewslist" element={<ReviewsList token={token} userInfo={userInfo} />} />
         <Route path="/updateinfo" element={<UpdateInfo userInfo={userInfo} token={token} setUserInfo={setUserInfo} isWorker={isWorker} />} />
+        <Route path="/tryagainst" element={<TryAgainst userInfo={userInfo} token={token} isWorker={isWorker} />} />
+        <Route path="/judgeobjection" element={<JudgeObjection userInfo={userInfo} token={token} isWorker={isWorker} />} />        
       </Routes>
       <div>
         <Footer />

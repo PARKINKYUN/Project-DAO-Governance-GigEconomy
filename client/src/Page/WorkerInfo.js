@@ -137,7 +137,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                 <h4>ID</h4>
                                 <h4>Nickname</h4>
                                 <h4>완료한 Order 갯수</h4>
-                                <h4>평점</h4>
+                                <h4>NPS Score</h4>
                                 <h4>평가 횟수</h4>
                                 <h4>Wallet Address</h4>
                                 <h4>Token Amount</h4>
@@ -164,17 +164,11 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                 <Button variant="contained" size="medium" onClick={changeWorkerStatus}>
                                     상태변경
                                 </Button>
-
-                                {/* 회원정보 수정페이지 제작해야함 */}
-                                {/* 회원정보 수정페이지 제작해야함 */}
-                                {/* 회원정보 수정페이지 제작해야함 */}
-                                {/* 회원정보 수정페이지 제작해야함 */}
-                                {/* 회원정보 수정페이지 제작해야함 */}
+                                <Button variant="contained" size="medium" onClick={() => navigate('/pastorderslistbyworker')}>
+                                    Order 이력
+                                </Button> 
                                 <Button variant="contained" size="medium" onClick={() => navigate('/updateinfo')}>
                                     회원정보수정
-                                </Button>
-                                <Button variant="contained" size="medium" onClick={() => navigate('/reviewslist', { state: { token: token, userInfo: userInfo } })}>
-                                    나의 후기
                                 </Button>
                                 <Button variant="contained" size="medium" onClick={() => navigate('/')}>
                                     토큰 전송
@@ -201,6 +195,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                         token={token}
                                         userInfo={userInfo}
                                         isWorker={true}
+                                        image={order.image}
                                     />
                                 </Grid>
                             );
@@ -219,6 +214,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                         token={token}
                                         userInfo={userInfo}
                                         isWorker={true}
+                                        image={order.image}
                                     />
                                 </Grid>
                             );
@@ -237,6 +233,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                         token={token}
                                         userInfo={userInfo}
                                         isWorker={true}
+                                        image={order.image}
                                     />
                                 </Grid>
                             );
