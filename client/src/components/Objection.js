@@ -34,12 +34,12 @@ const Objection = ({ token, tryitem, updateFunc, orders, estimations, panel }) =
                 const newUp = up + 1;
                 setUp(newUp);
                 updateFunc();
-                window.alert("해당 제안에 대한 선택 완료!!!")
+                window.alert("해당 이의 신청에 대한 선택 완료!!!")
             } else {
                 window.alert("서버 오류! 잠시 후 다시 시도해주세요.")
             }
         } else {
-            window.alert("해당 제안에 대해 이미 선택하였습니다.")
+            window.alert("해당 이의 신청건에 대해 이미 선택하였습니다.")
         }
     }
 
@@ -55,12 +55,12 @@ const Objection = ({ token, tryitem, updateFunc, orders, estimations, panel }) =
                 const newDown = down + 1;
                 setDown(newDown);
                 updateFunc();
-                window.alert("해당 제안에 대한 선택 완료!!!")
+                window.alert("해당 이의 신청에 대한 선택 완료!!!")
             } else {
                 window.alert("서버 오류! 잠시 후 다시 시도해주세요.")
             }
         } else {
-            window.alert("해당 제안에 대해 이미 선택하였습니다.")
+            window.alert("해당 이의 신청건에 대해 이미 선택하였습니다.")
         }
     }
 
