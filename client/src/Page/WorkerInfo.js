@@ -15,6 +15,9 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
     const [ongoing, setOngoing] = useState([]);
     const [finished, setFinished] = useState([]);
     const [taps, setTaps] = useState([]);
+    const [orderCount, setOrderCount] = useState(0);
+    const [evalAvg, setEvalAvg] = useState(0);
+    const [evalCount, setEvalCount] = useState(0);
 
     const navigate = useNavigate();
 
@@ -23,7 +26,8 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
         // 서버로 유저의 토큰 balance 구해오는 함수 넣어야함
 
         getOrdersList();
-
+        getOrderByWorker();
+        getEvaluation();
         getTaps();
     }, [])
 
@@ -36,23 +40,30 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
 
     const getOrderByWorker = async () => {
         try {
-    
+            const res = await axios.get(`http://localhost:4000/orders/getFinishedOrderByWorker/${userInfo.worker_id}`, { headers: { authorization: token } });
+            const orderData = res.data.data;
+            const filteredData = orderData.filter((order) => order.status === "finished");
+            console.log(filteredData)
+            setOrderCount(filteredData.length);
         } catch (err) {
-          console.error(err);
-          window.alert("페이지에 오류가 있습니다. 이전 페이지로 돌아갑니다.")
-          navigate(-1);
+            console.error(err);
+            window.alert("페이지에 오류가 있습니다. 이전 페이지로 돌아갑니다.")
+            navigate(-1);
         }
-      }
-    
-      const getEvaluation = async () => {
+    }
+
+    const getEvaluation = async () => {
         try {
-    
+            const res = await axios.get(`http://localhost:4000/estimate/getResultByWorker/${userInfo.worker_id}`, { headers: { authorization: token } });
+            const { average_score, estimation_count, total_score } = res.data.data;
+            setEvalAvg(average_score);
+            setEvalCount(estimation_count);
         } catch (err) {
-          console.error(err);
-          window.alert("페이지에 오류가 있습니다. 이전 페이지로 돌아갑니다.")
-          navigate(-1);
+            console.error(err);
+            window.alert("페이지에 오류가 있습니다. 이전 페이지로 돌아갑니다.")
+            navigate(-1);
         }
-      }    
+    }
 
     const getTaps = async () => {
         const res = await axios.get('http://localhost:4000/taps/taplistbyworker', { headers: { authorization: token } });
@@ -125,6 +136,9 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                 <h4>Current State</h4>
                                 <h4>ID</h4>
                                 <h4>Nickname</h4>
+                                <h4>완료한 Order 갯수</h4>
+                                <h4>평점</h4>
+                                <h4>평가 횟수</h4>
                                 <h4>Wallet Address</h4>
                                 <h4>Token Amount</h4>
                                 <h4>Gig Score</h4>
@@ -136,6 +150,9 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                 <h4>{userInfo.pending ? "Order를 기다리는 상태" : "Order를 받지 않는 상태"}</h4>
                                 <h4>{userInfo.worker_id}</h4>
                                 <h4>{userInfo.nickname}</h4>
+                                <h4>{orderCount}</h4>
+                                <h4>{evalAvg}</h4>
+                                <h4>{evalCount}</h4>
                                 <h4>{userInfo.address}</h4>
                                 <h4>{userInfo.balance}</h4>
                                 <h4>{userInfo.gig_score}</h4>
@@ -156,7 +173,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                 <Button variant="contained" size="medium" onClick={() => navigate('/updateinfo')}>
                                     회원정보수정
                                 </Button>
-                                <Button variant="contained" size="medium" onClick={() => navigate('/reviewslist', {state:{ token: token, userInfo: userInfo }})}>
+                                <Button variant="contained" size="medium" onClick={() => navigate('/reviewslist', { state: { token: token, userInfo: userInfo } })}>
                                     나의 후기
                                 </Button>
                                 <Button variant="contained" size="medium" onClick={() => navigate('/')}>
