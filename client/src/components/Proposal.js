@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const Proposal = ({ token, userInfo, proposal, updateFunc }) => {
+const Proposal = ({ token, proposal, updateFunc }) => {
     const [up, setUp] = useState(0);
     const [down, setDown] = useState(0);
 
@@ -37,7 +37,7 @@ const Proposal = ({ token, userInfo, proposal, updateFunc }) => {
 
     // proposal에 down을 추가한다.
     // 1. 워커가 해당 제안에 대한 선택을 했었는지 여부를 먼저 확인한다.
-    // 2. 선택을 한 적이 없다면 업카운트를 1 감소시킨다.
+    // 2. 선택을 한 적이 없다면 다운카운트를 1 증가시킨다.
     const handlerDownProposal = async () => {
         const checked = await axios.get(`http://localhost:4000/proposals/checkSelector/${proposal.proposal_id}`, { headers: { authorization: token } });
 

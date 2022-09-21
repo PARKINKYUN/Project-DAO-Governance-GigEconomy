@@ -93,11 +93,9 @@ function ClientInfo({ token, userInfo }) {
                                 <Button variant="contained" size="medium" onClick={() => navigate('/createorder')}>
                                     Order 생성
                                 </Button>
-                                {/* 회원정보 수정페이지 제작해야함 */}
-                                {/* 회원정보 수정페이지 제작해야함 */}
-                                {/* 회원정보 수정페이지 제작해야함 */}
-                                {/* 회원정보 수정페이지 제작해야함 */}
-                                {/* 회원정보 수정페이지 제작해야함 */}
+                                <Button variant="contained" size="medium" onClick={() => navigate('/pastorderslist')}>
+                                    Order 이력
+                                </Button>                                
                                 <Button variant="contained" size="medium" onClick={() => navigate('/updateinfo')}>
                                     회원정보수정
                                 </Button>
@@ -120,6 +118,7 @@ function ClientInfo({ token, userInfo }) {
                                         token={token}
                                         userInfo={userInfo}
                                         isWorker={false}
+                                        image={order.image}
                                     />
                                 </Grid>
                             );
@@ -138,6 +137,7 @@ function ClientInfo({ token, userInfo }) {
                                         token={token}
                                         userInfo={userInfo}
                                         isWorker={false}
+                                        image={order.image}
                                     />
                                 </Grid>
                             );
@@ -156,6 +156,7 @@ function ClientInfo({ token, userInfo }) {
                                         token={token}
                                         userInfo={userInfo}
                                         isWorker={false}
+                                        image={order.image}
                                     />
                                 </Grid>
                             );

@@ -4,6 +4,7 @@ const router = express.Router();
 const main = require("./main");
 const orders = require("./orders");
 const proposals = require("./proposals");
+const tryagainst = require("./tryagainst")
 const reviews = require("./reviews");
 const taps = require("./taps");
 const clients = require("./clients");
@@ -15,6 +16,7 @@ const offers = require("./offers")
 
 router.use("/orders", orders);
 router.use("/proposals", proposals);
+router.use("/tryagainst", tryagainst);
 router.use("/reviews", reviews);
 router.use("/taps", taps);
 router.use("/clients", clients);
