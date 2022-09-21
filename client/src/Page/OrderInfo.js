@@ -342,6 +342,7 @@ function OrderInfo() {
             </Grid>
           </Grid>
           <div className={styles.container}>
+          <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
             {offers.map((offer) => {
               return (
                 <Grid item xs={2} sm={4} md={3} key={offer._id} >
@@ -358,6 +359,7 @@ function OrderInfo() {
                 </Grid>
               );
             })}
+            </Grid>
           </div>
         </div>
         :

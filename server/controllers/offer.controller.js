@@ -25,6 +25,7 @@ module.exports = {
                         deadline: req.body.deadline,
                         compensation: req.body.compensation,
                         message: req.body.message,
+                        image: req.body.image,
                     };
                     const inputData = await offermodel.saveNewOffer(newOffer);
 
