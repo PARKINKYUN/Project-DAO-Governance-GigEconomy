@@ -13,7 +13,7 @@ const PastOrdersListByWorker = ({ token, userInfo }) => {
 
     const navigate = useNavigate();
 
-    // 부모 컴포넌트 리렌더링을 위한 후크
+    // 자식 컨트랙트에 변화가 생겼을때 View에 즉시 적용을 하기 위하여, 부모(현재) 컴포넌트 리렌더링을 위한 후크
     const updateFunc = () => {
         setUpdateNow(!updateNow)
     }
