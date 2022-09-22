@@ -66,9 +66,9 @@ const Objection = ({ token, tryitem, updateFunc, orders, estimations, panel }) =
 
     const handleChange = (panel, worker_id) => (isExpanded) => {
         if (isExpanded) {
-            const seletedOrder = orders.filter((order) => order.worker_id === worker_id);
+            const seletedOrder = orders.filter((order) => order._id === tryitem.order_id);
             setOrder(seletedOrder[0]);
-            const seletedEstimation = estimations.filter((estimation) => estimation.worker_id === worker_id);
+            const seletedEstimation = estimations.filter((estimation) => estimation.order_id === tryitem.order_id);
             setEstimation(seletedEstimation[0]);
             setExpanded(panel);
         } else {
