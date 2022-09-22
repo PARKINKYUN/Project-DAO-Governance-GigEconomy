@@ -17,6 +17,7 @@ import PastOrdersList from "./Page/PastOrdersList";
 import PastOrdersListByWorker from "./Page/PastOrdersListByWorker";
 import ReviewsList from "./components/ReviewsList";
 import JudgeObjection from "./Page/JudgeObjection";
+import ContactSupportTeam from "./Page/ContactSupportTeam";
 import Main from "./Page/Main";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -75,7 +76,8 @@ function App() {
         <Route path="/reviewslist" element={<ReviewsList token={token} userInfo={userInfo} />} />
         <Route path="/updateinfo" element={<UpdateInfo userInfo={userInfo} token={token} setUserInfo={setUserInfo} isWorker={isWorker} />} />
         <Route path="/tryagainst" element={<TryAgainst userInfo={userInfo} token={token} isWorker={isWorker} />} />
-        <Route path="/judgeobjection" element={<JudgeObjection userInfo={userInfo} token={token} isWorker={isWorker} />} />        
+        <Route path="/judgeobjection" element={<JudgeObjection userInfo={userInfo} token={token} isWorker={isWorker} />} />
+        <Route path="/contactsupportteam" element={<ContactSupportTeam userInfo={userInfo} token={token} />} />        
       </Routes>
       <div>
         <Footer />
