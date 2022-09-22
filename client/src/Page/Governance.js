@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Proposal from "../components/Proposal";
 import NewPolicy from "../components/NewPolicy";
+import { useNavigate } from "react-router-dom";
 
 function Governance({ token, userInfo }) {
   const [voting, setVoting] = useState([]);
@@ -15,6 +16,8 @@ function Governance({ token, userInfo }) {
   const [proposals, setProposals] = useState([]);
   const [updateNow, setUpdateNow] = useState(true);
   const [tryCount, setTryCount] = useState(0);
+
+  const navigate = useNavigate();
 
   // 부모 컴포넌트 리렌더링을 위한 후크
   const updateFunc = () => {
@@ -29,6 +32,10 @@ function Governance({ token, userInfo }) {
   const minParticipants = 10;
 
   useEffect(() => {
+    if(userInfo.account_type !== "worker"){
+      window.alert("잘못된 접근입니다. 메인페이지로 이동합니다.")
+      navigate("/")
+    }
     // 새로 신청된 Try가 있는지 확인
     getTryCount();
     // 최근 업데이트된 정책 읽어오기
