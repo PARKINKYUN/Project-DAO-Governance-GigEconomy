@@ -152,7 +152,7 @@ function Governance({ token, userInfo }) {
             {/* 어떤 제안을 올리기 전에 개발팀에게 기술적 범위에 대한 문의를 한다 */}
             <Grid item xs={2}>
               {userInfo.mod_authority === true ? (
-                <Button variant="contained" size="small">
+                <Button variant="contained" size="small" onClick={() => navigate("/contactsupportteam")} >
                   Contact Support Team
                 </Button>
               ) :
