@@ -13,6 +13,9 @@ const getTransactions = cron.schedule(
         try {
             console.log("1초마다 트랜잭션을 탐색합니다.")
 
+            // 제안... 상태에 따라서
+            // 
+
             // 체인에 마지막으로 생성된 블럭 조회
             const latestBlockNumber = await web3.eth.getBlockNumber().call();
             // server에서 마지막으로 조회했던 블럭 번호 조회
