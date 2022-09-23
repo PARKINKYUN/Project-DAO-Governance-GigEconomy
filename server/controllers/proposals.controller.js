@@ -1,6 +1,10 @@
 const proposalModel = require("../models/proposal.model");
 const proposalSelector = require("../models/proposalSelector.model");
 const jwt = require("jsonwebtoken");
+const Web3 = require("web3");
+
+// 여기부터는 직접 구현
+const web3 = new Web3();
 
 module.exports = {
   // 진행중인 제안 리스트
@@ -285,20 +289,28 @@ module.exports = {
       return res.status(400);
     }
   },
+
+  propose: async () => {
+    try {
+      try {
+        modCheck(res, req);
+  
+        const proposal = await proposalModel.modifyProposal(
+          req.params.id,
+          req.body
+        );
+        if (!proposal) {
+          return res.status(400).message("제안을 수정하지 못했습니다.");
+        }
+  
+        return res
+          .status(200)
+          .send({ data: proposal._id, message: "제안을 수정했습니다." });
+      } catch (err) {
+        console.error(err);
+        return res.status(400);
+      }
+  },
 };
 
-// 관리자 권한 체크
-const modCheck = async (req, res) => {
-  const accessToken = req.headers.authorization;
-  if (!accessToken) {
-    return res
-      .status(404)
-      .send({ data: null, message: "Invalid access token" });
-  }
 
-  const workerData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
-  if (workerData.mod_authority == false) {
-    return res.status(400).message("관리자 권한이 필요합니다.");
-  }
-  if (workerData.mod_authority == true) return;
-};

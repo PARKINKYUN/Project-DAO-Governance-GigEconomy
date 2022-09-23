@@ -10,5 +10,6 @@ router.patch("/upCount", controller.upCount); // up 클릭 시 숫자 올리기
 router.patch("/downCount", controller.downCount); // down 클릭 시 숫자 내리기
 router.patch("/successfulProposal", controller.successfulProposal); // 정족수에 도달하여 성공한 제안 등록
 router.delete("/proposal/:id", controller.removeProposal); // 제안 삭제
+router.post("/propose", controller.propose);
 
 module.exports = router;
