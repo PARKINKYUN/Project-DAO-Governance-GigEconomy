@@ -1,5 +1,3 @@
-const contract_abi = require("../contracts/contract_abi");
-const contract_address = require("../contracts/contract_address");
 const clientModel = require("../models/client.model");
 const workerModel = require("../models/worker.model");
 
