@@ -43,7 +43,6 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
             const res = await axios.get(`http://localhost:4000/orders/getFinishedOrderByWorker/${userInfo.worker_id}`, { headers: { authorization: token } });
             const orderData = res.data.data;
             const filteredData = orderData.filter((order) => order.status === "finished");
-            console.log(filteredData)
             setOrderCount(filteredData.length);
         } catch (err) {
             console.error(err);

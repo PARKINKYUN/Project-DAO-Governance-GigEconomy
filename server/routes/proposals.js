@@ -8,8 +8,9 @@ router.get("/checkSelector/:proposal_id", controller.checkSelector); // 워커�
 router.patch("/expiredProposal", controller.expiredProposal); // 기간 만료된 제안의 상태 수정
 router.patch("/upCount", controller.upCount); // up 클릭 시 숫자 올리기
 router.patch("/downCount", controller.downCount); // down 클릭 시 숫자 내리기
-router.patch("/successfulProposal", controller.successfulProposal); // 정족수에 도달하여 성공한 제안 등록
+router.patch("/successfulProposal", controller.successfulProposal); // 정족수에 도달하여 성공한 제안 상태변경
+router.patch("/proposedProposal", controller.proposedProposal); // 성공한 제안을 propose 함
 router.delete("/proposal/:id", controller.removeProposal); // 제안 삭제
-router.post("/propose", controller.propose);
+router.get("/propose", controller.propose);
 
 module.exports = router;

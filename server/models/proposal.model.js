@@ -32,7 +32,7 @@ const proposal = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["onPost", "onBallot", "rejected"],
+    enum: ["onPost", "standBy", "onBallot", "rejected"],
     default: "onPost",
   },
 });
@@ -60,6 +60,11 @@ proposal.statics.saveProposal = async function (obj) {
 
 // 정족수에 도달하여 성공한 제안의 상태 수정
 proposal.statics.successfulProposal = async function (proposal_id) {
+  return await this.findOneAndUpdate({ proposal_id: proposal_id }, {status: "standBy"});
+}
+
+// propose 호출 완료된 제안의 상태 수정
+proposal.statics.proposedProposal = async function (proposal_id) {
   return await this.findOneAndUpdate({ proposal_id: proposal_id }, {status: "onBallot"});
 }
 
