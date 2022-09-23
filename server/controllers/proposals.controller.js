@@ -372,12 +372,17 @@ module.exports = {
 
           // Governor propose 호출 트랜잭션 생성
           
-          const data = governor.methods.propose([GTaddress], [0], [transferCalldata], "propose test").encodeABI();
+          const data = governor.methods.propose([GTaddress], [0], [transferCalldata], "propose test321").encodeABI();
           const rawTransaction = {to: GovernorAddress, gas: 30000000, data: data};
           const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
           console.log(signedTX.transactionHash)
           const sendingTX = await web3.eth.sendSignedTransaction(signedTX.rawTransaction);
           console.log("sending TX. 트랜잭션 전송 완료", sendingTX);
+          const receipt = await web3.eth.getTransactionReceipt(sendingTX.transactionHash);
+          console.log("이건 영수증이다~~~~", receipt)
+          const event = governor.once("ProposalCreated", console.log)
+          console.log("이건 이벤트이다~~~", event)
+
 
           //
           /* Gig Score 를 핸들링하는 제안인 경우 */
