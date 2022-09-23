@@ -112,16 +112,10 @@ function Governance({ token, userInfo }) {
     setTryCount(res.data.data.length);
   };
 
-  // web3 test
-  const web3test = async () => {
-    const target = []
-    const value = [0];
-    const calldata = [];
-    const descryption = "";
-    const propose = {
-      target, value, calldata, descryption
-    }
-    const res = await axios.post("http://localhost:4000/proposals/propose", propose, { headers: { authorization: token } })
+  // propose 생성. 서버에서 생성한다.
+  const runPropose = async () => {
+    const res = await axios.get("http://localhost:4000/proposals/propose", { headers: { authorization: token } })
+    console.log("블록체인네트워크 응답 데이터: ", res.data.data);
   }
 
   return (
@@ -197,17 +191,11 @@ function Governance({ token, userInfo }) {
             //
             //            web3 test
               // */}
+            {/* 유지 보수를 담당하는 개발팀 전용 메뉴. 통과된 제안을 트랜잭션으로 만들고 컨트랙트를 실행하여 투표로 진입하게 한다 */}         
             <Grid item xs={2}>
-              <Button variant="contained" size="small" onclick={web3test}>
-                test web3
-              </Button>
-            </Grid>
-
-            {/* 유지 보수를 담당하는 개발팀 전용 메뉴. 통과된 제안을 트랜잭션으로 만들고 컨트랙트를 실행하여 투표로 진입하게 한다 */}
-            <Grid item xs={2}>
-              {userInfo.account_type === "dev_team" ? (
-                <Button variant="contained" size="small">
-                  Development Team
+              {userInfo.worker_id === "worker01@gig.com" ? (
+                <Button variant="contained" size="small" onClick={runPropose}>
+                  Run Propose
                 </Button>
               ) : null}
             </Grid>

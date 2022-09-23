@@ -1,3 +1,3 @@
-const GovernorAddress = "0xb0119D1A371F23d18e6cD19FF5f123Ff1ca45965";
+const GovernorAddress = "0xb0F4F86E2D138ad555323809721fbe72BF3b1711";
 
 module.exports = GovernorAddress;

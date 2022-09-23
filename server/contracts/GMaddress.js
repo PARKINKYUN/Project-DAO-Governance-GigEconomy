@@ -1,3 +1,3 @@
-const GMaddress = "0x453eE7F3cD9A1F802c4DF2a220Db6f23b70EeeA7";
+const GMaddress = "0x28fbb2da2423F310eb87De4406937Be2a77e3449";
 
 module.exports = GMaddress;
