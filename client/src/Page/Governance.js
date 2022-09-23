@@ -112,6 +112,18 @@ function Governance({ token, userInfo }) {
     setTryCount(res.data.data.length);
   };
 
+  // web3 test
+  const web3test = async () => {
+    const target = []
+    const value = [0];
+    const calldata = [];
+    const descryption = "";
+    const propose = {
+      target, value, calldata, descryption
+    }
+    const res = await axios.post("http://localhost:4000/proposals/propose", propose, { headers: { authorization: token } })
+  }
+
   return (
     <div style={{ padding: "10px" }}>
       <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
@@ -179,6 +191,16 @@ function Governance({ token, userInfo }) {
                   Contact Support Team
                 </Button>
               )}
+            </Grid>
+
+            {/*//
+            //
+            //            web3 test
+              // */}
+            <Grid item xs={2}>
+              <Button variant="contained" size="small" onclick={web3test}>
+                test web3
+              </Button>
             </Grid>
 
             {/* 유지 보수를 담당하는 개발팀 전용 메뉴. 통과된 제안을 트랜잭션으로 만들고 컨트랙트를 실행하여 투표로 진입하게 한다 */}
