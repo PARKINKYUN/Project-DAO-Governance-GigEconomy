@@ -30,9 +30,7 @@ module.exports = {
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {
-        return res
-          .status(404)
-          .send({ data: null, message: "Not autorized" });
+        return res.status(404).send({ data: null, message: "Not autorized" });
       } else {
         const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
@@ -42,7 +40,9 @@ module.exports = {
         } else {
           const proposalInfo = await proposalModel.getOnPostProposals();
 
-          return res.status(200).send({ data: proposalInfo, message: "Searching success" })
+          return res
+            .status(200)
+            .send({ data: proposalInfo, message: "Searching success" });
         }
       }
     } catch (err) {
@@ -60,9 +60,7 @@ module.exports = {
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {
-        return res
-          .status(404)
-          .send({ data: null, message: "Not autorized" });
+        return res.status(404).send({ data: null, message: "Not autorized" });
       } else {
         const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
@@ -70,10 +68,14 @@ module.exports = {
         if (!userInfo) {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-          const proposalInfo = await proposalModel.successfulProposal(req.body.proposal_id);
-          console.log("해당 제안이 성공하여 잠시 대기 중입니다.", proposalInfo)
+          const proposalInfo = await proposalModel.successfulProposal(
+            req.body.proposal_id
+          );
+          console.log("해당 제안이 성공하여 잠시 대기 중입니다.", proposalInfo);
 
-          return res.status(200).send({ data: proposalInfo, message: "Searching success" })
+          return res
+            .status(200)
+            .send({ data: proposalInfo, message: "Searching success" });
         }
       }
     } catch (err) {
@@ -91,9 +93,7 @@ module.exports = {
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {
-        return res
-          .status(404)
-          .send({ data: null, message: "Not autorized" });
+        return res.status(404).send({ data: null, message: "Not autorized" });
       } else {
         const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
@@ -101,14 +101,57 @@ module.exports = {
         if (!userInfo) {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-          const proposalInfo = await proposalModel.proposedProposal(req.body.proposal_id);
-          console.log("해당 제안이 propose 함수를 실행하여 대기열에서 사라집니다.", proposalInfo)
+          const proposalInfo = await proposalModel.proposedProposal(
+            req.body.proposal_id
+          );
+          console.log(
+            "해당 제안이 propose 함수를 실행하여 대기열에서 사라집니다.",
+            proposalInfo
+          );
 
-          return res.status(200).send({ data: proposalInfo, message: "Searching success" })
+          return res
+            .status(200)
+            .send({ data: proposalInfo, message: "Searching success" });
         }
       }
     } catch (err) {
       // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
+    }
+  },
+
+  // standBy
+  getStandByProposals: async (req, res) => {
+    try {
+      const accessToken = req.headers.authorization;
+      console.log("sdfsdfsdfdsfdsfsdfdsfsf");
+
+      if (!accessToken) {
+        return res.status(404).send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          console.log("____SDFSDFSDFSDFSDFSDF");
+          const proposalInfo = await proposalModel.getStandByProposals();
+          console.log(
+            "해당 제안이 propose 함수를 실행하여 대기열에서 사라집니다.",
+            proposalInfo
+          );
+
+          return res
+            .status(200)
+            .send({ data: proposalInfo, message: "Searching success" });
+        }
+      }
+    } catch (err) {
+      console.log("123123123");
       res.status(400).send({
         data: null,
         message: "Can't search",
@@ -122,9 +165,7 @@ module.exports = {
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {
-        return res
-          .status(404)
-          .send({ data: null, message: "Not autorized" });
+        return res.status(404).send({ data: null, message: "Not autorized" });
       } else {
         const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
@@ -132,10 +173,14 @@ module.exports = {
         if (!userInfo) {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-          const proposalInfo = await proposalModel.expiredProposal(req.body.proposal_id);
-          console.log("해당 제안이 더이상 노출되지 않습니다.", proposalInfo)
+          const proposalInfo = await proposalModel.expiredProposal(
+            req.body.proposal_id
+          );
+          console.log("해당 제안이 더이상 노출되지 않습니다.", proposalInfo);
 
-          return res.status(200).send({ data: proposalInfo, message: "Searching success" })
+          return res
+            .status(200)
+            .send({ data: proposalInfo, message: "Searching success" });
         }
       }
     } catch (err) {
@@ -153,9 +198,7 @@ module.exports = {
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {
-        return res
-          .status(404)
-          .send({ data: null, message: "Not autorized" });
+        return res.status(404).send({ data: null, message: "Not autorized" });
       } else {
         const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
@@ -163,11 +206,18 @@ module.exports = {
         if (!userInfo) {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-          const proposalInfo = await proposalModel.upCount(req.body.proposal_id);
-          const selector = await proposalSelector.saveSeletor({ proposal_id: req.body.proposal_id, worker_id: userInfo.worker_id });
-          console.log("해당 제안의 up count가 1 증가하였습니다.", proposalInfo)
+          const proposalInfo = await proposalModel.upCount(
+            req.body.proposal_id
+          );
+          const selector = await proposalSelector.saveSeletor({
+            proposal_id: req.body.proposal_id,
+            worker_id: userInfo.worker_id,
+          });
+          console.log("해당 제안의 up count가 1 증가하였습니다.", proposalInfo);
 
-          return res.status(200).send({ data: selector, message: "Searching success" })
+          return res
+            .status(200)
+            .send({ data: selector, message: "Searching success" });
         }
       }
     } catch (err) {
@@ -185,9 +235,7 @@ module.exports = {
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {
-        return res
-          .status(404)
-          .send({ data: null, message: "Not autorized" });
+        return res.status(404).send({ data: null, message: "Not autorized" });
       } else {
         const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
@@ -195,11 +243,21 @@ module.exports = {
         if (!userInfo) {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-          const proposalInfo = await proposalModel.downCount(req.body.proposal_id);
-          const selector = await proposalSelector.saveSeletor({ proposal_id: req.body.proposal_id, worker_id: userInfo.worker_id });
-          console.log("해당 제안의 down count가 1 증가하였습니다.", proposalInfo)
+          const proposalInfo = await proposalModel.downCount(
+            req.body.proposal_id
+          );
+          const selector = await proposalSelector.saveSeletor({
+            proposal_id: req.body.proposal_id,
+            worker_id: userInfo.worker_id,
+          });
+          console.log(
+            "해당 제안의 down count가 1 증가하였습니다.",
+            proposalInfo
+          );
 
-          return res.status(200).send({ data: selector, message: "Searching success" })
+          return res
+            .status(200)
+            .send({ data: selector, message: "Searching success" });
         }
       }
     } catch (err) {
@@ -217,9 +275,7 @@ module.exports = {
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {
-        return res
-          .status(404)
-          .send({ data: null, message: "Not autorized" });
+        return res.status(404).send({ data: null, message: "Not autorized" });
       } else {
         const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
@@ -227,10 +283,15 @@ module.exports = {
         if (!userInfo) {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-          const selector = await proposalSelector.checkSelector({ proposal_id: req.params.proposal_id, worker_id: userInfo.worker_id });
-          console.log("worker가 해당 제안을 선택한 횟수", selector)
+          const selector = await proposalSelector.checkSelector({
+            proposal_id: req.params.proposal_id,
+            worker_id: userInfo.worker_id,
+          });
+          console.log("worker가 해당 제안을 선택한 횟수", selector);
 
-          return res.status(200).send({ data: selector, message: "Searching success" })
+          return res
+            .status(200)
+            .send({ data: selector, message: "Searching success" });
         }
       }
     } catch (err) {
@@ -248,9 +309,7 @@ module.exports = {
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {
-        return res
-          .status(404)
-          .send({ data: null, message: "Not autorized" });
+        return res.status(404).send({ data: null, message: "Not autorized" });
       } else {
         const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
@@ -267,10 +326,12 @@ module.exports = {
             content: req.body.content,
             worker_id: userInfo.worker_id,
           };
-          const inputData = await proposalModel.saveProposal(newProposal)
+          const inputData = await proposalModel.saveProposal(newProposal);
           console.log("Wow! 새로운 제안이 저장되었습니다.", inputData);
 
-          return res.status(200).send({ data: inputData, message: "Created new proposal" })
+          return res
+            .status(200)
+            .send({ data: inputData, message: "Created new proposal" });
         }
       }
     } catch (err) {
@@ -345,9 +406,7 @@ module.exports = {
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {
-        return res
-          .status(404)
-          .send({ data: null, message: "Not autorized" });
+        return res.status(404).send({ data: null, message: "Not autorized" });
       } else {
         const token = accessToken.split(" ")[0];
         const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
@@ -355,16 +414,12 @@ module.exports = {
         if (!userInfo) {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-
           //
           /* Gig Token 을 핸들링하는 제안인 경우 */
           //
 
-          
-
           // const currState = await governor.methods.state("83277441787621362949971282067749244632911710677429999793274039764661482241623").call();
           // console.log("state의 상태", currState)
-
 
           // // call data 생성
           // const gt = await new ethers.Contract(GTaddress, GTabi);
@@ -383,7 +438,6 @@ module.exports = {
           // const sendingTX = await web3.eth.sendSignedTransaction(signedTX.rawTransaction);
           // console.log("sending TX. 트랜잭션 전송 완료", sendingTX);
 
-
           //
           /* Gig Score 를 핸들링하는 제안인 경우 */
           //
@@ -392,49 +446,89 @@ module.exports = {
           /* Moderator 를 핸들링하는 제안인 경우 */
           //
 
-          console.log("여기서 시작")
+          console.log("여기서 시작");
 
           /***** 각 컨트랙트 액세스 관계 셋팅 *****/
           // 1. GigToken 컨트랙트의 거버너 셋팅
-          const accessData1 = await gigtoken.methods.setGovernor(GovernorAddress).encodeABI();
-          const raw1 = {to: GTaddress, gas: 300000, data: accessData1};
-          const signed1 = await web3.eth.accounts.signTransaction(raw1, process.env.ADMIN_WALLET_PRIVATE_KEY);
+          const accessData1 = await gigtoken.methods
+            .setGovernor(GovernorAddress)
+            .encodeABI();
+          const raw1 = { to: GTaddress, gas: 300000, data: accessData1 };
+          const signed1 = await web3.eth.accounts.signTransaction(
+            raw1,
+            process.env.ADMIN_WALLET_PRIVATE_KEY
+          );
           const sending1 = await web3.eth.sendSignedTransaction(signed1.raw1);
-          console.log("GigToken의 Governor Address 설정이 완료되었습니다.", sending1);
+          console.log(
+            "GigToken의 Governor Address 설정이 완료되었습니다.",
+            sending1
+          );
           // 2. GigScore 컨트랙트의 거버너, 모더레이터 셋팅
-          const accessData2 = await gigscore.methods.setGovernorContractAddress(GovernorAddress).encodeABI();
-          const raw2 = {to: GSaddress, gas: 300000, data: accessData2};
-          const signed2 = await web3.eth.accounts.signTransaction(raw2, process.env.ADMIN_WALLET_PRIVATE_KEY);
+          const accessData2 = await gigscore.methods
+            .setGovernorContractAddress(GovernorAddress)
+            .encodeABI();
+          const raw2 = { to: GSaddress, gas: 300000, data: accessData2 };
+          const signed2 = await web3.eth.accounts.signTransaction(
+            raw2,
+            process.env.ADMIN_WALLET_PRIVATE_KEY
+          );
           const sending2 = await web3.eth.sendSignedTransaction(signed2.raw2);
-          console.log("GigScore의 Governor Address 설정이 완료되었습니다.", sending2);
-          const accessData3 = await gigscore.methods.setModeratorContractAddress(GMaddress).encodeABI();
-          const raw3 = {to: GSaddress, gas: 300000, data: accessData3};
-          const signed3 = await web3.eth.accounts.signTransaction(raw3, process.env.ADMIN_WALLET_PRIVATE_KEY);
+          console.log(
+            "GigScore의 Governor Address 설정이 완료되었습니다.",
+            sending2
+          );
+          const accessData3 = await gigscore.methods
+            .setModeratorContractAddress(GMaddress)
+            .encodeABI();
+          const raw3 = { to: GSaddress, gas: 300000, data: accessData3 };
+          const signed3 = await web3.eth.accounts.signTransaction(
+            raw3,
+            process.env.ADMIN_WALLET_PRIVATE_KEY
+          );
           const sending3 = await web3.eth.sendSignedTransaction(signed3.raw3);
-          console.log("GigScore의 Moderator Address 설정이 완료되었습니다.", sending3);
+          console.log(
+            "GigScore의 Moderator Address 설정이 완료되었습니다.",
+            sending3
+          );
           // 3. GigModerator 컨트랙트의 거버너, 긱스코어 셋팅
-          const accessData4 = await gigmoderator.methods.setGovernor(GovernorAddress).encodeABI();
-          const raw4 = {to: GMaddress, gas: 300000, data: accessData4};
-          const signed4 = await web3.eth.accounts.signTransaction(raw4, process.env.ADMIN_WALLET_PRIVATE_KEY);
+          const accessData4 = await gigmoderator.methods
+            .setGovernor(GovernorAddress)
+            .encodeABI();
+          const raw4 = { to: GMaddress, gas: 300000, data: accessData4 };
+          const signed4 = await web3.eth.accounts.signTransaction(
+            raw4,
+            process.env.ADMIN_WALLET_PRIVATE_KEY
+          );
           const sending4 = await web3.eth.sendSignedTransaction(signed4.raw4);
-          console.log("GigModerator의 Governor Address 설정이 완료되었습니다.", sending4);
-          const accessData5 = await gigmoderator.methods.setToken(GSaddress).encodeABI();
-          const raw5 = {to: GMaddress, gas: 300000, data: accessData5};
-          const signed5 = await web3.eth.accounts.signTransaction(raw5, process.env.ADMIN_WALLET_PRIVATE_KEY);
+          console.log(
+            "GigModerator의 Governor Address 설정이 완료되었습니다.",
+            sending4
+          );
+          const accessData5 = await gigmoderator.methods
+            .setToken(GSaddress)
+            .encodeABI();
+          const raw5 = { to: GMaddress, gas: 300000, data: accessData5 };
+          const signed5 = await web3.eth.accounts.signTransaction(
+            raw5,
+            process.env.ADMIN_WALLET_PRIVATE_KEY
+          );
           const sending5 = await web3.eth.sendSignedTransaction(signed5.raw5);
-          console.log("GigModerator의 GigScore Address 설정이 완료되었습니다.", sending5);
+          console.log(
+            "GigModerator의 GigScore Address 설정이 완료되었습니다.",
+            sending5
+          );
 
-          return res.status(200).send({ data: sendingTX, message: "Created new propose obj" })
+          return res
+            .status(200)
+            .send({ data: sendingTX, message: "Created new propose obj" });
         }
       }
     } catch (err) {
-      console.log("또 에러...")
+      console.log("또 에러...");
       res.status(400).send({
         data: null,
         message: "Can't run propose function",
       });
     }
-  }
+  },
 };
-
-

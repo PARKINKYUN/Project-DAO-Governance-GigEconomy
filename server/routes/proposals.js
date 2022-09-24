@@ -3,6 +3,7 @@ const router = express.Router();
 const controller = require("../controllers/proposals.controller");
 
 router.get("/getOnPostProposals", controller.getOnPostProposals); // 전체 제안 리스트
+router.get("/getStandByProposals", controller.getStandByProposals); // stanby 제안
 router.post("/newproposal", controller.postProposal); // 제안 올리기
 router.get("/checkSelector/:proposal_id", controller.checkSelector); // 워커가 해당 제안에 대한 선택을 이미 했는지 여부 반환
 router.patch("/expiredProposal", controller.expiredProposal); // 기간 만료된 제안의 상태 수정
