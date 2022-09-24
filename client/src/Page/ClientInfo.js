@@ -9,12 +9,14 @@ import OrderCard from "../components/OrderCard";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import TransferToken from "../components/TransferToken";
 
 function ClientInfo({ token, userInfo }) {
     const [pending, setPending] = useState([]);
     const [ongoing, setOngoing] = useState([]);
     const [finished, setFinished] = useState([]);
     const [taps, setTaps] = useState([]);
+    const [balance, setBalance] = useState(0);
 
     const navigate = useNavigate();
 
@@ -32,7 +34,17 @@ function ClientInfo({ token, userInfo }) {
             }
         }
         getTaps();
+        getBalance();
     }, [token, userInfo])
+
+    const getBalance = async () => {
+        try {
+            const res = await axios.patch('http://localhost:4000/transfers/getbalancebyclient', userInfo.address, { headers: { authorization: token } });
+            setBalance(res.data.data);
+        } catch (err) {
+            window.alert("토큰 잔액 정보를 업데이트 할 수 없습니다. 다시 시도해주세요.")
+        }
+    }
 
     const getOrdersList = async () => {
         try {
@@ -85,7 +97,7 @@ function ClientInfo({ token, userInfo }) {
                                 <h4>{userInfo.client_id}</h4>
                                 <h4>{userInfo.nickname}</h4>
                                 <h4>{userInfo.address}</h4>
-                                <h4>{userInfo.balance}</h4>
+                                <h4>{balance}</h4>
                             </div>
                         </Grid>
                         <Grid item xs={4} justifyContent="center" alignItems="center" >
@@ -99,9 +111,7 @@ function ClientInfo({ token, userInfo }) {
                                 <Button variant="contained" size="medium" onClick={() => navigate('/updateinfo')}>
                                     회원정보수정
                                 </Button>
-                                <Button variant="contained" size="medium" onClick={() => navigate('/')}>
-                                    토큰 전송
-                                </Button>
+                                <TransferToken token={token} isWorker={false} />
                             </Box>
                         </Grid>
                     </Grid>

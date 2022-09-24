@@ -128,6 +128,16 @@ function WorkerProfile({ token, userInfo }) {
             }
           </Grid>
         </div>
+        <div>
+          {flag ? (
+            <NewTapForm
+              token={token}
+              writer={userInfo.client_id}
+              client_id={userInfo.client_id}
+              worker_id={worker.worker_id}
+            />
+          ) : null}
+        </div>
         <div className={styles.reviewBox}>
           <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
             <div>
@@ -156,16 +166,6 @@ function WorkerProfile({ token, userInfo }) {
                 : null}
             </li>
           </div>
-        </div>
-        <div>
-          {flag ? (
-            <NewTapForm
-              token={token}
-              writer={userInfo.client_id}
-              client_id={userInfo.client_id}
-              worker_id={worker.worker_id}
-            />
-          ) : null}
         </div>
         <div>
           <TapsList token={token} userInfo={userInfo} taps={taps} />

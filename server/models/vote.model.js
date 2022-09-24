@@ -10,11 +10,11 @@ const vote = new mongoose.Schema({
     type: String,
     required: true,
   },
-  proposer_address: {
+  propoal_id: {
     type: Number,
     required: true,
   },
-  targets: {
+  targets: { // 배열
     type: Array,
     required: true,
   },
@@ -49,6 +49,10 @@ const vote = new mongoose.Schema({
     enum: ["Pending", "Active", "Canceled", "Defeated", "Succeeded", "Queued", "Expired", "Executed"],
     default: "Pending",
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  }
 });
 
 // 투표 저장
