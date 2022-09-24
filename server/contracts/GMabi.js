@@ -555,6 +555,25 @@ const GMabi = [
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "governor_",
+				"type": "address"
+			}
+		],
+		"name": "setGovernor",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "_price",
 				"type": "uint256"

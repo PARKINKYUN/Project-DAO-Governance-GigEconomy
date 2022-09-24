@@ -4,6 +4,7 @@ const vote = new mongoose.Schema({
   proposalId: {
     type: String,
     required: true,
+    unique: true,
   },
   proposer_id: {
     type: String,
@@ -12,29 +13,36 @@ const vote = new mongoose.Schema({
   proposer_address: {
     type: Number,
     required: true,
-    unique: true,
   },
-  targets: { // 배열
-    type: String,
+  targets: {
+    type: Array,
     required: true,
   },
   values: { // 배열
-    type: Number,
-    default: 0,
+    type: Array,
   },
   calldatas: { // 배열
-    type: String,
-    default: 0,
+    type: Array,
   },
-  descryption: {
-    type: Date,
-    default: Date.now
+  description: {
+    type: String,
+  },
+  contract: {
+    type: String,
+  },
+  methods: {
+    type: String,
+  },
+  params: {
+    type: Array,
   },
   for: {
     type: Number,
+    default: 0,
   },
   against: {
     type: Number,
+    default: 0,
   },
   status: {
     type: String,
@@ -42,5 +50,23 @@ const vote = new mongoose.Schema({
     default: "Pending",
   },
 });
+
+// 투표 저장
+vote.methods.saveVote = async function () {
+  return await this.save();
+};
+
+// 투표 업데이트
+vote.statics.updateVote = async function (obj) {
+  return await this.findOneAndUpdate(
+    { proposalId: obj.proposalId },
+    {
+      for: obj.for,
+      against: obj.against,
+      status: obj.status,
+    },
+    { new: true }
+  );
+}
 
 module.exports = mongoose.model("Vote", vote)
