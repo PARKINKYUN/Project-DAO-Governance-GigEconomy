@@ -10,6 +10,7 @@ import VoteModal from "../components/VoteModal";
 import Proposal from "../components/Proposal";
 import NewPolicy from "../components/NewPolicy";
 import { useNavigate } from "react-router-dom";
+import StandByProposal from "../components/StandByProposal";
 
 function Governance({ token, userInfo }) {
   const [voting, setVoting] = useState([]);
@@ -17,6 +18,7 @@ function Governance({ token, userInfo }) {
   const [proposals, setProposals] = useState([]);
   const [updateNow, setUpdateNow] = useState(true);
   const [tryCount, setTryCount] = useState(0);
+  const [standBy, setStandBy] = useState([]);
 
   const navigate = useNavigate();
 
@@ -43,6 +45,7 @@ function Governance({ token, userInfo }) {
     getPolicies();
     // 진행중인 제안 읽어오기
     getProposals();
+    getStandBy();
   }, []);
 
   // 현재 진행중인 Vote를 web3를 이용해 실시간으로 읽어옴
@@ -61,6 +64,19 @@ function Governance({ token, userInfo }) {
     });
     const recentPolicies = res.data.data;
     setPolicies(recentPolicies);
+  };
+  //
+  //
+  // standBy 상태 proposal 데이터 요청
+
+  const getStandBy = async () => {
+    const res = await axios.get(
+      "http://localhost:4000/proposals/getStandByProposals",
+      { headers: { authorization: token } }
+    );
+    const StandByProposal = res.data.data;
+    setStandBy(StandByProposal);
+    console.log(res.data.data);
   };
 
   // DB에서 현재 up/down 진행중인 제안을 읽어옴
@@ -114,9 +130,11 @@ function Governance({ token, userInfo }) {
 
   // propose 생성. 서버에서 생성한다.
   const runPropose = async () => {
-    const res = await axios.get("http://localhost:4000/proposals/propose", { headers: { authorization: token } })
+    const res = await axios.get("http://localhost:4000/proposals/propose", {
+      headers: { authorization: token },
+    });
     console.log("블록체인네트워크 응답 데이터: ", res.data.data);
-  }
+  };
 
   return (
     <div style={{ padding: "10px" }}>
@@ -191,7 +209,7 @@ function Governance({ token, userInfo }) {
             //
             //            web3 test
               // */}
-            {/* 유지 보수를 담당하는 개발팀 전용 메뉴. 통과된 제안을 트랜잭션으로 만들고 컨트랙트를 실행하여 투표로 진입하게 한다 */}         
+            {/* 유지 보수를 담당하는 개발팀 전용 메뉴. 통과된 제안을 트랜잭션으로 만들고 컨트랙트를 실행하여 투표로 진입하게 한다 */}
             <Grid item xs={2}>
               {userInfo.worker_id === "worker01@gig.com" ? (
                 <Button variant="contained" size="small" onClick={runPropose}>
@@ -255,6 +273,16 @@ function Governance({ token, userInfo }) {
         <div>
           <h3>Passed Proposal</h3>
         </div>
+        {standBy.map((proposal) => {
+          return (
+            <StandByProposal
+              key={proposal.proposal_id}
+              proposal={proposal}
+              token={token}
+              updateFunc={updateFunc}
+            />
+          );
+        })}
       </div>
 
       {/*------------Proposal------------*/}
