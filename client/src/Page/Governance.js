@@ -64,6 +64,29 @@ function Governance({ token, userInfo }) {
     });
     const recentPolicies = res.data.data;
     setPolicies(recentPolicies);
+    console.log("policies list", recentPolicies);
+  };
+  //
+  //
+  //policies post
+
+  const postData = async () => {
+    const newPolicy = {
+      title: "info 페이지 수정",
+      content: "myinfo 페이지에 더 많은 내용을 볼 수 있도록 변경해주세요.",
+      worker_id: "worker90@gig.com",
+      for: 10,
+      against: 2,
+      transactionHash: "123",
+    };
+    const res = await axios.post(
+      "http://localhost:4000/policies/newpolicy",
+      newPolicy,
+      {
+        headers: { authorization: token },
+      }
+    );
+    console.log("123123", res.data.data);
   };
   //
   //
