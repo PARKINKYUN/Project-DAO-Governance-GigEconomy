@@ -60,7 +60,7 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-export default function TransferToken({ token, isWorker, isLoading }) {
+export default function TransferToken({ token, isWorker }) {
     const [open, setOpen] = useState(false);
     const [selectBox, setSelectBox] = React.useState('');
     const [identifier, setIdentifier] = React.useState("");
@@ -133,7 +133,13 @@ export default function TransferToken({ token, isWorker, isLoading }) {
                 <DialogTitle>Token Transfer</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        토큰을 전송할 상대방의 <b>ID 또는 Nickname</b>과 <b>보내는 토큰의 양</b>을 정확하게 입력해주세요.
+                        <div>
+                            토큰을 전송할 상대방의 <b>ID 또는 Nickname</b>과
+                        </div>
+                        <div>
+                            <b>보내는 토큰의 양</b>을 정확하게 입력해주세요.
+                        </div>
+
                     </DialogContentText>
                     <Box
                         sx={{
@@ -181,7 +187,7 @@ export default function TransferToken({ token, isWorker, isLoading }) {
                 <div>
                     <CircularProgress color="inherit" />
                 </div>
-                
+
             </Backdrop>
         </div>
     );

@@ -12,6 +12,5 @@ router.patch("/downCount", controller.downCount); // down 클릭 시 숫자 내�
 router.patch("/successfulProposal", controller.successfulProposal); // 정족수에 도달하여 성공한 제안 상태변경
 router.patch("/proposedProposal", controller.proposedProposal); // 성공한 제안을 propose 함
 router.delete("/proposal/:id", controller.removeProposal); // 제안 삭제
-router.get("/propose", controller.propose);
 
 module.exports = router;
