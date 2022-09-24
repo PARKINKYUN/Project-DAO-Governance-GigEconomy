@@ -147,4 +147,20 @@ worker.statics.setGigScore = async function (worker_id, gig_score) {
   );
 };
 
+// 보유한 토큰의 양 업데이트
+worker.statics.setToken = async function (address, balance) {
+  return await this.findOneAndUpdate(
+    { address: address },
+    { balance: balance }
+  );
+};
+
+// 보유한 긱 스코어 업데이트
+worker.statics.setGigscore = async function (address, gigscore) {
+  return await this.findOneAndUpdate(
+    { address: address },
+    { gig_score: gigscore }
+  )
+}
+
 module.exports = mongoose.model("Worker", worker);

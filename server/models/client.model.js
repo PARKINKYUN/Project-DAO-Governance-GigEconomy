@@ -93,10 +93,15 @@ client.statics.getClientInfoById = async function (client_id) {
   return await this.find({ client_id: client_id });
 };
 
+// 회원정보 요청 (닉네임으로 요청)
+client.statics.getClientInfoByNickname = async function (nickname) {
+  return await this.find({ nickname: nickname });
+}
+
 // 보유한 토큰의 양 업데이트
-client.statics.setTokenById = async function (client_id, balance) {
+client.statics.setToken = async function (address, balance) {
   return await this.findOneAndUpdate(
-    { client_id: client_id },
+    { address: address },
     { balance: balance }
   );
 };
