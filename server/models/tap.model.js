@@ -68,6 +68,10 @@ tap.statics.getTapsByWorkerId = async function (worker_id) {
     return await this.find({ worker_id: worker_id }).sort({ tap_id: -1 });
 }
 
+tap.statics.getTapsByAdmin = async function (worker_id) {
+  return await this.find( {$or: [{ worker_id: worker_id }, {client_id: worker_id}] }).sort({ tap_id: -1 });
+}
+
 // tap id로 탭 조회
 tap.statics.getTapByTapId = async function (tap_id) {
     return await this.find({ tap_id: tap_id });

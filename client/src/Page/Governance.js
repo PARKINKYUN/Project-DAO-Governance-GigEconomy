@@ -151,14 +151,6 @@ function Governance({ token, userInfo }) {
     setTryCount(res.data.data.length);
   };
 
-  // propose 생성. 서버에서 생성한다.
-  const runPropose = async () => {
-    const res = await axios.get("http://localhost:4000/proposals/propose", {
-      headers: { authorization: token },
-    });
-    console.log("블록체인네트워크 응답 데이터: ", res.data.data);
-  };
-
   return (
     <div style={{ padding: "10px" }}>
       <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
@@ -217,7 +209,7 @@ function Governance({ token, userInfo }) {
                 <Button
                   variant="contained"
                   size="small"
-                  onClick={() => navigate("/contactsupportteam")}
+                  onClick={() => navigate("/contactsupportteam", {state: {token: token, userInfo: userInfo}} )}
                 >
                   Contact Support Team
                 </Button>
@@ -226,19 +218,6 @@ function Governance({ token, userInfo }) {
                   Contact Support Team
                 </Button>
               )}
-            </Grid>
-
-            {/*//
-            //
-            //            web3 test
-              // */}
-            {/* 유지 보수를 담당하는 개발팀 전용 메뉴. 통과된 제안을 트랜잭션으로 만들고 컨트랙트를 실행하여 투표로 진입하게 한다 */}
-            <Grid item xs={2}>
-              {userInfo.worker_id === "worker01@gig.com" ? (
-                <Button variant="contained" size="small" onClick={runPropose}>
-                  Run Propose
-                </Button>
-              ) : null}
             </Grid>
           </Grid>
         </li>

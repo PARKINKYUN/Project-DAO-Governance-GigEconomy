@@ -10,7 +10,7 @@ const vote = new mongoose.Schema({
     type: String,
     required: true,
   },
-  propoal_id: {
+  proposal_id: {
     type: Number,
     required: true,
   },
