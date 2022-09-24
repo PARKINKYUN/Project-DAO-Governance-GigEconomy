@@ -9,6 +9,7 @@ import OrderCard from "../components/OrderCard";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import TransferToken from "../components/TransferToken";
 
 function WorkerInfo({ token, userInfo, setUserInfo }) {
     const [pending, setPending] = useState([]);
@@ -18,6 +19,8 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
     const [orderCount, setOrderCount] = useState(0);
     const [evalAvg, setEvalAvg] = useState(0);
     const [evalCount, setEvalCount] = useState(0);
+    const [balance, setBalance] = useState(0);
+    const [gigscore, setGigscore] = useState(0);
 
     const navigate = useNavigate();
 
@@ -29,7 +32,18 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
         getOrderByWorker();
         getEvaluation();
         getTaps();
+        getBalance();
     }, [])
+
+    const getBalance = async () => {
+        try {
+            const res = await axios.patch('http://localhost:4000/transfers/getbalancebyworker', userInfo.address, { headers: { authorization: token } });
+            setBalance(res.data.data.balance);
+            setGigscore(res.data.data.gigscore);
+        } catch (err) {
+            window.alert("토큰 잔액 정보를 업데이트 할 수 없습니다. 다시 시도해주세요.")
+        }
+    }
 
     // 거버넌스에 참여하는 Moderator가 되기 위한 gig-score 자격
     const Mod_Contition = 1000;
@@ -153,8 +167,8 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                 <h4>{evalAvg}</h4>
                                 <h4>{evalCount}</h4>
                                 <h4>{userInfo.address}</h4>
-                                <h4>{userInfo.balance}</h4>
-                                <h4>{userInfo.gig_score}</h4>
+                                <h4>{balance}</h4>
+                                <h4>{gigscore}</h4>
                                 <h4>{userInfo.mod_authority ? "The Moderator Worker" : "The General Worker"}</h4>
                             </div>
                         </Grid>
@@ -169,9 +183,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                 <Button variant="contained" size="medium" onClick={() => navigate('/updateinfo')}>
                                     회원정보수정
                                 </Button>
-                                <Button variant="contained" size="medium" onClick={() => navigate('/')}>
-                                    토큰 전송
-                                </Button>
+                                <TransferToken token={token} isWoker={true} />
                                 {userInfo.gig_score >= Mod_Contition && !userInfo.mod_authority ?
                                     <Button variant="contained" size="medium" onClick={applyModerator}>
                                         Moderator 지원

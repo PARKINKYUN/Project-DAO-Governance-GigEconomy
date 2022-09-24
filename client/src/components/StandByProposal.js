@@ -2,6 +2,7 @@ import * as React from "react";
 import styles from "../css/Tap.module.css";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
+import Propose from "./Propose";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -20,6 +21,9 @@ const StandByProposal = ({ token, proposal, updateFunc }) => {
         </Grid>
         <Grid item xs={10}>
           <div>{proposal.content}</div>
+        </Grid>
+        <Grid item xs={2}>
+          <Propose proposal={proposal} />
         </Grid>
       </Grid>
     </li>
