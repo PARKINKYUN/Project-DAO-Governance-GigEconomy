@@ -19,6 +19,9 @@ const GovernorAddress = require("../contracts/GovernorAddress"); // Governor Add
 
 const web3 = new Web3(process.env.RPCURL);
 const governor = new web3.eth.Contract(GovernorABI, GovernorAddress);
+const gigtoken = new web3.eth.Contract(GTabi, GTaddress);
+const gigscore = new web3.eth.Contract(GSabi, GSaddress);
+const gigmoderator = new web3.eth.Contract(GMabi, GMaddress);
 
 module.exports = {
   // 진행중인 제안 리스트
@@ -82,36 +85,36 @@ module.exports = {
     }
   },
 
-    // 정족수에 도달하여 성공한 제안의 상태 변경
-    proposedProposal: async (req, res) => {
-      try {
-        const accessToken = req.headers.authorization;
-  
-        if (!accessToken) {
-          return res
-            .status(404)
-            .send({ data: null, message: "Not autorized" });
+  // 성공하여 투표를 대기하고 있던 제안의 상태변경
+  proposedProposal: async (req, res) => {
+    try {
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-          const token = accessToken.split(" ")[0];
-          const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
-  
-          if (!userInfo) {
-            return res.status(404).send({ data: null, message: "Invalid token" });
-          } else {
-            const proposalInfo = await proposalModel.proposedProposal(req.body.proposal_id);
-            console.log("해당 제안이 propose 함수를 실행하여 대기열에서 사라집니다.", proposalInfo)
-  
-            return res.status(200).send({ data: proposalInfo, message: "Searching success" })
-          }
+          const proposalInfo = await proposalModel.proposedProposal(req.body.proposal_id);
+          console.log("해당 제안이 propose 함수를 실행하여 대기열에서 사라집니다.", proposalInfo)
+
+          return res.status(200).send({ data: proposalInfo, message: "Searching success" })
         }
-      } catch (err) {
-        // console.log(err);
-        res.status(400).send({
-          data: null,
-          message: "Can't search",
-        });
       }
-    },
+    } catch (err) {
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
+    }
+  },
 
   // 기간 만료된 제안의 상태 변경
   expiredProposal: async (req, res) => {
@@ -357,31 +360,28 @@ module.exports = {
           /* Gig Token 을 핸들링하는 제안인 경우 */
           //
 
-          const currState = await governor.methods.state("41396008272626761976333970890805314422531695687300321995538584730435024288873").call();
-          console.log("state의 상태", currState)
           
 
-          // call data 생성
-          const gt = await new ethers.Contract(GTaddress, GTabi);
+          // const currState = await governor.methods.state("83277441787621362949971282067749244632911710677429999793274039764661482241623").call();
+          // console.log("state의 상태", currState)
 
-          const senderAddress = process.env.ADMIN_WALLET_ACOUNT;
-          const receipientAddress = "0xd5682142400b484Cb4E6af761A3e5fb534013C04";
-          const transAmount = 1000000;
-          const transferCalldata = gt.interface.encodeFunctionData("transferFrom", [senderAddress, receipientAddress, transAmount]);
-          console.log("propose call data: ", transferCalldata);
 
-          // Governor propose 호출 트랜잭션 생성
-          
-          const data = governor.methods.propose([GTaddress], [0], [transferCalldata], "propose test321").encodeABI();
-          const rawTransaction = {to: GovernorAddress, gas: 30000000, data: data};
-          const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
-          console.log(signedTX.transactionHash)
-          const sendingTX = await web3.eth.sendSignedTransaction(signedTX.rawTransaction);
-          console.log("sending TX. 트랜잭션 전송 완료", sendingTX);
-          const receipt = await web3.eth.getTransactionReceipt(sendingTX.transactionHash);
-          console.log("이건 영수증이다~~~~", receipt)
-          const event = governor.once("ProposalCreated", console.log)
-          console.log("이건 이벤트이다~~~", event)
+          // // call data 생성
+          // const gt = await new ethers.Contract(GTaddress, GTabi);
+
+          // const senderAddress = process.env.ADMIN_WALLET_ACOUNT;
+          // const receipientAddress = "0xd5682142400b484Cb4E6af761A3e5fb534013C04";
+          // const transAmount = 1000000;
+          // const transferCalldata = gt.interface.encodeFunctionData("transferFrom", [senderAddress, receipientAddress, transAmount]);
+
+          // // Governor propose 호출 트랜잭션 생성
+
+          // const data = await governor.methods.propose([GTaddress], [0], [transferCalldata], "propose test31").encodeABI();
+          // const rawTransaction = {to: GovernorAddress, gas: 3000000, data: data};
+          // const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
+          // console.log(signedTX.transactionHash)
+          // const sendingTX = await web3.eth.sendSignedTransaction(signedTX.rawTransaction);
+          // console.log("sending TX. 트랜잭션 전송 완료", sendingTX);
 
 
           //
@@ -392,7 +392,39 @@ module.exports = {
           /* Moderator 를 핸들링하는 제안인 경우 */
           //
 
-          return res.status(200).send({ data: inputData, sendingTX: "Created new propose obj" })
+          console.log("여기서 시작")
+
+          /***** 각 컨트랙트 액세스 관계 셋팅 *****/
+          // 1. GigToken 컨트랙트의 거버너 셋팅
+          const accessData1 = await gigtoken.methods.setGovernor(GovernorAddress).encodeABI();
+          const raw1 = {to: GTaddress, gas: 300000, data: accessData1};
+          const signed1 = await web3.eth.accounts.signTransaction(raw1, process.env.ADMIN_WALLET_PRIVATE_KEY);
+          const sending1 = await web3.eth.sendSignedTransaction(signed1.raw1);
+          console.log("GigToken의 Governor Address 설정이 완료되었습니다.", sending1);
+          // 2. GigScore 컨트랙트의 거버너, 모더레이터 셋팅
+          const accessData2 = await gigscore.methods.setGovernorContractAddress(GovernorAddress).encodeABI();
+          const raw2 = {to: GSaddress, gas: 300000, data: accessData2};
+          const signed2 = await web3.eth.accounts.signTransaction(raw2, process.env.ADMIN_WALLET_PRIVATE_KEY);
+          const sending2 = await web3.eth.sendSignedTransaction(signed2.raw2);
+          console.log("GigScore의 Governor Address 설정이 완료되었습니다.", sending2);
+          const accessData3 = await gigscore.methods.setModeratorContractAddress(GMaddress).encodeABI();
+          const raw3 = {to: GSaddress, gas: 300000, data: accessData3};
+          const signed3 = await web3.eth.accounts.signTransaction(raw3, process.env.ADMIN_WALLET_PRIVATE_KEY);
+          const sending3 = await web3.eth.sendSignedTransaction(signed3.raw3);
+          console.log("GigScore의 Moderator Address 설정이 완료되었습니다.", sending3);
+          // 3. GigModerator 컨트랙트의 거버너, 긱스코어 셋팅
+          const accessData4 = await gigmoderator.methods.setGovernor(GovernorAddress).encodeABI();
+          const raw4 = {to: GMaddress, gas: 300000, data: accessData4};
+          const signed4 = await web3.eth.accounts.signTransaction(raw4, process.env.ADMIN_WALLET_PRIVATE_KEY);
+          const sending4 = await web3.eth.sendSignedTransaction(signed4.raw4);
+          console.log("GigModerator의 Governor Address 설정이 완료되었습니다.", sending4);
+          const accessData5 = await gigmoderator.methods.setToken(GSaddress).encodeABI();
+          const raw5 = {to: GMaddress, gas: 300000, data: accessData5};
+          const signed5 = await web3.eth.accounts.signTransaction(raw5, process.env.ADMIN_WALLET_PRIVATE_KEY);
+          const sending5 = await web3.eth.sendSignedTransaction(signed5.raw5);
+          console.log("GigModerator의 GigScore Address 설정이 완료되었습니다.", sending5);
+
+          return res.status(200).send({ data: sendingTX, message: "Created new propose obj" })
         }
       }
     } catch (err) {

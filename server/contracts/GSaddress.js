@@ -1,3 +1,3 @@
-const GSaddress = "0xa46F4B47Ce30eD8A5FACB8E17aFBC496330D5C12";
+const GSaddress = "0x741510ec6D730B46054d74cd5215E511Ee7a648F";
 
 module.exports = GSaddress;

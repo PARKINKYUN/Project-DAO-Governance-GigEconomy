@@ -15,6 +15,9 @@ contract GigModerator is ERC721, ERC721Enumerable, ERC721Burnable, Ownable, EIP7
 
     Counters.Counter private _tokenIdCounter;
 
+    // 거버넌스
+    address private _governor;
+
     // GigScore를 소비하여 Moderator가 되는데 지불하는 비용
     uint256 switchingPrice;
     IERC20 token;
@@ -27,7 +30,8 @@ contract GigModerator is ERC721, ERC721Enumerable, ERC721Burnable, Ownable, EIP7
         return "https://ipfs.io/ipfs/bafybeifanfpb7iwdhjveyccm4vv2bsj2omhjqhcwrv5kunxbfnozirzduy";
     }
 
-    function safeMint(address to) public onlyOwner {
+    function safeMint(address to) public {
+        require(msg.sender == owner() || msg.sender == _governor);
         require(balanceOf(to) == 0, "Already Moderator");
         require(token.balanceOf(to) > switchingPrice);
 
@@ -40,8 +44,6 @@ contract GigModerator is ERC721, ERC721Enumerable, ERC721Burnable, Ownable, EIP7
         _safeMint(to, tokenId);
         delegate(to);
     }
-
-    // The following functions are overrides required by Solidity.
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
@@ -71,7 +73,8 @@ contract GigModerator is ERC721, ERC721Enumerable, ERC721Burnable, Ownable, EIP7
     }
 
     // 연결된 ERC20 토큰, 즉 GigScore 토큰 컨트랙트의 주소를 재설정한다.
-    function setToken (address _tokenAddress) public onlyOwner returns (bool) {
+    function setToken (address _tokenAddress) public returns (bool) {
+        require(msg.sender == owner() || msg.sender == _governor);
         require(_tokenAddress != address(0x0));
         token = IERC20(_tokenAddress);
         return true;
@@ -83,8 +86,16 @@ contract GigModerator is ERC721, ERC721Enumerable, ERC721Burnable, Ownable, EIP7
     }
 
     // 모더레이터로 전환하는 Gig Score Price 변경 함수
-    function setSwitchingPrice (uint _price) public onlyOwner returns (bool) {
+    function setSwitchingPrice (uint _price) public returns (bool) {
+        require(msg.sender == owner() || msg.sender == _governor);
         switchingPrice = _price;
+        return true;
+    }
+
+    // 거버너 주소 변경
+    function setGovernor (address governor_) public returns (bool) {
+        require(msg.sender == owner() || msg.sender == _governor);
+        _governor = governor_;
         return true;
     }
 }

@@ -51,8 +51,6 @@ contract GigScore is ERC20Interface, Ownable {
         return _balances[account];
     }
 
-    // 컨트랙트의 소유자만 실행 가능
-    // 추후 거버너 계정으로 소유자를 전환하면 된다.
     function transferFrom(address sender, address recipient, uint256 amount) external virtual override returns (bool) {
         require(msg.sender == owner() || msg.sender == moderatorContract || msg.sender == governorContract);
         _transfer(sender, recipient, amount);
