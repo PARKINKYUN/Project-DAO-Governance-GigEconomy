@@ -1,4 +1,4 @@
-const votemodels = require("../models/vote.model");
+const votemodel = require("../models/vote.model");
 const jwt = require("jsonwebtoken");
 
 const Web3 = require("web3");
@@ -141,10 +141,8 @@ module.exports = {
             const sendingTX = await web3.eth.sendSignedTransaction(signedTX.rawTransaction);
             console.log("sending TX. 트랜잭션 전송 완료", sendingTX);
 
-
-
-
-
+            // 새로운 투표가 생성되었기 때문에 DB에 저장
+            const saveVoteData = await new votemodel(proposal).saveVote();
 
 
             //
@@ -184,7 +182,7 @@ module.exports = {
             // const sending5 = await web3.eth.sendSignedTransaction(signed5.rawTransaction);
             // console.log("GigModerator의 GigScore Address 설정이 완료되었습니다.", sending5);
 
-            return res.status(200).send({ data: null, message: "Created new propose obj" })
+            return res.status(200).send({ data: saveVoteData, message: "Created new propose obj" })
         } catch (err) {
             console.log("Error...")
             res.status(400).send({

@@ -60,17 +60,25 @@ vote.methods.saveVote = async function () {
   return await this.save();
 };
 
+// 전체 투표 데이터 읽어오기
+vote.statics.getVote = async function () {
+  return await this.find({})
+}
+
 // 투표 업데이트
-vote.statics.updateVote = async function (obj) {
+vote.statics.updateVote = async function (proposalId, status) {
   return await this.findOneAndUpdate(
-    { proposalId: obj.proposalId },
+    { proposalId: proposalId },
     {
-      for: obj.for,
-      against: obj.against,
-      status: obj.status,
+      status: status,
     },
     { new: true }
   );
 }
+
+//투표 삭제
+vote.statics.removeVote = async function (proposalId) {
+  await this.findOneAndRemove(proposalId);
+};
 
 module.exports = mongoose.model("Vote", vote)
