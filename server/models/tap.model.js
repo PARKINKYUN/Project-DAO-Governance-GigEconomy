@@ -68,6 +68,7 @@ tap.statics.getTapsByWorkerId = async function (worker_id) {
     return await this.find({ worker_id: worker_id }).sort({ tap_id: -1 });
 }
 
+// 관리자 계정과 대화한 탭 조회
 tap.statics.getTapsByAdmin = async function (worker_id) {
   return await this.find( {$or: [{ worker_id: worker_id }, {client_id: worker_id}] }).sort({ tap_id: -1 });
 }
