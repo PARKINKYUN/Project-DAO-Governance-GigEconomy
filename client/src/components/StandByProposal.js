@@ -6,7 +6,7 @@ import Propose from "./Propose";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const StandByProposal = ({ token, proposal, updateFunc }) => {
+const StandByProposal = ({ proposal }) => {
   return (
     <li className={styles.taps}>
       <Grid container spacing={2}>

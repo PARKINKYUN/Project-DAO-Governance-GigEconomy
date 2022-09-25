@@ -4,7 +4,8 @@ import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import { Field, Form, FormSpy } from "react-final-form";
 import Typography from "../components/Typography";
-
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 import Header from "../view/Header";
 import AppForm from "../view/AppForm";
 import { email, required } from "../form/validation";
@@ -19,6 +20,7 @@ import { useNavigate } from 'react-router-dom'
 
 function SignUp() {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
   const isWorker = useRef(false);
 
   const navigate = useNavigate();
@@ -48,6 +50,7 @@ function SignUp() {
   };
 
   const handleSubmit = async (values) => {
+    setLoading(true);
     setSent(true);
     const { email, nickname, password } = values;
 
@@ -86,9 +89,11 @@ function SignUp() {
         window.alert("이미 존재하는 아이디 또는 닉네임입니다.")
         navigate("/ReRendering");
       }
+      setLoading(false);
     } catch (err) {
       console.error(err);
       window.alert("회원가입 실패. 다시 시도해주세요.");
+      setLoading(false);
       navigate("/ReRendering");
     }
 
@@ -176,6 +181,19 @@ function SignUp() {
           )}
         </Form>
       </AppForm>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <div>
+          <h2>블록체인 네트워크에 사용자의 지갑을 만들고, 트랜잭션을 보내고 있습니다.</h2>
+          <h2>블록체인 네트워크의 환경에 따라 1~3분이 소요됩니다. 잠시만 기다려 주세요.</h2>
+        </div>
+        <div>
+          <CircularProgress color="inherit" />
+        </div>
+
+      </Backdrop>
     </React.Fragment>
   );
 }

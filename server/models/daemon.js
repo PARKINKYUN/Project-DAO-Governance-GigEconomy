@@ -9,14 +9,11 @@ const web3 = new Web3(process.env.RPCURL);
 const governor = new web3.eth.Contract(GovernorABI, GovernorAddress);
 
 const cron = require("node-cron");
-const { vote } = require("../controllers/votes.controller");
 
 const getTransactions = cron.schedule(
-    "1 * * * * *",
+    "* */1 * * * *",
     async function () {
         try {
-            console.log("1초마다 트랜잭션을 탐색합니다.")
-
             // 1. votes.controller 에서 propose 함수가 실행되고 proposalId 가 기록된 자료가 DB에 저장된다.
             // 2. 데몬이 DB에 저장된 자료 중 상태가 Pending, Active, Succeeded인 것을 읽어와 블록체인에서의 상태 변화를 감시한다.
             //    블록체인에서 proposalId로 state 함수를 실행시켜
@@ -26,20 +23,22 @@ const getTransactions = cron.schedule(
             let voteData = await votemodel.getVote();
 
             for await (const vote of voteData) {
-                const currentStatus = await governor.methods.state(vote.proposalId).call();              
+                const currentStatus = await governor.methods.state(vote.proposalId).call();     
+                console.log("실시간 투표 상태 트래킹", currentStatus)         
                 
-                // 현재 상태가 defeated 또는 executed 라면 기존 DB에서 지우고 백업용 DB에 저장하라
-                if(currentStatus === "3" || currentStatus === "7") {
+                // 현재 상태가 defeated, succeeded 또는 executed 라면 기존 DB에서 지우고 백업용 DB에 저장하라
+                if(currentStatus === "3" || currentStatus === "4" || currentStatus === "7") {
+                    console.log("투표 상태를 추적합니다. Voting Finished")
                     const voteResult = await governor.methods.proposalVotes(vote.proposalId).call();
-                    console.log(vote.description, "새로운 객체", voteResult);
+                    console.log("투표가 종료되었습니다. 투표 결과 : ", voteResult);
                     const pastVote = {
                         proposalId: vote.proposalId,
                         proposal_id: vote.proposal_id,
                         values: vote.values,
                         description: vote.description,
-                        mothods: vote.methods,
+                        methods: vote.methods,
                         for: parseInt(voteResult["1"]),
-                        status: vote.status,
+                        status: currentStatus,
                         proposer_id: vote.proposer_id,
                         targets: vote.targets,
                         calldatas: vote.calldatas,
@@ -51,8 +50,9 @@ const getTransactions = cron.schedule(
                     await new pastvotemodel(pastVote).saveVote();
                     await votemodel.removeVote(vote.proposalId);
                 }
-                // 그밖에 "pending" 상태가 아니면 업데이트 해라
-                if(currentStatus !== "0"){
+                // 그밖에 상태가 "active"이면 업데이트 해라
+                if(currentStatus === "1"){
+                    console.log("투표 상태를 추적합니다. Active Status")
                     await votemodel.updateVote(vote.proposalId, currentStatus)
                 }
             }

@@ -48,7 +48,6 @@ module.exports = {
         if (!userInfo) {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-          console.log("======req.body======", req.body)
           const proposalInfo = await proposalModel.successfulProposal(
             req.body.proposal_id
           );
@@ -108,7 +107,6 @@ module.exports = {
   getStandByProposals: async (req, res) => {
     try {
       const accessToken = req.headers.authorization;
-      console.log("sdfsdfsdfdsfdsfsdfdsfsf");
 
       if (!accessToken) {
         return res.status(404).send({ data: null, message: "Not autorized" });
@@ -120,10 +118,6 @@ module.exports = {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
           const proposalInfo = await proposalModel.getStandByProposals();
-          console.log(
-            "해당 제안이 propose 함수를 실행하여 대기열에서 사라집니다.",
-            proposalInfo
-          );
 
           return res
             .status(200)
@@ -137,6 +131,35 @@ module.exports = {
       });
     }
   },
+
+    // onBallot 상태의 proposal 가져오기
+    getOnBallotProposals: async (req, res) => {
+      try {
+        const accessToken = req.headers.authorization;
+  
+        if (!accessToken) {
+          return res.status(404).send({ data: null, message: "Not autorized" });
+        } else {
+          const token = accessToken.split(" ")[0];
+          const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+  
+          if (!userInfo) {
+            return res.status(404).send({ data: null, message: "Invalid token" });
+          } else {
+            const proposalInfo = await proposalModel.getOnBallotProposals();
+  
+            return res
+              .status(200)
+              .send({ data: proposalInfo, message: "Searching success" });
+          }
+        }
+      } catch (err) {
+        res.status(400).send({
+          data: null,
+          message: "Can't search",
+        });
+      }
+    },
 
   // 기간 만료된 제안의 상태 변경
   expiredProposal: async (req, res) => {
@@ -322,20 +345,33 @@ module.exports = {
     }
   },
 
-  // 제안 조회
-  getProposal: async () => {
+  // proposal_id 로 제안 불러오기
+  getproposalsbyid: async (req, res) => {
     try {
-      const proposal = await proposalModel.proposalById(req.params.id);
-      if (!proposal) {
-        return res.status(400).message("제안을 불러오지 못했습니다.");
-      }
+      const accessToken = req.headers.authorization;
 
-      return res
-        .status(200)
-        .send({ data: proposal, message: "제안을 불러왔습니다." });
+      if (!accessToken) {
+        return res.status(404).send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
+        } else {
+          const proposalData = await proposalModel.getproposalsbyid(req.params.proposal_id);
+
+          return res
+            .status(200)
+            .send({ data: proposalData, message: "Searching success" });
+        }
+      }
     } catch (err) {
-      console.error(err);
-      return res.status(400);
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
     }
   },
 

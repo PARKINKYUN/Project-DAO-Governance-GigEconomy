@@ -320,7 +320,6 @@ module.exports = {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
           const orderData = await order.finish(req.body.order_id);
-          console.log("offers 상태 변경 완료", orderData)
           return res.status(200).send({ data: orderData, message: "Searching success" })
         }
       }
@@ -414,7 +413,6 @@ module.exports = {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
           const isReviewed = await order.isReviewed(req.body.order_id);
-          console.log("dfkjdkfjdk", isReviewed)
           if (isReviewed) {
             return res.status(400).send({ data: null, message: "Already Reviewed" })
           } else {
@@ -446,7 +444,6 @@ module.exports = {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
           const orderInfo = await order.getEstimatedOrder();
-          console.log("worker_id로 오더 정보 조회 완료");
 
           return res
             .status(200)

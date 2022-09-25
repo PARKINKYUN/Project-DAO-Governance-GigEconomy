@@ -57,7 +57,6 @@ module.exports = {
                     return res.status(404).send({ data: null, message: "Invalid token" });
                 } else {
                     const policiesData = await policymodel.getPolicies();
-                    console.log("최근 업데이트된 정책 조회 완료", policiesData)
 
                     return res.status(200).send({ data: policiesData, message: "Searching success"})
                 }

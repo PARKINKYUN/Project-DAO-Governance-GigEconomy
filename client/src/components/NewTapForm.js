@@ -34,11 +34,7 @@ const NewTapForm = ({ token, writer, client_id, worker_id, order_id }) => {
         order_id: order_id,
       };
 
-      const res = await axios.post(
-        "http://localhost:4000/taps/newtap",
-        newTap,
-        { headers: { authorization: token } }
-      );
+      const res = await axios.post("http://localhost:4000/taps/newtap", newTap, { headers: { authorization: token } });
 
       setNewTapContent("");
       window.alert("똑똑~! 상대에게 새로운 메시지를 전송했습니다!")

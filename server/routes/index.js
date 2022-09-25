@@ -14,6 +14,8 @@ const estimate = require("./estimate");
 const policies = require("./policies");
 const offers = require("./offers");
 const transfers = require("./transfers");
+const pastvotes = require("./pastvotes")
+const controller = require("../controllers/contractsetting");
 
 router.use("/orders", orders);
 router.use("/proposals", proposals);
@@ -27,6 +29,8 @@ router.use("/estimate", estimate);
 router.use("/policies", policies);
 router.use("/offers", offers);
 router.use("/transfers", transfers);
+router.use("/pastvotes", pastvotes);
+router.post("/contractsetting", controller.contractsetting)
 router.use("/", main);
 
 module.exports = router;
