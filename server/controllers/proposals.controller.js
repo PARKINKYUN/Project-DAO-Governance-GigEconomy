@@ -1,5 +1,6 @@
 const proposalModel = require("../models/proposal.model");
 const proposalSelector = require("../models/proposalSelector.model");
+const transactionmodel = require("../models/transactions.model");
 const jwt = require("jsonwebtoken");
 
 module.exports = {
@@ -47,6 +48,7 @@ module.exports = {
         if (!userInfo) {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
+          console.log("======req.body======", req.body)
           const proposalInfo = await proposalModel.successfulProposal(
             req.body.proposal_id
           );
