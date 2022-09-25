@@ -122,17 +122,17 @@ module.exports = {
       //   gas: 1000000,
       //   data: data,
       // };
+      
       const rawTransaction = { to: GTaddress, gas: 100000, data: data };
+
 
       // // 3. 트랜잭션에 개인키(server 개인키)로 서명
       // const signedTX = await web3.eth.accounts.signTransaction(
       //   rawTransaction,
       //   process.env.ADMIN_WALLET_PRIVATE_KEY
       // );
-      const signedTX = await web3.eth.accounts.signTransaction(
-        rawTransaction,
-        process.env.ADMIN_WALLET_PRIVATE_KEY
-      );
+
+      const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
       // // 4. 서명한 트랜잭션 발송
       // const sendingTX = await web3.eth.sendSignedTransaction(
       //   signedTX.rawTransaction

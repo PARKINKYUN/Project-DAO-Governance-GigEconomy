@@ -104,10 +104,12 @@ module.exports = {
         client_id: req.body.client_id,
         nickname: req.body.nickname,
         password: req.body.password,
-        address: newAccount.address+"",
+        address: newAccount.address,
       };
 
-      console.log("왜 또 에러냐", clientData.address)
+      // const createUser = usermodel.saveUser(userData);
+
+      const createUser = await new clientModel(clientData).saveClient();
 
       // // 회원가입 보상 토큰 지급을 위한 트랜잭션 생성작업
       // // 1. 원시 데이터 생성
@@ -161,6 +163,8 @@ module.exports = {
           clientInfo[0].client_id,
           balance
         );
+
+        console.log("DB 업데이트된 Token의 양: ", updateBalance.balance);
 
         const clientInfo = {
           client_id: clientData.client_id,
