@@ -46,8 +46,7 @@ const vote = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Pending", "Active", "Canceled", "Defeated", "Succeeded", "Queued", "Expired", "Executed"],
-    default: "Pending",
+    default: "0",
   },
   createdAt: {
     type: Date,

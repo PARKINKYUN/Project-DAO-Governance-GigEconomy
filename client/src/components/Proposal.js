@@ -4,10 +4,13 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Proposal = ({ token, proposal, updateFunc }) => {
+const Proposal = ({ token, proposal }) => {
     const [up, setUp] = useState(0);
     const [down, setDown] = useState(0);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         setUp(proposal.up);
@@ -25,7 +28,7 @@ const Proposal = ({ token, proposal, updateFunc }) => {
             if(res.status === 200) {
                 const newUp = up + 1;
                 setUp(newUp);
-                updateFunc();
+                navigate("/ReRendering");
                 window.alert("해당 제안에 대한 선택 완료!!!")
             } else {
                 window.alert("서버 오류! 잠시 후 다시 시도해주세요.")
@@ -46,7 +49,7 @@ const Proposal = ({ token, proposal, updateFunc }) => {
             if(res.status === 200) {
                 const newDown = down + 1;
                 setDown(newDown);
-                updateFunc();
+                navigate("/ReRendering");
                 window.alert("해당 제안에 대한 선택 완료!!!")
             } else {
                 window.alert("서버 오류! 잠시 후 다시 시도해주세요.")

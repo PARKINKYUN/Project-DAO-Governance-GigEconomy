@@ -49,7 +49,6 @@ const getTransactions = cron.schedule(
                         createdAt: vote.createdAt,
                     }
                     await new pastvotemodel(pastVote).saveVote();
-                    console.log("-===============================")
                     await votemodel.removeVote(vote.proposalId);
                 }
                 // 그밖에 "pending" 상태가 아니면 업데이트 해라

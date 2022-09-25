@@ -16,6 +16,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import InputBase from '@mui/material/InputBase';
 import Rating from '@mui/material/Rating';
+import { useNavigate } from 'react-router-dom';
 
 const StyledRating = styled(Rating)({
     '& .MuiRating-iconFilled': {
@@ -78,6 +79,8 @@ export default function Propose({ proposal }) {
     const [param4, setParam4] = useState(0);
     const [description, setDescription] = useState("");
     const [loading, setLoading] = React.useState(false);
+
+    const navigate = useNavigate();
 
     const handleContract = (e) => {
         setContract(e.target.value);
@@ -151,11 +154,11 @@ export default function Propose({ proposal }) {
             const res = await axios.post("http://localhost:4000/votes/propose", proposeData);
             setLoading(false);
             window.alert("새로운 투표가 시작되었습니다.")
+            navigate("/ReRendering");
         } catch (err) {
             window.alert("새로운 투표 생성이 실패하였습니다.")
             setLoading(false);
         }
-
     }
 
     return (
