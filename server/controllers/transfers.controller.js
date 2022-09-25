@@ -1,5 +1,6 @@
 const clientModel = require("../models/client.model");
 const workerModel = require("../models/worker.model");
+const transactionsModel = require("../models/transactions.model");
 
 const jwt = require("jsonwebtoken");
 
@@ -45,7 +46,7 @@ module.exports = {
                             recipient = workerInfo[0].address;
                             workerFlag = true;
                         } else {
-                            return res.status(400).send({data: null, message: "존재하지 않는 ID 또는 Nickname입니다."}) 
+                            return res.status(400).send({ data: null, message: "존재하지 않는 ID 또는 Nickname입니다." })
                         }
                     } else if (userNickname && userId === undefined) {
                         const clientInfo = await clientModel.getClientInfoByNickname(userNickname);
@@ -57,25 +58,23 @@ module.exports = {
                             recipient = workerInfo[0].address;
                             workerFlag = true;
                         } else {
-                            return res.status(400).send({data: null, message: "존재하지 않는 ID 또는 Nickname입니다."}) 
+                            return res.status(400).send({ data: null, message: "존재하지 않는 ID 또는 Nickname입니다." })
                         }
                     } else {
-                        return res.status(400).send({data: null, message: "존재하지 않는 ID 또는 Nickname입니다."}) 
+                        return res.status(400).send({ data: null, message: "존재하지 않는 ID 또는 Nickname입니다." })
                     }
-
-                    // 트랜잭션
 
                     // 0. sender의 잔액 정보를 가져와 보내는 양 amount와 비교
                     const balance = await gt.methods.balanceOf(sender).call();
                     console.log(sender, "의 잔액: ", balance);
-                    
-                    if(balance < amount){
-                        return res.status(405).send({data: null, message: "잔액이 보내는 양보다 적습니다."})
+
+                    if (balance < amount) {
+                        return res.status(405).send({ data: null, message: "잔액이 보내는 양보다 적습니다." })
                     }
                     // 1. 원시 데이터 생성
                     const data = gt.methods.transferFrom(sender, recipient, amount).encodeABI();
                     // 2. 원시 트랜잭션 장부 생성
-                    const rawTransaction = {to: GTaddress, gas: 100000, data: data};
+                    const rawTransaction = { to: GTaddress, gas: 100000, data: data };
                     // 3. 트랜잭션에 개인키(server 개인키)로 서명
                     const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
                     // 4. 서명한 트랜잭션 발송
@@ -84,7 +83,7 @@ module.exports = {
 
                     // 보내는 사람과 받는 사람의 DB 토큰 잔액 업데이트
                     console.log("트랜잭션이 실행되어 DB의 Token 소유자 정보를 업데이트 합니다.")
-                    if(isWorker){
+                    if (isWorker) {
                         const workerBalance = await gt.methods.balanceOf(sender).call();
                         await workerModel.setToken(sender, workerBalance);
                     } else {
@@ -92,15 +91,20 @@ module.exports = {
                         await clientModel.setToken(sender, clientBalance);
                     }
 
-                    if(workerFlag){
+                    if (workerFlag) {
                         const workerBalance = await gt.methods.balanceOf(recipient).call();
+
                         await workerModel.setToken(recipient, workerBalance);
                     } else {
                         const clientBalance = await gt.methods.balanceOf(recipient).call();
                         await clientModel.setToken(recipient, clientBalance);
                     }
 
-                    return res.status(200).send({ data: null, message: "Transfer success" });
+                    // 트랜잭션 정보를 DB에 저장
+                    const saveTransaction = await new transactionsModel(sendingTX).saveTransaction();
+                    console.log("투표 트랜잭션 정보가 DB에 저장되었습니다.", saveTransaction)
+
+                    return res.status(200).send({ data: saveTransaction, message: "Transfer success" });
                 }
             }
         } catch (err) {
@@ -133,7 +137,6 @@ module.exports = {
                     // worker only : const gigscore = await gs.methods.balanceOf(userAddress).call();
 
                     const update = await clientModel.setToken(userAddress, balance);
-                    console.log("잔액이 업데이트 되었습니다.", update);
 
                     return res.status(200).send({ data: balance, message: "Searching success" });
                 }
@@ -162,7 +165,6 @@ module.exports = {
                 if (!userInfo) {
                     return res.status(404).send({ data: null, message: "Invalid token" });
                 } else {
-                    console.log("dkfjdkjfd")
                     const userAddress = userInfo.address;
 
                     const balance = await gt.methods.balanceOf(userAddress).call();
@@ -170,9 +172,8 @@ module.exports = {
 
                     const update = await workerModel.setToken(userAddress, balance);
                     const update2 = await workerModel.setGigscore(userAddress, gigscore);
-                    console.log("잔액이 업데이트 되었습니다.", update, "긱스코어가 업데이트되었습니다.", update2);
 
-                    return res.status(200).send({ data: {balance: balance, gigscore: gigscore}, message: "Searching success" });
+                    return res.status(200).send({ data: { balance: balance, gigscore: gigscore }, message: "Searching success" });
                 }
             }
         } catch (err) {

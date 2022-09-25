@@ -163,8 +163,8 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                 <h4>{userInfo.pending ? "Order를 기다리는 상태" : "Order를 받지 않는 상태"}</h4>
                                 <h4>{userInfo.worker_id}</h4>
                                 <h4>{userInfo.nickname}</h4>
-                                <h4>{orderCount}</h4>
-                                <h4>{evalAvg}</h4>
+                                <h4>{orderCount ? orderCount : 0}</h4>
+                                <h4>{evalAvg ? evalAvg : 0}</h4>
                                 <h4>{evalCount}</h4>
                                 <h4>{userInfo.address}</h4>
                                 <h4>{balance}</h4>

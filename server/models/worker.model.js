@@ -119,6 +119,10 @@ worker.statics.getPendingWorker = async function () {
   return await this.find({pending: true}).sort({pendingAt: 1});
 };
 
+worker.statics.getWorkerInfoByNickname = async function (nickname) {
+  return await this.find({nickname: nickname});
+};
+
 // pending 상태 변경(true || false)
 worker.statics.togglePending = async function (worker_id) {
   const newDate = Date.now();
@@ -151,7 +155,8 @@ worker.statics.setGigScore = async function (worker_id, gig_score) {
 worker.statics.setToken = async function (address, balance) {
   return await this.findOneAndUpdate(
     { address: address },
-    { balance: balance }
+    { balance: balance },
+    { new: true }
   );
 };
 
@@ -159,7 +164,8 @@ worker.statics.setToken = async function (address, balance) {
 worker.statics.setGigscore = async function (address, gigscore) {
   return await this.findOneAndUpdate(
     { address: address },
-    { gig_score: gigscore }
+    { gig_score: gigscore },
+    { new: true }
   )
 }
 

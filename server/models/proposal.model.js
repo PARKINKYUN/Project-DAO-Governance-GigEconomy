@@ -47,9 +47,19 @@ proposal.statics.getOnPostProposals = async function () {
   return await this.find({ status: "onPost" });
 };
 
+// proposal_id 로 조회
+proposal.statics.getproposalsbyid = async function (proposal_id) {
+  return await this.find({ proposal_id: proposal_id})
+}
+
 // standBy 제안 리스트
 proposal.statics.getStandByProposals = async function () {
   return await this.find({ status: "standBy" });
+};
+
+// onBallot 제안 리스트
+proposal.statics.getOnBallotProposals = async function () {
+  return await this.find({ status: "onBallot"});
 };
 
 // 제안 올리기

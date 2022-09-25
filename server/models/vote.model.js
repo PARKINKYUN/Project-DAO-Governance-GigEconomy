@@ -75,6 +75,11 @@ vote.statics.updateVote = async function (proposalId, status) {
   );
 }
 
+// Active 상태인 투표 읽어오기
+vote.statics.getActiveVotes = async function () {
+  return await this.find({ status: "1"});
+}
+
 //투표 삭제
 vote.statics.removeVote = async function (proposalId) {
   await this.findOneAndRemove(proposalId);

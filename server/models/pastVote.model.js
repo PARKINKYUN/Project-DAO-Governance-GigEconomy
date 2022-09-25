@@ -53,13 +53,24 @@ pastvote.methods.saveVote = async function () {
 };
 
 // 최근 20개의 데이터만 읽어오기
-pastvote.statics.getRecentVote = async function (proposalId) {
-  return await this.find({}).sort({createdAt: -1}).limit(10);
+pastvote.statics.getRecentVote = async function () {
+  return await this.find({}).sort({createdAt: -1}).limit(20);
 }
 
 // 전체 데이터 읽어오기
 pastvote.statics.getVote = async function () {
     return await this.find({});
   }
+
+// 실행된 제안 최종 상태 변경
+pastvote.statics.finalstatus = async function (proposalId) {
+  return await this.findOneAndUpdate(
+    { proposalId: proposalId },
+    {
+      status: "8",
+    },
+    { new: true }
+  );
+}
 
 module.exports = mongoose.model("Pastvote", pastvote)

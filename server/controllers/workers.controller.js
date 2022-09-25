@@ -1,12 +1,13 @@
 const workerModel = require("../models/worker.model");
 const orderModel = require("../models/order.model");
+const GTabi = require("../contracts/GTabi");
+const GTaddress = require("../contracts/GTaddress");
 const Web3 = require("web3");
 
 const jwt = require("jsonwebtoken");
 const web3 = new Web3(process.env.RPCURL);
+const gt = new web3.eth.Contract(GTabi, GTaddress);
 
-// 최초 회원 가입 시 지급하는 토큰의 양
-const welcomeReward = 100000;
 // Access Token 만료 주기
 const expiresIn = "1d";
 
@@ -54,13 +55,9 @@ module.exports = {
             introduction: workerInfo[0].introduction,
           };
 
-          console.log("workerData", workerData);
-
           const accessToken = jwt.sign(workerData, process.env.ACCESS_SECRET, {
             expiresIn: expiresIn,
           });
-
-          console.log("accessToken: ", accessToken);
 
           return res.status(200).send({
             data: {
@@ -109,7 +106,6 @@ module.exports = {
         nickname: req.body.nickname,
         password: req.body.password,
         address: newAccount.address,
-        balance: welcomeReward,
       };
 
       const createUser = await new workerModel(workerData).saveWorker();
@@ -126,24 +122,23 @@ module.exports = {
       //   gas: 1000000,
       //   data: data,
       // };
-      const rawTransaction = { to: GTaddress, gas: 10000, data: data };
+      
+      const rawTransaction = { to: GTaddress, gas: 100000, data: data };
+
 
       // // 3. 트랜잭션에 개인키(server 개인키)로 서명
       // const signedTX = await web3.eth.accounts.signTransaction(
       //   rawTransaction,
       //   process.env.ADMIN_WALLET_PRIVATE_KEY
       // );
-      const signedTX = await web3.eth.account.signTransaction(
-        rawTransaction,
-        process.env.ADMIN_WALLET_PRIVATE_KEY
-      );
+
+      const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
       // // 4. 서명한 트랜잭션 발송
       // const sendingTX = await web3.eth.sendSignedTransaction(
       //   signedTX.rawTransaction
       // );
       const sendingTX = await web3.eth.sendSignedTransaction(
-        signedTX,
-        rawTransaction
+        signedTX.rawTransaction
       );
       console.log("20 Token 전송 트랜잭션: ", sendingTX);
 
@@ -172,8 +167,6 @@ module.exports = {
       } else {
         const workerData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
 
-        console.log("User information: ", workerData);
-
         // client가 소유한 최신 토큰 정보를 블록체인 네트워크에서 읽어와 업데이트
         const balance = await contract.methods
           .balanceOf(workerData.address)
@@ -182,7 +175,6 @@ module.exports = {
           workerInfo[0].worker_id,
           balance
         );
-        console.log("DB 업데이트된 Token의 양: ", updateBalance.balance);
 
         const workerInfo = {
           worker_id: workerInfo[0].worker_id,
