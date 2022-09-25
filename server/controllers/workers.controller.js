@@ -119,25 +119,33 @@ module.exports = {
       // const data = contract.methods
       //   .transferFrom(ADMIN_WALLET_ACOUNT, workerData.address, welcomeReward)
       //   .encodeABI();
-
+      const data = gt.methods.rewardWelcome(workerData.address).encodeABI();
       // // 2. 원시 트랜잭션 장부 생성
       // const rawTransaction = {
       //   to: ADMIN_WALLET_ACOUNT,
       //   gas: 1000000,
       //   data: data,
       // };
+      const rawTransaction = { to: GTaddress, gas: 10000, data: data };
 
       // // 3. 트랜잭션에 개인키(server 개인키)로 서명
       // const signedTX = await web3.eth.accounts.signTransaction(
       //   rawTransaction,
       //   process.env.ADMIN_WALLET_PRIVATE_KEY
       // );
-
+      const signedTX = await web3.eth.account.signTransaction(
+        rawTransaction,
+        process.env.ADMIN_WALLET_PRIVATE_KEY
+      );
       // // 4. 서명한 트랜잭션 발송
       // const sendingTX = await web3.eth.sendSignedTransaction(
       //   signedTX.rawTransaction
       // );
-      // console.log("20 Token 전송 트랜잭션: ", sendingTX);
+      const sendingTX = await web3.eth.sendSignedTransaction(
+        signedTX,
+        rawTransaction
+      );
+      console.log("20 Token 전송 트랜잭션: ", sendingTX);
 
       return res.status(200).send({
         data: createUser,
@@ -264,18 +272,21 @@ module.exports = {
     try {
       // 현재 상태가 pending(false) 이면 true 전환하면서 토큰을 지불해야함. 토큰 환불은 하지 않음.
       if (!req.body.currentStatus) {
-        // 
+        //
         // web3 토큰 지불 로직이 들어가야함
         //
         //
-
       }
       const result = await workerModel.togglePending(req.body.workerId);
       if (!result) {
-        return res.status(400).send({ data: null, message: "Worker 정보가 없습니다." });
+        return res
+          .status(400)
+          .send({ data: null, message: "Worker 정보가 없습니다." });
       }
 
-      return res.status(200).send({ data: result, message: "pending 리스트에 등록되었습니다." });
+      return res
+        .status(200)
+        .send({ data: result, message: "pending 리스트에 등록되었습니다." });
     } catch (err) {
       console.error(err);
       res.status(400);
@@ -354,24 +365,30 @@ module.exports = {
       const accessToken = req.headers.authorization;
 
       if (!accessToken) {
-        return res.status(404).send({ data: null, message: "Invalid access token" });
+        return res
+          .status(404)
+          .send({ data: null, message: "Invalid access token" });
       } else {
         const workerData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
 
         if (workerData.account_type !== "worker") {
           res.status(404).send({ data: null, message: "Invalid account" });
         } else {
-          const updateInfo = await workerModel.setWorkerInfo(workerData.worker_id, req.body.image[0], req.file.filename, req.body.image[1]);
+          const updateInfo = await workerModel.setWorkerInfo(
+            workerData.worker_id,
+            req.body.image[0],
+            req.file.filename,
+            req.body.image[1]
+          );
 
-          res.status(200).send({ data: req.file.filename, message: "Client info updated" })
+          res
+            .status(200)
+            .send({ data: req.file.filename, message: "Client info updated" });
         }
       }
     } catch (err) {
       console.error(err);
-      res.status(404).send({ data: null, message: "Can't execute request" })
+      res.status(404).send({ data: null, message: "Can't execute request" });
     }
-  }
+  },
 };
-
-
-
