@@ -102,7 +102,7 @@ module.exports = {
 
                     // 트랜잭션 정보를 DB에 저장
                     const saveTransaction = await new transactionsModel(sendingTX).saveTransaction();
-                    console.log("투표 트랜잭션 정보가 DB에 저장되었습니다.", saveTransaction)
+                    console.log("토큰 전송 트랜잭션 정보가 DB에 저장되었습니다.", saveTransaction)
 
                     return res.status(200).send({ data: saveTransaction, message: "Transfer success" });
                 }

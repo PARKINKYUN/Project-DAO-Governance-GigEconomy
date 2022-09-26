@@ -107,10 +107,6 @@ module.exports = {
         address: newAccount.address,
       };
 
-      // const createUser = usermodel.saveUser(userData);
-
-      const createUser = await new clientModel(clientData).saveClient();
-
       // // 회원가입 보상 토큰 지급을 위한 트랜잭션 생성작업
       // // 1. 원시 데이터 생성
       // const data = contract.methods.transferFrom(ADMIN_WALLET_ACOUNT, clientData.address, welcomeReward).encodeABI();

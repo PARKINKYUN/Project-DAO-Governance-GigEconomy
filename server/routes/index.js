@@ -16,6 +16,7 @@ const offers = require("./offers");
 const transfers = require("./transfers");
 const pastvotes = require("./pastvotes")
 const controller = require("../controllers/contractsetting");
+const controller2 = require("../controllers/transaction")
 
 router.use("/orders", orders);
 router.use("/proposals", proposals);
@@ -31,6 +32,7 @@ router.use("/offers", offers);
 router.use("/transfers", transfers);
 router.use("/pastvotes", pastvotes);
 router.post("/contractsetting", controller.contractsetting)
+router.get("/transactions", controller2.getTransactions)
 router.use("/", main);
 
 module.exports = router;

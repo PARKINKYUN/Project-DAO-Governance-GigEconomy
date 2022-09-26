@@ -76,28 +76,6 @@ function Governance({ token, userInfo }) {
     const recentPolicies = res.data.data;
     setPolicies(recentPolicies);
   };
-  //
-  //
-  //policies post
-
-  const postData = async () => {
-    const newPolicy = {
-      title: "info 페이지 수정",
-      content: "myinfo 페이지에 더 많은 내용을 볼 수 있도록 변경해주세요.",
-      worker_id: "worker90@gig.com",
-      for: 10,
-      against: 2,
-      transactionHash: "123",
-    };
-    const res = await axios.post(
-      "http://localhost:4000/policies/newpolicy",
-      newPolicy,
-      {
-        headers: { authorization: token },
-      }
-    );
-    console.log("123123", res.data.data);
-  };
 
   // standBy 상태 proposal 데이터 요청
   const getStandBy = async () => {
@@ -222,7 +200,7 @@ function Governance({ token, userInfo }) {
 
             {/* 투표, 펜딩전환, 토큰전송 등으로 발생한 트랜잭션 정보를 검색한다. */}
             <Grid item xs={2}>
-              <Button variant="contained" size="small">
+              <Button variant="contained" size="small" onClick={()=> navigate("/transactions")}>
                 View Transactions
               </Button>
             </Grid>

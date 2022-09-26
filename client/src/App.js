@@ -26,6 +26,7 @@ import CreateProposal from "./components/CreateProposal";
 import WorkerInfo from "./Page/WorkerInfo";
 import ReRendering from "./Page/ReRendering";
 import { useCookies } from "react-cookie";
+import Transactions from "./Page/Transactions";
 
 function App() {
   const [token, setToken] = useState("");
@@ -77,7 +78,8 @@ function App() {
         <Route path="/updateinfo" element={<UpdateInfo userInfo={userInfo} token={token} setUserInfo={setUserInfo} isWorker={isWorker} />} />
         <Route path="/tryagainst" element={<TryAgainst userInfo={userInfo} token={token} isWorker={isWorker} />} />
         <Route path="/judgeobjection" element={<JudgeObjection userInfo={userInfo} token={token} isWorker={isWorker} />} />
-        <Route path="/contactsupportteam" element={<ContactSupportTeam userInfo={userInfo} token={token} />} />        
+        <Route path="/contactsupportteam" element={<ContactSupportTeam userInfo={userInfo} token={token} />} />   
+        <Route path="/transactions" element={<Transactions />} />
       </Routes>
       <div>
         <Footer />
