@@ -128,14 +128,16 @@ module.exports = {
 
       const rawTransaction = { to: GTaddress, gas: 100000, data: data };
 
-
       // // 3. 트랜잭션에 개인키(server 개인키)로 서명
       // const signedTX = await web3.eth.accounts.signTransaction(
       //   rawTransaction,
       //   process.env.ADMIN_WALLET_PRIVATE_KEY
       // );
 
-      const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
+      const signedTX = await web3.eth.accounts.signTransaction(
+        rawTransaction,
+        process.env.ADMIN_WALLET_PRIVATE_KEY
+      );
       // // 4. 서명한 트랜잭션 발송
       // const sendingTX = await web3.eth.sendSignedTransaction(
       //   signedTX.rawTransaction
@@ -268,9 +270,21 @@ module.exports = {
       if (!req.body.currentStatus) {
         //
         // web3 토큰 지불 로직이 들어가야함
-        //
-        //
+        const data = gt.methods.transPending(req.body.address).encodeABI();
+        const rawTransaction = { to: GTaddress, gas: 100000, data: data };
+        const signedTX = await web3.eth.accounts.signTransaction(
+          rawTransaction,
+          process.env.ADMIN_WALLET_PRIVATE_KEY
+        );
+        const sendingTX = await web3.eth.sendSignedTransaction(
+          signedTX.rawTransaction
+        );
+        console.log("Token 전송 트랜잭션: ", sendingTX);
       }
+      // pending 수수료 지불한 후 worker의 잔액 확인
+      const workerBalance = await gt.methods.balanceOf(req.body.address).call();
+      await workerModel.setToken(req.body.address, workerBalance);
+
       const result = await workerModel.togglePending(req.body.workerId);
       if (!result) {
         return res
@@ -400,26 +414,37 @@ module.exports = {
         if (workerData.account_type !== "worker") {
           res.status(404).send({ data: null, message: "Invalid account" });
         } else {
-
           // 1. 블록체인 상에서 모더레이터 NFT 발급
           const data = gm.methods.safeMint(workerData.address).encodeABI();
-          const rawTransaction = { to: GMaddress , gas: 1000000, data: data };
-          const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
-          const sendingTX = await web3.eth.sendSignedTransaction(signedTX.rawTransaction);
+          const rawTransaction = { to: GMaddress, gas: 1000000, data: data };
+          const signedTX = await web3.eth.accounts.signTransaction(
+            rawTransaction,
+            process.env.ADMIN_WALLET_PRIVATE_KEY
+          );
+          const sendingTX = await web3.eth.sendSignedTransaction(
+            signedTX.rawTransaction
+          );
 
           // 2. DB의 정보 변경
           const mod_author = await workerModel.moderator(workerData.worker_id);
 
           // 3. 트랜잭션 데이터 DB 저장
-          const saveTransaction = await new transactionsModel(sendingTX).saveTransaction();
-          console.log("모더레이터의 표식! NFT 트랜잭션 정보가 DB에 저장되었습니다.", saveTransaction)
+          const saveTransaction = await new transactionsModel(
+            sendingTX
+          ).saveTransaction();
+          console.log(
+            "모더레이터의 표식! NFT 트랜잭션 정보가 DB에 저장되었습니다.",
+            saveTransaction
+          );
 
-          res.status(200).send({ data: req.file.filename, message: "Client info updated" });
+          res
+            .status(200)
+            .send({ data: req.file.filename, message: "Client info updated" });
         }
       }
     } catch (err) {
       console.error(err);
       res.status(404).send({ data: null, message: "Can't execute request" });
     }
-  }
+  },
 };
