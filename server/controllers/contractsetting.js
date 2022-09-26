@@ -60,7 +60,7 @@ module.exports = {
 
             // 모더레이터 만들기
             console.log("Gig Moderator 전환")
-            const moderator = "0x513C3c91f51B16b49A5Af8601a3EFe01663be838" // 모더레이터 만들 주소
+            const moderator = "0x98Feb2552151600a78B684905064F02F908A3155" // 모더레이터 만들 주소
             const rawData = await gigscore.methods.transferFrom(process.env.ADMIN_WALLET_ACOUNT, moderator, 500000).encodeABI();
             const rawTX = {to: GSaddress, gas: 300000, data: rawData};
             const signedTrans = await web3.eth.accounts.signTransaction(rawTX, process.env.ADMIN_WALLET_PRIVATE_KEY);

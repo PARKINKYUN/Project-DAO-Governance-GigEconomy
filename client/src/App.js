@@ -64,7 +64,7 @@ function App() {
         <Route path="/findworker" element={<FindWorker userInfo={userInfo} token={token} />}/>
         <Route path="/findorder" element={<FindOrder userInfo={userInfo} token={token} isWorker={isWorker} />} />
         <Route path="/clientInfo" element={<ClientInfo token={token} userInfo={userInfo} setUserInfo={setUserInfo} />}/>
-        <Route path="/workerInfo" element={<WorkerInfo token={token} userInfo={userInfo} setUserInfo={setUserInfo} />}/>
+        <Route path="/workerInfo" element={<WorkerInfo token={token} userInfo={userInfo} setUserInfo={setUserInfo} removeCookie={removeCookie} setToken={setToken} setIsWorker={setUserInfo} />}/>
         <Route path="/ReRendering" element={<ReRendering token={token} userInfo={userInfo} setUserInfo={setUserInfo} />}/>
         <Route path="/workerprofile" element={<WorkerProfile userInfo={userInfo} token={token} />}/>
         <Route path="/orderinfo" element={<OrderInfo token={token} userInfo={userInfo} />} />

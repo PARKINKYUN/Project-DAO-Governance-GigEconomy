@@ -1,5 +1,4 @@
 import withRoot from "../withRoot";
-import styles2 from "../css/WorkerProfile.module.css";
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -9,7 +8,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Grid from '@mui/material/Grid';
 import { useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
 
 function Transactions() {
     const [tx, setTx] = useState([]);
@@ -32,61 +30,57 @@ function Transactions() {
     }
 
     return (
-        <div className={styles2.profile}>
-            <div className={styles.reviewBox}>
-                <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
-                    <div>
-                        <h3>Explorer Transactions</h3>
-                    </div>
-                    <li className={styles.taps}>
-                        {tx.length !== 0 ?
-                            (tx.map((item) => {
-                                return (
-                                    <Accordion key={item._id}>
-                                        <AccordionSummary
-                                            expandIcon={<ExpandMoreIcon />}
-                                            aria-controls="panel1a-content"
-                                            id="panel1a-header"
-                                        >
-
-                                            <Grid container spacing={2} alignItems="center">
-                                                <Grid item xs={7}>
-                                                    <h5>Transaction Hash: {item.transactionHash}</h5>
-                                                    <h5>Block Number: {item.blockNumber}</h5>
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <h5>From: {item.from}</h5>
-                                                    <h5>To: {item.to}</h5>
-                                                </Grid>
-                                                <Grid item xs={1}>
-                                                    <a target="_blank" href={"https://ropsten.etherscan.io/tx/" + item.transactionHash}>EtherScan</a>
-                                                </Grid>
-                                            </Grid>
-
-                                        </AccordionSummary>
-                                        <AccordionDetails>
-                                            <Grid container spacing={2}>
-                                                <Grid item xs={12}>
-                                                    <h5>Block Hash: {item.blockHash}</h5>
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <h5>Cumulative Gas Used: {item.cumulativeGasUsed}</h5>
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <h5>Effective Gas Price: {item.effectiveGasPrice}</h5>
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <h5>Gas Used: {item.gasUsed}</h5>
-                                                </Grid>
-                                            </Grid>
-                                        </AccordionDetails>
-                                    </Accordion>
-                                )
-                            }))
-                            : null}
-                    </li>
-                </div>
+        <div style={{ padding: "10px" }}>
+            <div>
+                <h3>Explorer Transactions</h3>
             </div>
+            <li className={styles.taps}>
+                {tx.length !== 0 ?
+                    (tx.map((item) => {
+                        return (
+                            <Accordion key={item._id}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel1a-content"
+                                    id="panel1a-header"
+                                >
+
+                                    <Grid container spacing={2} alignItems="center">
+                                        <Grid item xs={7}>
+                                            <h5>Transaction Hash: {item.transactionHash}</h5>
+                                            <h5>Block Number: {item.blockNumber}</h5>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <h5>From: {item.from}</h5>
+                                            <h5>To: {item.to}</h5>
+                                        </Grid>
+                                        <Grid item xs={1}>
+                                            <a target="_blank" href={"https://ropsten.etherscan.io/tx/" + item.transactionHash}>EtherScan</a>
+                                        </Grid>
+                                    </Grid>
+
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12}>
+                                            <h5>Block Hash: {item.blockHash}</h5>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <h5>Cumulative Gas Used: {item.cumulativeGasUsed}</h5>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <h5>Effective Gas Price: {item.effectiveGasPrice}</h5>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <h5>Gas Used: {item.gasUsed}</h5>
+                                        </Grid>
+                                    </Grid>
+                                </AccordionDetails>
+                            </Accordion>
+                        )
+                    }))
+                    : null}
+            </li>
         </div>
     );
 }
