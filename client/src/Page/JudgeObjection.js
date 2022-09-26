@@ -8,8 +8,6 @@ import withRoot from "../withRoot";
 
 const JudgeObjection = ({ token, userInfo }) => {
   const [tries, setTries] = useState([]);
-  const [orders, setOrders] = useState([]);
-  const [estimations, setEstimations] = useState([]);
   const [updateNow, setUpdateNow] = useState(true);
 
   const navigate = useNavigate();
@@ -25,8 +23,6 @@ const JudgeObjection = ({ token, userInfo }) => {
       navigate(-1);
     }
     getOnBoardTry();
-    getEstimatedOrder();
-    getEvaluation();
   }, []);
 
   const getOnBoardTry = async () => {
@@ -43,34 +39,6 @@ const JudgeObjection = ({ token, userInfo }) => {
     }
   };
 
-  const getEstimatedOrder = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:4000/orders/getEstimatedOrder`,
-        { headers: { authorization: token } }
-      );
-      setOrders(res.data.data);
-    } catch (err) {
-      console.error(err);
-      window.alert("Order 목록을 불러오는데 실패했습니다. 다시 시도해주세요.");
-      navigate(-1);
-    }
-  };
-
-  const getEvaluation = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:4000/estimate/getTryingEstimations`,
-        { headers: { authorization: token } }
-      );
-      setEstimations(res.data.data);
-    } catch (err) {
-      console.error(err);
-      window.alert("평가 목록을 불러오는데 실패했습니다. 다시 시도해주세요.");
-      navigate(-1);
-    }
-  };
-
   return (
     <div style={{ padding: "10px" }}>
       <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
@@ -80,14 +48,10 @@ const JudgeObjection = ({ token, userInfo }) => {
         <li className={styles.taps}>
           {tries.length !== 0
             ? tries.map((tryitem, idx) => {
-                const panel = "panel" + idx;
                 return (
                   <Objection
                     key={idx}
-                    panel={panel}
                     token={token}
-                    orders={orders}
-                    estimations={estimations}
                     tryitem={tryitem}
                     updateFunc={updateFunc}
                   />

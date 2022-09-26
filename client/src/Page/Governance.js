@@ -58,6 +58,13 @@ function Governance({ token, userInfo }) {
   const [activeVotes, setActiveVotes] = useState([]);
   const [voteResult, setVoteResult] = useState([]);
 
+  // 제안 만료일 설정 (여기서는 1시간)
+  const EXPIRED_PROPOSAL_TIME = 1 * 1 * 60 * 60 * 1000; // 단위 : 일 * 시간 * 분 * 초 * 밀리세컨
+  // 제안이 통과되기 위한 정족수(%)
+  const QUORUM = 50;
+  // 제안이 통과되기 위한 최소 참여자 수
+  const minParticipants = 3;
+
   const navigate = useNavigate();
 
   const handleChange = (event, newValue) => {
@@ -67,13 +74,6 @@ function Governance({ token, userInfo }) {
   const updateFunc = () => {
     setUpdateNow(!updateNow);
   };
-
-  // 제안 만료일 설정 (여기서는 7일)
-  const EXPIRED_PROPOSAL_TIME = 7 * 24 * 60 * 60 * 1000;
-  // 제안이 통과되기 위한 정족수(%)
-  const QUORUM = 50;
-  // 제안이 통과되기 위한 최소 참여자 수
-  const minParticipants = 10;
 
   useEffect(() => {
     if (userInfo.account_type !== "worker") {
@@ -92,7 +92,7 @@ function Governance({ token, userInfo }) {
     getStandBy();
     // 모든 투표가 종료된 제안 불러오기
     getVoteResult();
-  }, []);
+  }, [updateNow]);
 
   // 블록체인에서 투표가 진행중인 vote의 자료를 DB에서 가져오기
   // (데몬이 실시간으로 트래킹하여 이미 DB에 저장했음)
@@ -165,8 +165,11 @@ function Governance({ token, userInfo }) {
       const down = proposal.down;
       const checkMinParticipants = up + down >= minParticipants;
       const checkQuorum = (100 * up) / (up + down) >= QUORUM;
+              console.log("지난시간: ", proposal.createdAt + EXPIRED_PROPOSAL_TIME)
+        console.log("현재시간: ", new Date())
 
-      if (proposal.createdAt + EXPIRED_PROPOSAL_TIME >= Date.now()) {
+      if (proposal.createdAt + EXPIRED_PROPOSAL_TIME >= new Date()) {
+
         await axios.patch(
           "http://localhost:4000/proposals/expiredProposal",
           proposal,
@@ -212,7 +215,7 @@ function Governance({ token, userInfo }) {
           <Tab label="Voting Result" {...a11yProps(3)} />
           <Tab label="Changed Policy" {...a11yProps(4)} />
           <Tab label="Transactions" {...a11yProps(5)} />
-          <Tab label="Court" {...a11yProps(6)} />
+          <Tab label={`Court : ${tryCount}`} {...a11yProps(6)} />
           {userInfo.worker_id === "admin01@gig.com" ? (
             <Tab label="Contract Setting" {...a11yProps(7)} />
           ) : null}
@@ -377,7 +380,7 @@ function Governance({ token, userInfo }) {
         {userInfo.mod_authority === true ? (
           <JudgeObjection token={token} userInfo={userInfo} />
         ) : (
-          "모더레이터 권한이 필요합니다."
+          null
         )}
       </TabPanel>
 

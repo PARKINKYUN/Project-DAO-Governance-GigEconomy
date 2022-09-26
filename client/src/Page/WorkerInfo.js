@@ -13,7 +13,7 @@ import TransferToken from "../components/TransferToken";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
-function WorkerInfo({ token, userInfo, setUserInfo }) {
+function WorkerInfo({ token, userInfo, setUserInfo, removeCookie, setToken, setIsWorker }) {
   const [pending, setPending] = useState([]);
   const [ongoing, setOngoing] = useState([]);
   const [finished, setFinished] = useState([]);
@@ -63,6 +63,17 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
       const res = await axios.get("http://localhost:4000/workers/moderator", {
         headers: { authorization: token },
       });
+      if (res.status === 200) {
+        setLoading(false);
+        removeCookie("login")
+        setToken("");
+        setUserInfo({});
+        setIsWorker(false);
+        window.alert("축하합니다! 새로운 모더레이터가 되었습니다. 사용자 정보 업데이트를 위해 다시 로그인해주세요!")
+        navigate("/signin");
+      } else {
+        window.alert("모더레이터 전환 중에 문제가 발생했습니다. 재로그인 후 사용자 정보를 확인하시고, Moderator로 전환이 안되었다면 다시 시도해주세요.")
+      }
     } catch (err) {
       window.alert("모더레이터 전환에 실패했습니다. 다시 시도해주세요.");
       setLoading(false);
@@ -129,6 +140,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
         );
         setUserInfo({ ...userInfo, pending: false });
       } else {
+        window.alert("사용자를 작업대기 상태로 변경합니다. 블록체인 네트워크의 상태에 따라 1~3분이 소요됩니다.")
         const res = await axios.patch(
           "http://localhost:4000/workers/toggle_status",
           {
@@ -138,6 +150,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
           }
         );
         setUserInfo({ ...userInfo, pending: true });
+        window.alert("정상적으로 작업대기 상태가 되었습니다. 이제부터 Find Worker 페이지에 사용자의 정보가 노출됩니다.")
       }
       navigate("/workerInfo");
     } catch (err) {
