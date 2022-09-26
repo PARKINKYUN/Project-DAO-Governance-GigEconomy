@@ -212,7 +212,7 @@ function Governance({ token, userInfo }) {
           <Tab label="Voting Result" {...a11yProps(3)} />
           <Tab label="Changed Policy" {...a11yProps(4)} />
           <Tab label="Transactions" {...a11yProps(5)} />
-          <Tab label="Court" {...a11yProps(6)} />
+          <Tab label={`Court : ${tryCount}`} {...a11yProps(6)} />
           {userInfo.worker_id === "admin01@gig.com" ? (
             <Tab label="Contract Setting" {...a11yProps(7)} />
           ) : null}
@@ -377,7 +377,7 @@ function Governance({ token, userInfo }) {
         {userInfo.mod_authority === true ? (
           <JudgeObjection token={token} userInfo={userInfo} />
         ) : (
-          "모더레이터 권한이 필요합니다."
+          null
         )}
       </TabPanel>
 
