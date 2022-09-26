@@ -1,5 +1,6 @@
 const workerModel = require("../models/worker.model");
 const orderModel = require("../models/order.model");
+const transactionsModel = require("../models/transactions.model")
 const GTabi = require("../contracts/GTabi");
 const GTaddress = require("../contracts/GTaddress");
 const GMabi = require("../contracts/GMabi");
@@ -439,7 +440,7 @@ module.exports = {
 
           res
             .status(200)
-            .send({ data: req.file.filename, message: "Client info updated" });
+            .send({ data: null, message: "Worker info updated" });
         }
       }
     } catch (err) {

@@ -104,7 +104,7 @@ order.statics.postOrder = async function (data) {
 
 // 워커에게 직접 의뢰
 order.statics.directOrder = async function (worker_id, data) {
-  const { client_id, title, category, deadline, compensation, content, file } =
+  const { client_id, title, category, deadline, compensation, content, file, image } =
     data;
   return await this.create({
     client_id: client_id,
@@ -116,6 +116,7 @@ order.statics.directOrder = async function (worker_id, data) {
     direct_order: true,
     content: content,
     file: file,
+    image: image,
   });
 };
 

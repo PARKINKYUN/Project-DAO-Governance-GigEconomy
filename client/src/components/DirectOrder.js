@@ -21,6 +21,11 @@ function DirectOrder({ userInfo, token }) {
 
   const navigate = useNavigate();
 
+  React.useEffect(()=> {
+    console.log("다이렉트오더의 유저 이미지", userInfo.image)
+    console.log("로케이션스테이트의 자료", location.state)
+  })
+
   const handleSubmit = async (values) => {
     setSent(true);
     const { title, deadline, compensation, content } = values;

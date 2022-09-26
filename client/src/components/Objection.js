@@ -10,17 +10,28 @@ import styles from "../css/Tap.module.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const Objection = ({ token, tryitem, updateFunc, orders, estimations, panel }) => {
+const Objection = ({ token, tryitem, updateFunc }) => {
     const [up, setUp] = useState(0);
     const [down, setDown] = useState(0);
     const [order, setOrder] = useState({});
     const [estimation, setEstimation] = useState({});
-    const [expanded, setExpanded] = useState(false);
 
     useEffect(() => {
         setUp(tryitem.up);
         setDown(tryitem.down);
-    }, [expanded])
+        setOrderByOrderId();
+        setEstimationByOrderId();
+    }, [])
+
+    const setOrderByOrderId = async () => {
+        const res = await axios.get(`http://localhost:4000/orders/order_info/${tryitem.order_id}`);
+        setOrder(res.data.data);
+    }
+
+    const setEstimationByOrderId = async () => {
+        const res = await axios.get(`http://localhost:4000/estimate/getEvalByOrderId/${tryitem.order_id}`);
+        setEstimation(res.data.data);
+    } 
 
     // Try에 up을 추가한다.
     // 1. 모더레이터가 해당 Try에 대한 선택을 했었는지 여부를 먼저 확인한다.
@@ -64,36 +75,20 @@ const Objection = ({ token, tryitem, updateFunc, orders, estimations, panel }) =
         }
     }
 
-    const handleChange = (panel, worker_id) => (isExpanded) => {
-        if (isExpanded) {
-            const seletedOrder = orders.filter((order) => order._id === tryitem.order_id);
-            setOrder(seletedOrder[0]);
-            const seletedEstimation = estimations.filter((estimation) => estimation.order_id === tryitem.order_id);
-            setEstimation(seletedEstimation[0]);
-            setExpanded(panel);
-        } else {
-            setExpanded(false);
-        }
-    };
-
     return (
-        <Accordion expanded={expanded === panel} onChange={handleChange(panel, tryitem.worker_id)}>
-            <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1bh-content"
-                id="panel1bh-header"
-            >
+        <Accordion>
+        <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+        >
                 {/* 패널이 닫혀있을 때 보이는 부분 by 인균 ㅋㅋ */}
                 <Grid container spacing={2} alignItems="center">
                     <Grid item xs={6}>
-                        <Typography sx={{ width: '100%', flexShrink: 0 }}>
-                            <b>{tryitem.title}</b>
-                        </Typography>
+                            <h5>{tryitem.title}</h5>
                     </Grid>
                     <Grid item xs={4}>
-                        <Typography sx={{ width: '100%', flexShrink: 0, color: 'text.secondary' }}>
-                            Time: <b>{tryitem.createdAt}</b>
-                        </Typography>
+                            <h5>Time: {tryitem.createdAt}</h5>
                     </Grid>
                     <Grid item xs={1}>
                         <Button variant="contained" size="small" onClick={handlerUpTry}>
@@ -117,25 +112,26 @@ const Objection = ({ token, tryitem, updateFunc, orders, estimations, panel }) =
                                     <img height="100%" src={"http://localhost:4000/images/" + tryitem.file} alt="" />
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <div>NPS Score : {estimation.score}</div>
-                                    <div>{tryitem.content}</div>
+                                    <h5>NPS Score : {estimation.score}</h5>
+                                    <h5>신청 내용 : </h5>
+                                    <h5>{tryitem.content}</h5>
                                 </Grid>
                             </Grid>
                             <Grid container spacing={2} alignItems="center">
                                 <Grid item xs={12}>
-                                    <h4>관련 Order 정보</h4>
+                                    <h4>분쟁 관련 Order 정보</h4>
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <div>Order Title : {order.title}</div>
+                                    <h5>Order Title : {order.title}</h5>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <div>Compensation : {order.compensation}</div>
+                                    <h5>Compensation : {order.compensation}</h5>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <div>Order 생성시간 : {order.createdAt}</div>
+                                    <h5>Order 생성시간 : {order.createdAt}</h5>
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <div>{order.content}</div>
+                                    <h5>{order.content}</h5>
                                 </Grid>
                             </Grid>
                         </li>

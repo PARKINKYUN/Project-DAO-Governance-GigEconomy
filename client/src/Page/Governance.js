@@ -1,19 +1,55 @@
+import * as React from "react";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import withRoot from "../withRoot";
-import styles from "../css/Tap.module.css";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import { Link as RouterLink } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import CastVote from "../components/CastVote";
-import Proposal from "../components/Proposal";
+import VoteModal from "../components/VoteModal";
+import styles from "../css/Tap.module.css";
 import NewPolicy from "../components/NewPolicy";
-import { useNavigate } from "react-router-dom";
+import Proposal from "../components/Proposal";
 import StandByProposal from "../components/StandByProposal";
+import CastVote from "../components/CastVote";
 import VotingResult from "../components/VotingResult";
+import Transactions from "./Transactions";
+import JudgeObjection from "./JudgeObjection";
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
 
 function Governance({ token, userInfo }) {
+  const [value, setValue] = React.useState(0);
   const [policies, setPolicies] = useState([]);
   const [proposals, setProposals] = useState([]);
   const [updateNow, setUpdateNow] = useState(true);
@@ -22,19 +58,22 @@ function Governance({ token, userInfo }) {
   const [activeVotes, setActiveVotes] = useState([]);
   const [voteResult, setVoteResult] = useState([]);
 
-  const navigate = useNavigate();
-
-  // 부모 컴포넌트 리렌더링을 위한 후크
-  const updateFunc = () => {
-    setUpdateNow(!updateNow);
-  };
-
-  // 제안 만료일 설정 (여기서는 7일)
-  const EXPIRED_PROPOSAL_TIME = 7 * 24 * 60 * 60 * 1000;
+  // 제안 만료일 설정 (여기서는 1시간)
+  const EXPIRED_PROPOSAL_TIME = 1 * 1 * 60 * 60 * 1000; // 단위 : 일 * 시간 * 분 * 초 * 밀리세컨
   // 제안이 통과되기 위한 정족수(%)
   const QUORUM = 50;
   // 제안이 통과되기 위한 최소 참여자 수
   const minParticipants = 3;
+
+  const navigate = useNavigate();
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const updateFunc = () => {
+    setUpdateNow(!updateNow);
+  };
 
   useEffect(() => {
     if (userInfo.account_type !== "worker") {
@@ -53,18 +92,23 @@ function Governance({ token, userInfo }) {
     getStandBy();
     // 모든 투표가 종료된 제안 불러오기
     getVoteResult();
-  }, []);
+  }, [updateNow]);
 
   // 블록체인에서 투표가 진행중인 vote의 자료를 DB에서 가져오기
   // (데몬이 실시간으로 트래킹하여 이미 DB에 저장했음)
   const getActiveVotes = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/votes/getactivevotes", { headers: { authorization: token } });
+      const res = await axios.get(
+        "http://localhost:4000/votes/getactivevotes",
+        { headers: { authorization: token } }
+      );
       setActiveVotes(res.data.data);
     } catch (err) {
-      window.alert("현재 Governance에서 진행중인 투표 목록을 불러오는데 실패했습니다.")
+      window.alert(
+        "현재 Governance에서 진행중인 투표 목록을 불러오는데 실패했습니다."
+      );
     }
-  }
+  };
 
   // 투표가 종료되고 실제로 정책에 반영되면
   // 반영된 내용을 DB에 저장하고...
@@ -90,14 +134,19 @@ function Governance({ token, userInfo }) {
   // db에서 종료된 투표 데이터를 읽어오는 로직
   const getVoteResult = async () => {
     try {
-      console.log("종료된 투표 목록을 가져온다.")
-      const res = await axios.get("http://localhost:4000/pastvotes/votesresult", { headers: { authorization: token } });
-      console.log("종료된 투표 목록을 가져왔다.", res.data.data)
+      console.log("종료된 투표 목록을 가져온다.");
+      const res = await axios.get(
+        "http://localhost:4000/pastvotes/votesresult",
+        { headers: { authorization: token } }
+      );
+      console.log("종료된 투표 목록을 가져왔다.", res.data.data);
       setVoteResult(res.data.data);
     } catch (err) {
-      window.alert("알 수 없는 원인으로 인하여 블록체인으로부터 투표 결과 데이터를 가져올 수 없습니다.")
+      window.alert(
+        "알 수 없는 원인으로 인하여 블록체인으로부터 투표 결과 데이터를 가져올 수 없습니다."
+      );
     }
-  }
+  };
 
   // DB에서 현재 up/down 진행중인 제안을 읽어옴
   // 제안을 읽어옴과 동시에 기간이 만료된 제안은 상태를 변경하고 상태변수에 넣지 않는다.
@@ -116,8 +165,11 @@ function Governance({ token, userInfo }) {
       const down = proposal.down;
       const checkMinParticipants = up + down >= minParticipants;
       const checkQuorum = (100 * up) / (up + down) >= QUORUM;
+              console.log("지난시간: ", proposal.createdAt + EXPIRED_PROPOSAL_TIME)
+        console.log("현재시간: ", new Date())
 
-      if (proposal.createdAt + EXPIRED_PROPOSAL_TIME >= Date.now()) {
+      if (proposal.createdAt + EXPIRED_PROPOSAL_TIME >= new Date()) {
+
         await axios.patch(
           "http://localhost:4000/proposals/expiredProposal",
           proposal,
@@ -151,168 +203,199 @@ function Governance({ token, userInfo }) {
     // 테스트용 모더레이터 만드는 코드는 서버쪽에 있음
     //
     const res = await axios.post("http://localhost:4000/contractsetting");
-  }
+  };
 
   return (
-    <div style={{ padding: "10px" }}>
-      <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
-        <li className={styles.taps}>
-          <Grid container spacing={1}>
-            {/* 투표에 가기 전 전체적인 공감대를 얻을 수 있는지 확인하기 위하여 새로운 제안을 생성한다 */}
-            <Grid item xs={2}>
-              {userInfo.mod_authority === true ? (
-                <Button variant="contained" size="small">
-                  <Link
-                    style={{ color: "white" }}
-                    component={RouterLink}
-                    to="/createproposal"
-                    state={{ token: token, userInfo: userInfo }}
-                  >
-                    Create Proposal
-                  </Link>
-                </Button>
-              ) : (
-                <Button variant="contained" disabled size="small">
-                  Create Proposal
-                </Button>
-              )}
-            </Grid>
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs value={value} onChange={handleChange}>
+          <Tab label="Proposals" {...a11yProps(0)} />
+          <Tab label="Passed Proposals" {...a11yProps(1)} />
+          <Tab label="Voting" {...a11yProps(2)} />
+          <Tab label="Voting Result" {...a11yProps(3)} />
+          <Tab label="Changed Policy" {...a11yProps(4)} />
+          <Tab label="Transactions" {...a11yProps(5)} />
+          <Tab label={`Court : ${tryCount}`} {...a11yProps(6)} />
+          {userInfo.worker_id === "admin01@gig.com" ? (
+            <Tab label="Contract Setting" {...a11yProps(7)} />
+          ) : null}
+        </Tabs>
+      </Box>
 
-            {/* 워커가 클라이언트의 평가에 납득하지 못하는 경우 try를 신청하면, moderator들이 판단을 한다. */}
-            <Grid item xs={2}>
-              {userInfo.mod_authority === true ? (
-                <Button variant="contained" size="small">
-                  <Link
-                    style={{ color: "white" }}
-                    component={RouterLink}
-                    to="/judgeobjection"
-                    state={{ token: token, userInfo: userInfo }}
-                  >
-                    Judge Estimation ({tryCount === 0 ? null : tryCount}건)
-                  </Link>
-                </Button>
-              ) : (
-                <Button variant="contained" disabled size="small">
-                  Judge Estimation
-                </Button>
-              )}
-            </Grid>
-
-            {/* 투표, 펜딩전환, 토큰전송 등으로 발생한 트랜잭션 정보를 검색한다. */}
-            <Grid item xs={2}>
-              <Button variant="contained" size="small" onClick={()=> navigate("/transactions")}>
-                View Transactions
-              </Button>
-            </Grid>
-            {/* 어떤 제안을 올리기 전에 개발팀에게 기술적 범위에 대한 문의를 한다 */}
-            <Grid item xs={2}>
-              {userInfo.mod_authority === true ? (
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={() => navigate("/contactsupportteam", { state: { token: token, userInfo: userInfo } })}
+      {/*------------proposals------------*/}
+      <TabPanel value={value} index={0}>
+        <Grid
+          container
+          direction="row"
+          justifyContent="flex-end"
+          alignItems="center"
+        >
+          <Grid item xs={6}></Grid>
+          {/* 투표에 가기 전 전체적인 공감대를 얻을 수 있는지 확인하기 위하여 새로운 제안을 생성한다 */}
+          <Grid item xs={1}>
+            {userInfo.mod_authority === true ? (
+              <Button variant="contained" size="small">
+                <Link
+                  style={{ color: "white" }}
+                  component={RouterLink}
+                  to="/createproposal"
+                  state={{ token: token, userInfo: userInfo }}
                 >
-                  Contact Support Team
-                </Button>
-              ) : (
-                <Button variant="contained" disabled size="small">
-                  Contact Support Team
-                </Button>
-              )}
-            </Grid>
-            {/* admin@gig.com 전용 메뉴. 컨트랙트 주소를 재설정하거나, 수동 긱스코어 발송등을 한다. */}
-            {userInfo.worker_id === "admin01@gig.com" ?
-              (<Grid item xs={2}>
-                <Button variant="contained" size="small" onClick={contractSetting} >
-                  Contract Setting
-                </Button>
-              </Grid>)
-              :null}
+                  Create Proposal
+                </Link>
+              </Button>
+            ) : (
+              <Button variant="contained" disabled size="small">
+                Create Proposal
+              </Button>
+            )}
           </Grid>
-        </li>
-      </div>
 
-      {/*------------voting in progress------------*/}
-      <div style={{ padding: "10px" }}>
-        <div className={styles.reviewBox}>
-          <div>
-            <h3>Cast Vote</h3>
-          </div>
+          {/* 어떤 제안을 올리기 전에 개발팀에게 기술적 범위에 대한 문의를 한다 */}
+          <Grid item xs={2}>
+            {userInfo.mod_authority === true ? (
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() =>
+                  navigate("/contactsupportteam", {
+                    state: { token: token, userInfo: userInfo },
+                  })
+                }
+              >
+                Contact Support Team
+              </Button>
+            ) : (
+              <Button variant="contained" disabled size="small">
+                Contact Support Team
+              </Button>
+            )}
+          </Grid>
+        </Grid>
+        {/*------------Proposal------------*/}
+        <Grid>
           <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
-            {activeVotes.map((vote) => {
+            <div>
+              <h3>Proposals</h3>
+            </div>
+            {proposals.map((proposal) => {
               return (
-                <li className={styles.taps} key={vote._id}>
-                  <CastVote vote={vote} token={token} userInfo={userInfo} key={vote._id} />
-                </li>
-              )
+                <Proposal
+                  key={proposal.proposal_id}
+                  proposal={proposal}
+                  token={token}
+                  updateFunc={updateFunc}
+                />
+              );
             })}
           </div>
-        </div>
-      </div>
-
-      {/*------------voting result------------*/}
-      <div style={{ padding: "10px" }}>
-        <div className={styles.reviewBox}>
-          <div>
-            <h3>Voting Result</h3>
-          </div>
-          <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
-            {voteResult.map((vote) => {
-              return (
-                <li className={styles.taps} key={vote._id}>
-                  <VotingResult vote={vote} token={token} />
-                </li>
-              )
-            })}
-          </div>
-        </div>
-      </div>
-
-
-      {/*------------Changed Policy------------*/}
-      <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
-        <div>
-          <h3>Recent updated Policies</h3>
-        </div>
-        {policies.map((policy) => {
-          return <NewPolicy key={policy._id} policy={policy} />;
-        })}
-      </div>
+        </Grid>
+      </TabPanel>
 
       {/*------------Passed Proposal------------*/}
-      <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
-        <div>
-          <h3>Stand By before Vote</h3>
+      <TabPanel value={value} index={1}>
+        <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
+          <div>
+            <h3>Stand By before Vote</h3>
+          </div>
+          {standBy.map((proposal) => {
+            return (
+              <StandByProposal
+                key={proposal.proposal_id}
+                proposal={proposal}
+                token={token}
+                updateFunc={updateFunc}
+              />
+            );
+          })}
         </div>
-        {standBy.map((proposal) => {
-          return (
-            <StandByProposal
-              key={proposal.proposal_id}
-              proposal={proposal}
-              token={token}
-              updateFunc={updateFunc}
-            />
-          );
-        })}
-      </div>
+      </TabPanel>
 
-      {/*------------Proposal------------*/}
-      <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
-        <div>
-          <h3>Proposals</h3>
+      {/*------------voting------------*/}
+      <TabPanel value={value} index={2}>
+        {/*------------voting in progress------------*/}
+        <div style={{ padding: "10px" }}>
+          <div className={styles.reviewBox}>
+            <div>
+              <h3>Cast Vote</h3>
+            </div>
+            <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
+              {activeVotes.map((vote) => {
+                return (
+                  <li className={styles.taps} key={vote._id}>
+                    <CastVote
+                      vote={vote}
+                      token={token}
+                      userInfo={userInfo}
+                      key={vote._id}
+                    />
+                  </li>
+                );
+              })}
+            </div>
+          </div>
         </div>
-        {proposals.map((proposal) => {
-          return (
-            <Proposal
-              key={proposal.proposal_id}
-              proposal={proposal}
-              token={token}
-              updateFunc={updateFunc}
-            />
-          );
-        })}
-      </div>
-    </div>
+      </TabPanel>
+
+      {/*------------voting result------------*/}
+      <TabPanel value={value} index={3}>
+        <div style={{ padding: "10px" }}>
+          <div className={styles.reviewBox}>
+            <div>
+              <h3>Voting Result</h3>
+            </div>
+            <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
+              {voteResult.map((vote) => {
+                return (
+                  <li className={styles.taps} key={vote._id}>
+                    <VotingResult vote={vote} token={token} />
+                  </li>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </TabPanel>
+
+      {/*------------changed policy------------*/}
+      <TabPanel value={value} index={4}>
+        <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
+          <div>
+            <h3>Recent updated Policies</h3>
+          </div>
+          {policies.map((policy) => {
+            return <NewPolicy key={policy._id} policy={policy} />;
+          })}
+        </div>
+      </TabPanel>
+
+      {/*------------transactions------------*/}
+      <TabPanel value={value} index={5}>
+        {/* 투표, 펜딩전환, 토큰전송 등으로 발생한 트랜잭션 정보를 검색한다. */}
+        <Transactions></Transactions>
+      </TabPanel>
+
+      {/*------------court------------*/}
+      <TabPanel value={value} index={6}>
+        {userInfo.mod_authority === true ? (
+          <JudgeObjection token={token} userInfo={userInfo} />
+        ) : (
+          null
+        )}
+      </TabPanel>
+
+      {/*------------contract setting------------*/}
+      {/* admin@gig.com 전용 메뉴. 컨트랙트 주소를 재설정하거나, 수동 긱스코어 발송등을 한다. */}
+      {userInfo.worker_id === "admin01@gig.com" ? (
+        <TabPanel value={value} index={7}>
+          <Grid item xs={2}>
+            <Button variant="contained" size="small" onClick={contractSetting}>
+              Contract Setting
+            </Button>
+          </Grid>
+        </TabPanel>
+      ) : null}
+    </Box>
   );
 }
 
