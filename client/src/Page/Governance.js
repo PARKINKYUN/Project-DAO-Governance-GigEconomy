@@ -375,9 +375,7 @@ function Governance({ token, userInfo }) {
       {/*------------court------------*/}
       <TabPanel value={value} index={6}>
         {userInfo.mod_authority === true ? (
-          <JudgeObjection
-            state={{ token: token, userInfo: userInfo }}
-          ></JudgeObjection>
+          <JudgeObjection token={token} userInfo={userInfo} />
         ) : (
           "모더레이터 권한이 필요합니다."
         )}
