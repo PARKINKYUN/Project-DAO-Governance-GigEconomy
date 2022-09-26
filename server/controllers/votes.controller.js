@@ -206,7 +206,7 @@ module.exports = {
 
                     // execute 함수 호출 트랜잭션
                     const data = await governor.methods.execute(targets, values, calldatas, descriptionHash).encodeABI();
-                    const rawTransaction = { to: GovernorAddress, gas: 3000000, data: data };
+                    const rawTransaction = { to: GovernorAddress, gas: 5000000, data: data };
                     const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
                     const sendingTX = await web3.eth.sendSignedTransaction(signedTX.rawTransaction);
 

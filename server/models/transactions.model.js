@@ -51,8 +51,8 @@ transaction.methods.saveTransaction = async function () {
 };
 
 // 최근 트랜잭션 데이터 읽어오기
-transaction.statics.getTransaction = async function () {
-    return await this.find({}).sort({ blockNumber: -1 }).limit(20);
+transaction.statics.getTransactions = async function () {
+    return await this.find({}).sort({ blockNumber: -1 }).limit(10);
 }
 
 module.exports = mongoose.model("Transaction", transaction)

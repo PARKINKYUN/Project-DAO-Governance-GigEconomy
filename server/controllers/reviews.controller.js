@@ -163,4 +163,20 @@ module.exports = {
       });
     }
   },
+
+  // 최근 리뷰 조회
+  recentReview: async (req, res) => {
+    try {
+      const recentReview = await reviewmodel.recentReview();
+      return res
+        .status(200)
+        .send({ data: recentReview, message: "ok" });
+    } catch (err) {
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't Update review",
+      });
+    }
+  },
 };

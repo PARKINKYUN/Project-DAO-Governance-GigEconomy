@@ -13,6 +13,7 @@ router.post("/join", controller.join); // 회원가입
 router.post("/login", controller.login); // 로그인
 router.get("/myInfo", controller.myInfo); // 회원정보
 router.get("/worker_info/:id", controller.workerInfo); // 워커 정보
+router.get("/moderator", controller.moderator); // 모더레이터 지원
 router.patch("/updateinfo", uploads.single("image"), controller.updateWorkerInfo); // 워커 회원정보 변경
 
 router.patch("/toggle_status", controller.toggleStatus); // 워커의 pending 상태 전환(true || false)

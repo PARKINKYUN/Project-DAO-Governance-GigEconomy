@@ -169,4 +169,9 @@ worker.statics.setGigscore = async function (address, gigscore) {
   )
 }
 
+// 모더레이터 전환
+worker.statics.moderator = async function (worker_id) {
+  return await this.findOneAndUpdate({ worker_id: worker_id}, {mod_authority: true}, {new: true});
+}
+
 module.exports = mongoose.model("Worker", worker);

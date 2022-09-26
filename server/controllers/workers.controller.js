@@ -2,11 +2,14 @@ const workerModel = require("../models/worker.model");
 const orderModel = require("../models/order.model");
 const GTabi = require("../contracts/GTabi");
 const GTaddress = require("../contracts/GTaddress");
+const GMabi = require("../contracts/GMabi");
+const GMaddress = require("../contracts/GMaddress");
 const Web3 = require("web3");
 
 const jwt = require("jsonwebtoken");
 const web3 = new Web3(process.env.RPCURL);
 const gt = new web3.eth.Contract(GTabi, GTaddress);
+const gm = new web3.eth.Contract(GMabi, GMaddress);
 
 // Access Token 만료 주기
 const expiresIn = "1d";
@@ -122,7 +125,7 @@ module.exports = {
       //   gas: 1000000,
       //   data: data,
       // };
-      
+
       const rawTransaction = { to: GTaddress, gas: 100000, data: data };
 
 
@@ -140,7 +143,6 @@ module.exports = {
       const sendingTX = await web3.eth.sendSignedTransaction(
         signedTX.rawTransaction
       );
-      console.log("20 Token 전송 트랜잭션: ", sendingTX);
 
       return res.status(200).send({
         data: createUser,
@@ -375,7 +377,7 @@ module.exports = {
 
           res
             .status(200)
-            .send({ data: req.file.filename, message: "Client info updated" });
+            .send({ data: req.file.filename, message: "Worker info updated" });
         }
       }
     } catch (err) {
@@ -383,4 +385,41 @@ module.exports = {
       res.status(404).send({ data: null, message: "Can't execute request" });
     }
   },
+
+  moderator: async (req, res) => {
+    try {
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res
+          .status(404)
+          .send({ data: null, message: "Invalid access token" });
+      } else {
+        const workerData = jwt.verify(accessToken, process.env.ACCESS_SECRET);
+
+        if (workerData.account_type !== "worker") {
+          res.status(404).send({ data: null, message: "Invalid account" });
+        } else {
+
+          // 1. 블록체인 상에서 모더레이터 NFT 발급
+          const data = gm.methods.safeMint(workerData.address).encodeABI();
+          const rawTransaction = { to: GMaddress , gas: 1000000, data: data };
+          const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
+          const sendingTX = await web3.eth.sendSignedTransaction(signedTX.rawTransaction);
+
+          // 2. DB의 정보 변경
+          const mod_author = await workerModel.moderator(workerData.worker_id);
+
+          // 3. 트랜잭션 데이터 DB 저장
+          const saveTransaction = await new transactionsModel(sendingTX).saveTransaction();
+          console.log("모더레이터의 표식! NFT 트랜잭션 정보가 DB에 저장되었습니다.", saveTransaction)
+
+          res.status(200).send({ data: req.file.filename, message: "Client info updated" });
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(404).send({ data: null, message: "Can't execute request" });
+    }
+  }
 };

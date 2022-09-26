@@ -10,6 +10,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import TransferToken from "../components/TransferToken";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function WorkerInfo({ token, userInfo, setUserInfo }) {
     const [pending, setPending] = useState([]);
@@ -21,8 +23,11 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
     const [evalCount, setEvalCount] = useState(0);
     const [balance, setBalance] = useState(0);
     const [gigscore, setGigscore] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
+    // 모더레이터로 지원할 수 있는 기준
+    const Mod_Contition = 100000;
 
     useEffect(() => {
         // 토큰을 사용하여
@@ -45,11 +50,16 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
         }
     }
 
-    // 거버넌스에 참여하는 Moderator가 되기 위한 gig-score 자격
-    const Mod_Contition = 1000;
     // 자격이 되는 worker가 Moderator로 전환
-    const applyModerator = () => {
-        console.log("모더레이터로 전환되었습니다.")
+    const applyModerator = async () => {
+        try {
+            setLoading(true);
+            const res = await axios.get("http://localhost:4000/workers/moderator", { headers: { authorization: token } }) 
+
+        } catch (err) {
+            window.alert("모더레이터 전환에 실패했습니다. 다시 시도해주세요.");
+            setLoading(false);
+        }
     }
 
     const getOrderByWorker = async () => {
@@ -184,7 +194,7 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                                     회원정보수정
                                 </Button>
                                 <TransferToken token={token} isWoker={true} />
-                                {userInfo.gig_score >= Mod_Contition && !userInfo.mod_authority ?
+                                {gigscore >= Mod_Contition && !userInfo.mod_authority ?
                                     <Button variant="contained" size="medium" onClick={applyModerator}>
                                         Moderator 지원
                                     </Button>
@@ -255,6 +265,20 @@ function WorkerInfo({ token, userInfo, setUserInfo }) {
                     <TapsList token={token} userInfo={userInfo} taps={taps} />
                 </div>
             </div>
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={loading}
+            >
+                <div>
+                    <h2>우리 모두가 GigTopia...!</h2>
+                    <h2>블록체인 네트워크에 새로운 Moderator를 기록하고 있습니다.</h2>
+                    <h2>잠시 기다려주세요.</h2>
+                </div>
+                <div>
+                    <CircularProgress color="inherit" />
+                </div>
+
+            </Backdrop>
         </div>
     );
 }

@@ -14,6 +14,10 @@ const review = new mongoose.Schema({
     type: String,
     required: true,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  }
 });
 
 //리뷰 조회(worker_id조회)
@@ -50,5 +54,9 @@ review.statics.setReview = async function (review_id, content) {
 review.statics.removeReview = async function (review_id) {
   await this.findByIdAndRemove(review_id);
 };
+
+review.statics.recentReview = async function () {
+  return await this.find({}).sort({createdAt: -1}).limit(6);
+}
 
 module.exports = mongoose.model("Review", review);
