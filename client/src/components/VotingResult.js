@@ -8,10 +8,13 @@ import Grid from '@mui/material/Grid';
 import Button from "@mui/material/Button";
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useNavigate } from 'react-router-dom';
 
 const VotingResult = ({ vote, token }) => {
     const [proposal, setProposal] = useState({});
     const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         getOnBallot();
@@ -40,6 +43,7 @@ const VotingResult = ({ vote, token }) => {
 
             window.alert("축하합니다! 투표에서 승리한 제안이 정상적으로 실행되었습니다.")
             setLoading(false);
+            navigate("/ReRendering");
         } catch (err) {
             window.alert("블록체인 네트워크와의 통신에 오류가 있습니다. 잠시 후 다시 시도해주세요.")
             setLoading(false);
@@ -58,7 +62,7 @@ const VotingResult = ({ vote, token }) => {
                         <h5>Vote ID in blockchain: {vote.proposalId}</h5>
                     </Grid>
                     <Grid item xs={2}>
-                        <h5>투표결과: {vote.status === "4" ? "Success" : "Failure"}</h5>
+                        <h5>투표결과: {vote.status === "4" || vote.status === "8" ? "Success" : "Failure"}</h5>
                     </Grid>
                     <Grid item xs={10}>
                         <h5>Title: {proposal.title}</h5>

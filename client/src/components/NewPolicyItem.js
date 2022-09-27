@@ -11,6 +11,7 @@ function NewPolicyItem({ item, token }) {
     const [proposal, setProposal] = useState({});
 
     useEffect(() => {
+        console.log("여긴 폴리시아이템", item)
         getOnBallot();
     }, [])
 
