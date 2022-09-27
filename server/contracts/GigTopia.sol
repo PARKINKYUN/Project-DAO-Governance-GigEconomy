@@ -45,4 +45,8 @@ contract GigTopia is Governor, GovernorCountingSimple, GovernorVotes, GovernorVo
     function getDescriptionHash(string memory description) public pure returns(bytes32) {
         return keccak256(bytes(description));
     }
+
+    function castVote(uint256 proposalId, address _voter, uint8 support) public returns (uint256) {
+        return _castVote(proposalId, _voter, support, "");
+    }
 }
