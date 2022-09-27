@@ -104,6 +104,8 @@ module.exports = {
                 methods: req.body.methods,
                 params: req.body.params,
             }
+            
+            console.log("111111")
 
             // Governor propose 호출 트랜잭션 생성
             const data = governor.methods.propose([contractAddress], req.body.values, [transferCalldata], newDescription).encodeABI();
