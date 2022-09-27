@@ -40,7 +40,7 @@ module.exports = {
                 } else {
                     // vote 를 위한 트랜잭션 생성작업
                     // 1. 원시 데이터 생성
-                    const data = governor.methods.castVote(req.body.proposalId, req.body.position).encodeABI();
+                    const data = governor.methods.castVote(req.body.proposalId, userInfo.address, req.body.position).encodeABI();
                     // 2. 원시 트랜잭션 장부 생성
                     const rawTransaction = { to: GovernorAddress, gas: 1000000, data: data };
                     // 3. 트랜잭션에 개인키(server 개인키)로 서명
@@ -106,7 +106,7 @@ module.exports = {
             }
 
             // Governor propose 호출 트랜잭션 생성
-            const data = await governor.methods.propose([contractAddress], req.body.values, [transferCalldata], newDescription).encodeABI();
+            const data = governor.methods.propose([contractAddress], req.body.values, [transferCalldata], newDescription).encodeABI();
             const rawTransaction = { to: GovernorAddress, gas: 3000000, data: data };
             const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
             const sendingTX = await web3.eth.sendSignedTransaction(signedTX.rawTransaction);

@@ -57,6 +57,7 @@ function Governance({ token, userInfo }) {
   const [activeVotes, setActiveVotes] = useState([]);
   const [voteResult, setVoteResult] = useState([]);
   const [tries, setTries] = useState([]);
+  const [policies, setPolicy] = useState([]);
 
   // 제안 만료일 설정 (여기서는 1시간)
   const EXPIRED_PROPOSAL_TIME = 1 * 1 * 60 * 60 * 1000; // 단위 : 일 * 시간 * 분 * 초 * 밀리세컨
@@ -121,12 +122,12 @@ function Governance({ token, userInfo }) {
   // db에서 종료된 투표 데이터를 읽어오는 로직
   const getVoteResult = async () => {
     try {
-      console.log("종료된 투표 목록을 가져온다.");
       const res = await axios.get(
         "http://localhost:4000/pastvotes/votesresult",
         { headers: { authorization: token } }
       );
-      console.log("종료된 투표 목록을 가져왔다.", res.data.data);
+      const policy = res.data.data.filter((item) => item.status === "8");
+      setPolicy(policy);
       setVoteResult(res.data.data);
     } catch (err) {
       window.alert(
@@ -152,8 +153,6 @@ function Governance({ token, userInfo }) {
       const down = proposal.down;
       const checkMinParticipants = up + down >= minParticipants;
       const checkQuorum = (100 * up) / (up + down) >= QUORUM;
-      console.log("지난시간: ", proposal.createdAt + EXPIRED_PROPOSAL_TIME)
-      console.log("현재시간: ", new Date())
 
       if (proposal.createdAt + EXPIRED_PROPOSAL_TIME >= new Date()) {
 
@@ -351,7 +350,17 @@ function Governance({ token, userInfo }) {
 
       {/*------------changed policy------------*/}
       <TabPanel value={value} index={4}>
-        <NewPolicy policies={voteResult} token={token} />
+        <div style={{ padding: "10px" }}>
+          <div>
+            <h3>Recent Updated Policies</h3>
+          </div>
+          <li className={styles.taps}>
+            {policies.length !== 0 ?
+            (policies.map((policy) => (
+              <NewPolicy policy={policy} token={token} />)))
+            :null}
+          </li>
+        </div>
       </TabPanel>
 
       {/*------------transactions------------*/}
