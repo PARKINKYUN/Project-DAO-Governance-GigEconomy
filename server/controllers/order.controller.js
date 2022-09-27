@@ -1,5 +1,12 @@
 const jwt = require("jsonwebtoken");
 const order = require("../models/order.model");
+const workermodel = require("../models/worker.model");
+const GSabi = require("../contracts/GSabi");
+const GSaddress = require("../contracts/GSaddress");
+
+const Web3 = require("web3");
+const web3 = new Web3(process.env.RPCURL);
+const gs = new web3.eth.Contract(GSabi, GSaddress);
 
 module.exports = {
   // pending 중인 order 리스트
@@ -93,36 +100,36 @@ module.exports = {
     }
   },
 
-    // worker_id로 오더 정보 조회
-    getFinishedOrderByWorker: async (req, res) => {
-      try {
-        const accessToken = req.headers.authorization;
-  
-        if (!accessToken) {
-          return res.status(404).send({ data: null, message: "Not autorized" });
+  // worker_id로 오더 정보 조회
+  getFinishedOrderByWorker: async (req, res) => {
+    try {
+      const accessToken = req.headers.authorization;
+
+      if (!accessToken) {
+        return res.status(404).send({ data: null, message: "Not autorized" });
+      } else {
+        const token = accessToken.split(" ")[0];
+        const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (!userInfo) {
+          return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-          const token = accessToken.split(" ")[0];
-          const userInfo = jwt.verify(token, process.env.ACCESS_SECRET);
-  
-          if (!userInfo) {
-            return res.status(404).send({ data: null, message: "Invalid token" });
-          } else {
-            const orderInfo = await order.getOrderByWorker(req.params.worker_id);
-            console.log("worker_id로 오더 정보 조회 완료");
-  
-            return res
-              .status(200)
-              .send({ data: orderInfo, message: "Searching success" });
-          }
+          const orderInfo = await order.getOrderByWorker(req.params.worker_id);
+          console.log("worker_id로 오더 정보 조회 완료");
+
+          return res
+            .status(200)
+            .send({ data: orderInfo, message: "Searching success" });
         }
-      } catch (err) {
-        // console.log(err);
-        res.status(400).send({
-          data: null,
-          message: "Can't search",
-        });
       }
-    },
+    } catch (err) {
+      // console.log(err);
+      res.status(400).send({
+        data: null,
+        message: "Can't search",
+      });
+    }
+  },
 
   // 새로운 오더 생성
   new_order: async (req, res) => {
@@ -319,7 +326,21 @@ module.exports = {
         if (!userInfo) {
           return res.status(404).send({ data: null, message: "Invalid token" });
         } else {
-          const orderData = await order.finish(req.body.order_id);
+          // order에 있는 worker_id로 Worker의 정보를 읽어온다.
+          const workerInfo = await workermodel.getWorkerInfoById(req.body.order.worker_id);
+
+          // *** client가 오더 완료시 worker 에게 GigScore 지급
+          // 1. 원시 데이터 생성
+          const data = gs.methods.transferFrom(process.env.ADMIN_WALLET_ACOUNT, workerInfo[0].address, 3000).encodeABI();
+          // 2. 원시 트랜잭션 장부 생성
+          const rawTransaction = { to: GSaddress, gas: 500000, data: data };
+          // 3. 트랜잭션에 개인키(server 개인키)로 서명
+          const signedTX = await web3.eth.accounts.signTransaction(rawTransaction, process.env.ADMIN_WALLET_PRIVATE_KEY);
+          // 4. 서명한 트랜잭션 발송
+          const sendingTX = await web3.eth.sendSignedTransaction(signedTX.rawTransaction);
+          console.log("Token 전송 트랜잭션: ", sendingTX);
+
+          const orderData = await order.finish(req.body.order._id);
           return res.status(200).send({ data: orderData, message: "Searching success" })
         }
       }

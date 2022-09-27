@@ -12,6 +12,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { useNavigate, useLocation } from "react-router-dom";
 import NewTapForm from "../components/NewTapForm";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function OrderInfo() {
   const [orderItem, setOrderItem] = useState({});
@@ -24,6 +26,7 @@ function OrderInfo() {
   const [compensation, setCompensation] = useState("");
   const [deadline, setDeadline] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -193,11 +196,14 @@ function OrderInfo() {
   // 오더 완료 ==================================
   const finishOrder = async () => {
     try {
-      const res = await axios.patch(`http://localhost:4000/orders/order_info/finish`, { order_id: orderItem._id }, { headers: { authorization: token } });
+      setLoading(true);
+      const res = await axios.patch(`http://localhost:4000/orders/order_info/finish`, { order: orderItem }, { headers: { authorization: token } });
+      setLoading(false);
       window.alert("작업 중이었던 Order가 완료되었습니다.");
       navigate("/clientInfo");
     } catch (err) {
       console.log(err);
+      setLoading(false);
       window.alert("오류가 발생하였습니다. 다시 시도해주세요.");
       navigate("/ReRendering");
     }
@@ -471,6 +477,19 @@ function OrderInfo() {
       <div>
         <TapsList token={token} userInfo={userInfo} taps={taps} order={order} />
       </div>
+      <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={loading}
+            >
+                <div>
+                    <h2>주문하신 작업이 완료되어 블록체인 네트워크에 트랜잭션을 보내는 중입니다.</h2>
+                    <h2>잠시만 기다려 주세요.</h2>
+                </div>
+                <div>
+                    <CircularProgress color="inherit" />
+                </div>
+
+            </Backdrop>
     </div>
   )
 }
