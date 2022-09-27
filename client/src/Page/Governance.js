@@ -50,13 +50,13 @@ function a11yProps(index) {
 
 function Governance({ token, userInfo }) {
   const [value, setValue] = React.useState(0);
-  const [policies, setPolicies] = useState([]);
   const [proposals, setProposals] = useState([]);
   const [updateNow, setUpdateNow] = useState(true);
   const [tryCount, setTryCount] = useState(0);
   const [standBy, setStandBy] = useState([]);
   const [activeVotes, setActiveVotes] = useState([]);
   const [voteResult, setVoteResult] = useState([]);
+  const [tries, setTries] = useState([]);
 
   // 제안 만료일 설정 (여기서는 1시간)
   const EXPIRED_PROPOSAL_TIME = 1 * 1 * 60 * 60 * 1000; // 단위 : 일 * 시간 * 분 * 초 * 밀리세컨
@@ -84,8 +84,6 @@ function Governance({ token, userInfo }) {
     getActiveVotes();
     // 새로 신청된 Try가 있는지 확인
     getTryCount();
-    // 최근 업데이트된 정책 읽어오기
-    getPolicies();
     // 진행중인 제안 읽어오기
     getProposals();
     // 1차 제안 투표에 통과하여 본 투표 직전에 대기하는 제안 불러오기
@@ -108,17 +106,6 @@ function Governance({ token, userInfo }) {
         "현재 Governance에서 진행중인 투표 목록을 불러오는데 실패했습니다."
       );
     }
-  };
-
-  // 투표가 종료되고 실제로 정책에 반영되면
-  // 반영된 내용을 DB에 저장하고...
-  // 이 함수를 통해 그 내용을 DB에서 읽어옴
-  const getPolicies = async () => {
-    const res = await axios.get("http://localhost:4000/policies/", {
-      headers: { authorization: token },
-    });
-    const recentPolicies = res.data.data;
-    setPolicies(recentPolicies);
   };
 
   // standBy 상태 proposal 데이터 요청
@@ -165,8 +152,8 @@ function Governance({ token, userInfo }) {
       const down = proposal.down;
       const checkMinParticipants = up + down >= minParticipants;
       const checkQuorum = (100 * up) / (up + down) >= QUORUM;
-              console.log("지난시간: ", proposal.createdAt + EXPIRED_PROPOSAL_TIME)
-        console.log("현재시간: ", new Date())
+      console.log("지난시간: ", proposal.createdAt + EXPIRED_PROPOSAL_TIME)
+      console.log("현재시간: ", new Date())
 
       if (proposal.createdAt + EXPIRED_PROPOSAL_TIME >= new Date()) {
 
@@ -195,6 +182,7 @@ function Governance({ token, userInfo }) {
       `http://localhost:4000/tryagainst/getOnBoardTry`,
       { headers: { authorization: token } }
     );
+    setTries(res.data.data)
     setTryCount(res.data.data.length);
   };
 
@@ -215,7 +203,11 @@ function Governance({ token, userInfo }) {
           <Tab label="Voting Result" {...a11yProps(3)} />
           <Tab label="Changed Policy" {...a11yProps(4)} />
           <Tab label="Transactions" {...a11yProps(5)} />
-          <Tab label={`Court : ${tryCount}`} {...a11yProps(6)} />
+          {userInfo.mod_authority === true ? (
+            <Tab label={`Court : ${tryCount}`} {...a11yProps(6)} />
+          ) : (
+            null
+          )}
           {userInfo.worker_id === "admin01@gig.com" ? (
             <Tab label="Contract Setting" {...a11yProps(7)} />
           ) : null}
@@ -359,14 +351,7 @@ function Governance({ token, userInfo }) {
 
       {/*------------changed policy------------*/}
       <TabPanel value={value} index={4}>
-        <div style={{ borderBottom: "1px solid black", padding: "10px" }}>
-          <div>
-            <h3>Recent updated Policies</h3>
-          </div>
-          {policies.map((policy) => {
-            return <NewPolicy key={policy._id} policy={policy} />;
-          })}
-        </div>
+        <NewPolicy policies={voteResult} token={token} />
       </TabPanel>
 
       {/*------------transactions------------*/}
@@ -376,12 +361,9 @@ function Governance({ token, userInfo }) {
       </TabPanel>
 
       {/*------------court------------*/}
+
       <TabPanel value={value} index={6}>
-        {userInfo.mod_authority === true ? (
-          <JudgeObjection token={token} userInfo={userInfo} />
-        ) : (
-          null
-        )}
+        <JudgeObjection token={token} userInfo={userInfo} />
       </TabPanel>
 
       {/*------------contract setting------------*/}

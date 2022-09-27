@@ -31,6 +31,7 @@ const JudgeObjection = ({ token, userInfo }) => {
         `http://localhost:4000/tryagainst/getOnBoardTry`,
         { headers: { authorization: token } }
       );
+      console.log("저지 오브젝션 콘솔", res.data.data)
       setTries(res.data.data);
     } catch (err) {
       console.error(err);

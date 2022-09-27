@@ -1,7 +1,6 @@
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -54,45 +53,41 @@ const VotingResult = ({ vote, token }) => {
                 aria-controls="panel1a-content"
                 id="panel1a-header"
             >
-                <Typography>
-                    <Grid container spacing={2} alignItems="center">
-                        <Grid item xs={10}>
-                            <h5>Vote ID in blockchain: {vote.proposalId}</h5>
-                        </Grid>
-                        <Grid item xs={2}>
-                            <h5>투표결과: {vote.status === "4" ? "Success" : "Failure"}</h5>
-                        </Grid>
-                        <Grid item xs={10}>
-                            <h5>Title: {proposal.title}</h5>
-                            <h5>Content: {proposal.content}</h5>
-                        </Grid>
-                        <Grid item xs={1}>
-                            <h5>찬성: {vote.for}</h5>
-                            <h5>반대: {vote.against}</h5>
-                        </Grid>
-                        <Grid item xs={1}>
-                            {vote.status === "4" ?
-                                <Button variant="contained" size="small" onClick={executeVote}>
-                                    Execute
-                                </Button>
-                                : null}
-                        </Grid>
+                <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={10}>
+                        <h5>Vote ID in blockchain: {vote.proposalId}</h5>
                     </Grid>
-                </Typography>
+                    <Grid item xs={2}>
+                        <h5>투표결과: {vote.status === "4" ? "Success" : "Failure"}</h5>
+                    </Grid>
+                    <Grid item xs={10}>
+                        <h5>Title: {proposal.title}</h5>
+                        <h5>Content: {proposal.content}</h5>
+                    </Grid>
+                    <Grid item xs={1}>
+                        <h5>찬성: {vote.for}</h5>
+                        <h5>반대: {vote.against}</h5>
+                    </Grid>
+                    <Grid item xs={1}>
+                        {vote.status === "4" ?
+                            <Button variant="contained" size="small" onClick={executeVote}>
+                                Execute
+                            </Button>
+                            : null}
+                    </Grid>
+                </Grid>
             </AccordionSummary>
             <AccordionDetails>
-                <Typography>
-                    <Grid container spacing={2}>
-                        <Grid item xs={3}>
-                            <h5>Target Contract : {vote.contract}</h5>
-                        </Grid>
-                        <Grid item xs={9}>
-                            <h5>Methods : {vote.methods}</h5>
-                            <h5>Params : {vote.params}</h5>
-                            <h5>Description : {vote.description}</h5>
-                        </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs={3}>
+                        <h5>Target Contract : {vote.contract}</h5>
                     </Grid>
-                </Typography>
+                    <Grid item xs={9}>
+                        <h5>Methods : {vote.methods}</h5>
+                        <h5>Params : {vote.params}</h5>
+                        <h5>Description : {vote.description}</h5>
+                    </Grid>
+                </Grid>
             </AccordionDetails>
             <Backdrop
                 sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
