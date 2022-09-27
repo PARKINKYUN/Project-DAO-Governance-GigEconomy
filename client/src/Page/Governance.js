@@ -211,7 +211,7 @@ function Governance({ token, userInfo }) {
         <Tabs value={value} onChange={handleChange}>
           <Tab label="Proposals" {...a11yProps(0)} />
           <Tab label="Passed Proposals" {...a11yProps(1)} />
-          <Tab label="Voting" {...a11yProps(2)} />
+          <Tab label={`Voting : ${activeVotes.length}`} {...a11yProps(2)} />
           <Tab label="Voting Result" {...a11yProps(3)} />
           <Tab label="Changed Policy" {...a11yProps(4)} />
           <Tab label="Transactions" {...a11yProps(5)} />

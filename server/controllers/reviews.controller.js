@@ -49,9 +49,10 @@ module.exports = {
           const workerBalance = await gt.methods
             .balanceOf(userInfo.address)
             .call();
-          await workerModel.setToken(userInfo.address, workerBalance);
+          const tokenBalance = await workerModel.setToken(userInfo.address, workerBalance);
+          console.log("리뷰 작성 토큰 정보 업데이트", tokenBalance)
           const inputReview = await reviewmodel.saveReview(newReview);
-          console.log("똑똑! 새로운 review가 저장되었습니다.", inputReview);
+          console.log("똑똑! 새로운 review가 저장되었습니다.");
 
           return res
             .status(200)

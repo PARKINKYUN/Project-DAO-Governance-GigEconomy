@@ -9,6 +9,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function FormDialog({
   token,
@@ -18,6 +20,7 @@ export default function FormDialog({
 }) {
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState("");
+  const [loading, setLoading] = React.useState(false);
 
   const navigate = useNavigate();
 
@@ -41,6 +44,8 @@ export default function FormDialog({
         order_title: order_title,
         content: content,
       };
+      setOpen(false);
+      setLoading(true);
       const res = await axios.post(
         "http://localhost:4000/reviews/review",
         newReview,
@@ -53,14 +58,15 @@ export default function FormDialog({
           { order_id: order_id },
           { headers: { authorization: token } }
         );
+        setLoading(false);
         window.alert(
           "작업 후기가 정상적으로 저장되었습니다. 더 이상 작업 목록에 노출되지 않습니다."
         );
         setContent("");
-        setOpen(false);
         navigate("/workerInfo");
       }
     } catch (err) {
+      setLoading(false);
       window.alert("오류가 발생했습니다. 다시 시도해주세요");
       setContent("");
       setOpen(false);
@@ -98,6 +104,18 @@ export default function FormDialog({
           <Button onClick={postReview}>Post</Button>
         </DialogActions>
       </Dialog>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <div>
+          <h2>사용자의 후기가 작성되어 블록체인 네트워크에 트랜잭션을 보내는 중입니다.</h2>
+          <h2>잠시만 기다려 주세요.</h2>
+        </div>
+        <div>
+          <CircularProgress color="inherit" />
+        </div>
+      </Backdrop>
     </div>
   );
 }
