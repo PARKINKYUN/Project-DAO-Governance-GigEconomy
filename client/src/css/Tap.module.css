@@ -1,0 +1,32 @@
+.tapBox {
+  padding: 10px;
+}
+
+.newTapContent {
+  width: 80%;
+  height: 100px;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+
+.submitNewTap {
+  width: 20%;
+}
+
+.writingArea {
+  display: flex;
+}
+
+.taps {
+  padding: 0;
+  margin: 0;
+  border-radius: 10px;
+}
+
+li.taps {
+  list-style: none;
+  border: 1px solid transparent;
+  padding: 10px;
+  margin: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
