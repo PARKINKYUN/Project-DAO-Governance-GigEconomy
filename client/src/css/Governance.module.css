@@ -1,0 +1,22 @@
+.main {
+  padding: 30px;
+}
+.vote {
+  border: 2px solid #c3cfd9;
+  border-radius: 10px;
+  padding: 10px;
+}
+.voteBox {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #c3cfd9;
+  padding: 10px;
+}
+.name {
+  margin-left: 30px;
+}
+.proposals {
+  align-items: center;
+  border-bottom: 2px solid #c3cfd9;
+  padding: 10px;
+}

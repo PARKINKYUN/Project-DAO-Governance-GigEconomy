@@ -1,0 +1,27 @@
+.main {
+  padding: 30px;
+}
+.profile {
+  border: 2px solid #c3cfd9;
+  border-radius: 10px;
+  padding: 10px;
+}
+.profileBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #c3cfd9;
+  padding: 10px;
+}
+.name {
+  margin-left: 30px;
+}
+.reviewBox {
+  align-items: center;
+  border-bottom: 2px solid #c3cfd9;
+  padding: 10px;
+}
+.toolBox {
+  justify-content: center;
+  align-items: center;
+}

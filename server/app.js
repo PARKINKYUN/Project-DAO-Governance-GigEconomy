@@ -10,10 +10,15 @@ dotenv.config();
 app.use(express.urlencoded({ limit: "50mb", extended: false }));
 app.use(express.json({ limit: "50mb" }));
 app.use(cors());
+app.use('/images', express.static('uploads'));
 
 // Database 연결
 const db = require("./models");
 db();
+
+// 반복적으로 블록체인 네트워크를 탐색하여 트랜잭션 정보를 DB에 저장
+const getTransactions = require("./models/daemon");
+getTransactions.start();
 
 // Routing 설정
 const routes = require("./routes");
