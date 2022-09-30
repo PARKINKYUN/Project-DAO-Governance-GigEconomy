@@ -146,16 +146,16 @@
 
 ## 박인균 (팀장)
 
-- 담당 PM, Fullstack, SmartContract
+- PM, Fullstack, SmartContract
 
 ## 김승주
 
-- 담당 Fullstack
+- Fullstack
 
 ## 오정헌
 
-- 담당 Backend, SmartContract
+- Backend, SmartContract
 
 ## 이효정
 
-- 담당 Fullstack
+- Fullstack
