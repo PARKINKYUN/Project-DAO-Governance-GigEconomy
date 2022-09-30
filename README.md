@@ -144,22 +144,18 @@
 
 # 6. Team
 
+## 박인균 (팀장)
+
+- 담당 PM, Fullstack, SmartContract
+
 ## 김승주
 
-- 담당
-- Github
-
-## 박인균
-
-- 담당
-- Github
+- 담당 Fullstack
 
 ## 오정헌
 
-- 담당
-- Github
+- 담당 Backend, SmartContract
 
 ## 이효정
 
-- 담당
-- Github
+- 담당 Fullstack
