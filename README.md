@@ -26,7 +26,38 @@
 
 ---
 
-# 2. Built with
+# 2. Features
+
+## Order
+
+1. client는 Find Worker 페이지에서 worker를 선택하여 직접 의뢰하거나, Find Order 페이지에서 의뢰를 작성할 수 있습니다. 의뢰 작성 후, worker가 올린 제안 중 마음에 드는 제안을 선택하여 의뢰를 시작할 수 있습니다.
+2. worker는 Find Order 페이지에서 order를 선택하여 기간과 요구 보상을 설정후 client에게 제안을 보낼 수 있습니다. 또한, MyPage에서 상태를 pending으로 전환하면 프로필이 Find Worker에 노출되어 client가 직접 의뢰를 보낼 수 있게 됩니다. pending 상태로 전환에는 GigToken이 소요됩니다. 이 후 MyPa-ge에서 client가 직접 보낸 의뢰를 확인 후 수락하여 의뢰를 시작할 수 있습니다.
+3. 위의 과정을 통하여 의뢰가 시작되면 client와 worker는 tap을 통하여 소통할 수 있습니다.
+4. 의뢰가 완료되면 client는 워커에게 사전에 합의된 보상 GIgToken을 지급합니다. 또한 worker는 소정의 GIgScore를 획득합니다.
+5. clinet는 worker를 평가합니다. client의 평가가 높으면 GigScore를 획득하고, 평가가 지나치게 낮다면 GigScore가 차감됩니다. worker가 client의 평가에 불복할 경우 이의를 제기할 수 있습니다(Court 참조).
+6. worker는 해당 의뢰에 대한 회고를 작성하여 GIgToken을 지급 받습니다.
+
+## Court
+
+1. 의뢰 완료 후 client의 평가에 불복한다면 worker는 이의를 제기할 수 있습니다.
+2. moderator(추후 설명)는 Governance 페이지에서 worker가 올린 이의를 확인 할 수 있습니다.
+3. moderator는 이의를 심사하여 GigScore를 획득합니다.
+4. 다수의 moderator가 동의하여 이의가 합당하다고 판단될 경우 Client는 평가를 정정해야 합니다.
+
+## Vote
+
+1. client는 일정량 이상의 GigScore를 사용해서 moderator 권한(NFT)을 획득할 수 있습니다. moderator NFT는 계정당 하나만 획득할 수 있습니다.
+2. moderator는 proposal을 작성할 수 있습니다.
+3. 다수의 worker가 동의한 proposal은 거버너 컨트랙트의 propose 함수를 통하여 voting으로 전환됩니다.
+4. 투표는 moderator만 가능하며, moderator NFT 하나당 한 표, 즉 한 계정은 한 표만 행사할 수 있으며 모든 표의 가치(weight)는 동일합니다. 투표 후 GigScore가 지급됩니다.
+5. 투표가 정족수를 넘었고 다수가 동의했다면 해당 제안은 성공으로 전주되어 거버너 컨트랙트의 excute 함수를 실행할 수 있게 됩니다
+6. 정족수를 넘지 못하거나 다수가 동의하지 않는다면 투표는 실패하게 되고, 제안자의 GigScore가 차감됩니다. 따라서 제안은 신중하게 올려야 합니다.
+
+![tokenEconomy](https://lh3.googleusercontent.com/ZIyJxWJ1BDogRfWd4wj5qvfHhJVv0RLqnvPLKSKRIaOzM_ubz7EMn8fWbglmsk5bUf7-mwKSXq2BP6dh8i4AWYMPgImyNBzJTcn11sb1C3XvbyRhIclGPN7ihxtpuIGwPejaReFYsZAwjiBCsdeTHPS2l9BMdC-kBOWYN3gXYZFWWVW7A4UDthJGXKgpQKgrHIkbuF0yHAwCnCXjK1anX3UtOCKoBC96xq6_xm1Uz-LpByUQ-b_xT5RGBrHtl9eNacbQQJLbTUlyPeuPC2zmmz9B2tb-wyAibtG7kgFHwyY2f-ge6z3CYFk4gA6I7RbWU70YD-6lgTqU-ELFN3vUAPzTmmzMguWaWgFUkNxGWkFiTLlA32OVOrEZwwkb7mSq28QuGqdsFSaFPgr9Spbk37cGcvk5XWkDc5FYpfo-ywIb6wEO5tHudRLfAIGOWRHBd67lUW-ngq5DRH_9IZnNy5yveqPZobVBjwZ1-bMD_ok9XB6F12vJEwRtl0QtHxkbqCYO98KIyRfCre8F33uD8qKMutZezT2lN1E1w9pJ7JzXU311sFyeTF5fbICEBIaRuJxK-w3uGBPNZVXcFOvX0IR1UNpm-dhrL0ftBcuE3A0JuHlGGWrZ8izY3wLDhiU1I9bYrl0jO23hpJ03hbhds35jweJo7vUj-uNd2zBOZOluxu_f74qQvtOo6_njExu6MzhpFdBvCWf_81uWKBOCwXLADv2fYC423FxbHZQTnTXgYbdPm1p_bNefZ_aiCJSY_LGjydadG_dPnfj_B9d5-ZhAiPGMauiyDvwdWMXlKwJcg-zuqRco6ZRLjcJyo4Jswgqe0ePfcxJP8Vp1w6QQZ1RZ1NyjCHwEivyPOqSoRnh5lYaGl51AjEHQuVJt7MPvFPJt5WhWWhCizibm5Hy3Kxu4tPNyC5JDX8HVvsfBqPK7m6ksjCY7V_FkVyjQB0d9zJoiBg=w1432-h676-no?authuser=0)
+
+---
+
+# 3. Built with
 
 - Front-end
   - ReactJs
@@ -41,7 +72,7 @@
 
 ---
 
-# 3. Quick Start
+# 4. Quick Start
 
 - Front-end
   1. Install packages
@@ -102,37 +133,6 @@
        ```
        npx hardhat run script/vote.js
        ```
-
----
-
-# 4. Features
-
-## Order
-
-1. client는 Find Worker 페이지에서 worker를 선택하여 직접 의뢰하거나, Find Order 페이지에서 의뢰를 작성할 수 있습니다. 의뢰 작성 후, worker가 올린 제안 중 마음에 드는 제안을 선택하여 의뢰를 시작할 수 있습니다.
-2. worker는 Find Order 페이지에서 order를 선택하여 기간과 요구 보상을 설정후 client에게 제안을 보낼 수 있습니다. 또한, MyPage에서 상태를 pending으로 전환하면 프로필이 Find Worker에 노출되어 client가 직접 의뢰를 보낼 수 있게 됩니다. pending 상태로 전환에는 GigToken이 소요됩니다. 이 후 MyPa-ge에서 client가 직접 보낸 의뢰를 확인 후 수락하여 의뢰를 시작할 수 있습니다.
-3. 위의 과정을 통하여 의뢰가 시작되면 client와 worker는 tap을 통하여 소통할 수 있습니다.
-4. 의뢰가 완료되면 client는 워커에게 사전에 합의된 보상 GIgToken을 지급합니다. 또한 worker는 소정의 GIgScore를 획득합니다.
-5. clinet는 worker를 평가합니다. client의 평가가 높으면 GigScore를 획득하고, 평가가 지나치게 낮다면 GigScore가 차감됩니다. worker가 client의 평가에 불복할 경우 이의를 제기할 수 있습니다(Court 참조).
-6. worker는 해당 의뢰에 대한 회고를 작성하여 GIgToken을 지급 받습니다.
-
-## Court
-
-1. 의뢰 완료 후 client의 평가에 불복한다면 worker는 이의를 제기할 수 있습니다.
-2. moderator(추후 설명)는 Governance 페이지에서 worker가 올린 이의를 확인 할 수 있습니다.
-3. moderator는 이의를 심사하여 GigScore를 획득합니다.
-4. 다수의 moderator가 동의하여 이의가 합당하다고 판단될 경우 Client는 평가를 정정해야 합니다.
-
-## Vote
-
-1. client는 일정량 이상의 GigScore를 사용해서 moderator 권한(NFT)을 획득할 수 있습니다. moderator NFT는 계정당 하나만 획득할 수 있습니다.
-2. moderator는 proposal을 작성할 수 있습니다.
-3. 다수의 worker가 동의한 proposal은 거버너 컨트랙트의 propose 함수를 통하여 voting으로 전환됩니다.
-4. 투표는 moderator만 가능하며, moderator NFT 하나당 한 표, 즉 한 계정은 한 표만 행사할 수 있으며 모든 표의 가치(weight)는 동일합니다. 투표 후 GigScore가 지급됩니다.
-5. 투표가 정족수를 넘었고 다수가 동의했다면 해당 제안은 성공으로 전주되어 거버너 컨트랙트의 excute 함수를 실행할 수 있게 됩니다
-6. 정족수를 넘지 못하거나 다수가 동의하지 않는다면 투표는 실패하게 되고, 제안자의 GigScore가 차감됩니다. 따라서 제안은 신중하게 올려야 합니다.
-
-![tokenEconomy](https://lh3.googleusercontent.com/ZIyJxWJ1BDogRfWd4wj5qvfHhJVv0RLqnvPLKSKRIaOzM_ubz7EMn8fWbglmsk5bUf7-mwKSXq2BP6dh8i4AWYMPgImyNBzJTcn11sb1C3XvbyRhIclGPN7ihxtpuIGwPejaReFYsZAwjiBCsdeTHPS2l9BMdC-kBOWYN3gXYZFWWVW7A4UDthJGXKgpQKgrHIkbuF0yHAwCnCXjK1anX3UtOCKoBC96xq6_xm1Uz-LpByUQ-b_xT5RGBrHtl9eNacbQQJLbTUlyPeuPC2zmmz9B2tb-wyAibtG7kgFHwyY2f-ge6z3CYFk4gA6I7RbWU70YD-6lgTqU-ELFN3vUAPzTmmzMguWaWgFUkNxGWkFiTLlA32OVOrEZwwkb7mSq28QuGqdsFSaFPgr9Spbk37cGcvk5XWkDc5FYpfo-ywIb6wEO5tHudRLfAIGOWRHBd67lUW-ngq5DRH_9IZnNy5yveqPZobVBjwZ1-bMD_ok9XB6F12vJEwRtl0QtHxkbqCYO98KIyRfCre8F33uD8qKMutZezT2lN1E1w9pJ7JzXU311sFyeTF5fbICEBIaRuJxK-w3uGBPNZVXcFOvX0IR1UNpm-dhrL0ftBcuE3A0JuHlGGWrZ8izY3wLDhiU1I9bYrl0jO23hpJ03hbhds35jweJo7vUj-uNd2zBOZOluxu_f74qQvtOo6_njExu6MzhpFdBvCWf_81uWKBOCwXLADv2fYC423FxbHZQTnTXgYbdPm1p_bNefZ_aiCJSY_LGjydadG_dPnfj_B9d5-ZhAiPGMauiyDvwdWMXlKwJcg-zuqRco6ZRLjcJyo4Jswgqe0ePfcxJP8Vp1w6QQZ1RZ1NyjCHwEivyPOqSoRnh5lYaGl51AjEHQuVJt7MPvFPJt5WhWWhCizibm5Hy3Kxu4tPNyC5JDX8HVvsfBqPK7m6ksjCY7V_FkVyjQB0d9zJoiBg=w1432-h676-no?authuser=0)
 
 ---
 
