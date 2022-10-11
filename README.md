@@ -106,9 +106,9 @@
 ## Court
 
 1. 의뢰 완료 후 client의 평가에 불복한다면 worker는 이의를 제기할 수 있습니다.
-2. moderator(추후 설명)는 Governance 페이지에서 worker가 올린 이의를 확인 할 수 있습니다.
+2. moderator는 Governance 페이지에서 worker가 올린 이의를 확인 할 수 있습니다.
 3. moderator는 이의를 심사하여 GigScore를 획득합니다.
-4. 다수의 moderator가 동의하여 이의가 합당하다고 판단될 경우 Client는 평가를 정정해야 합니다.
+4. 다수의 moderator가 동의하여 이의가 합당하다고 판단될 경우 해당 평가는 Worker에게서 삭제됩니다.
 
 ---
 
