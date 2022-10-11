@@ -30,6 +30,8 @@
 
 ## Order
 
+![client side](./클라이언트 기능 gif.gif)
+
 1. client는 Find Worker 페이지에서 worker를 선택하여 직접 의뢰하거나, Find Order 페이지에서 의뢰를 작성할 수 있습니다. 의뢰 작성 후, worker가 올린 제안 중 마음에 드는 제안을 선택하여 의뢰를 시작할 수 있습니다.
 2. worker는 Find Order 페이지에서 order를 선택하여 기간과 요구 보상을 설정후 client에게 제안을 보낼 수 있습니다. 또한, MyPage에서 상태를 pending으로 전환하면 프로필이 Find Worker에 노출되어 client가 직접 의뢰를 보낼 수 있게 됩니다. pending 상태로 전환에는 GigToken이 소요됩니다. 이 후 MyPa-ge에서 client가 직접 보낸 의뢰를 확인 후 수락하여 의뢰를 시작할 수 있습니다.
 3. 위의 과정을 통하여 의뢰가 시작되면 client와 worker는 tap을 통하여 소통할 수 있습니다.
